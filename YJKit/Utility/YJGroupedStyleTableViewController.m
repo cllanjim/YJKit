@@ -238,7 +238,7 @@
 // --------------------------------------------
 
 static const CGFloat kYJGSTVCLastGroupSeparatorCellHeight = 999.0f;
-static const CGFloat kYJGSTVCBottomSpaceFromLastCell = 50.0f;
+static const CGFloat kYJGSTVCExtraBottomMargin = 50.0f;
 
 @interface YJGroupedStyleTableViewController ()
 
@@ -261,7 +261,7 @@ static const CGFloat kYJGSTVCBottomSpaceFromLastCell = 50.0f;
     YJGroupedStyleTableView *tableView = [[YJGroupedStyleTableView alloc] initWithFrame:[UIScreen mainScreen].bounds
                                                                                   style:UITableViewStylePlain];
     tableView.backgroundColor = YJGSTVC_DEFAULT_TABLE_BACKGROUND_COLOR;
-    tableView.contentInset = (UIEdgeInsets){ 0, 0, kYJGSTVCBottomSpaceFromLastCell - kYJGSTVCLastGroupSeparatorCellHeight, 0 };
+    tableView.contentInset = (UIEdgeInsets){ 0, 0, kYJGSTVCExtraBottomMargin - kYJGSTVCLastGroupSeparatorCellHeight, 0 };
     
     tableView.lineSeparatorIndentationStyle = YJGroupedStyleTableViewSeparatorIndentationStyleAlignItemCellTitle;
     tableView.lineSeparatorThicknessLevel = YJGroupedStyleTableViewSeparatorThicknessLevelNormal;
@@ -638,9 +638,9 @@ static const CGFloat kYJGSTVCBottomSpaceFromLastCell = 50.0f;
         return cellHeight;
     }
     
-    // group sperator (supplementary region)
+    // group separator (supplementary region)
     else if ([typeInfo isEqualToString:YJGSGroupSeparator]) {
-        // last big group sperator cell
+        // last big group separator cell
         if (row == self.mappedRows.count - 1) {
             return kYJGSTVCLastGroupSeparatorCellHeight;
         } else {
@@ -648,7 +648,7 @@ static const CGFloat kYJGSTVCBottomSpaceFromLastCell = 50.0f;
         }
     }
     
-    // line sperator
+    // line separator
     else {
         switch (tableView.lineSeparatorThicknessLevel) {
             case YJGroupedStyleTableViewSeparatorThicknessLevelNormal: return 0.5;

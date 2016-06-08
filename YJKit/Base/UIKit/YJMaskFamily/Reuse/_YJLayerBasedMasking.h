@@ -54,7 +54,7 @@
     [super willMoveToSuperview:newSuperview];  \
     if (!newSuperview) return;  \
     /* added to superview */  \
-    if (newSuperview.backgroundColor) {  \
+    if (newSuperview.backgroundColor && !_forceMaskColor) {  \
         _maskColor = newSuperview.backgroundColor;  \
         [self updateMaskLayer];  \
     }  \

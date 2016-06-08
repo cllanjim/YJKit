@@ -8,7 +8,7 @@
 
 #import "RGBColor.h"
 
-const RGBColor RGBColorZero = { 0, 0, 0, 0 };
+const RGBColor RGBColorNone = { 0, 0, 0, 0 };
 
 NSString *NSStringFromRGBColor(RGBColor rgbColor) {
     return [NSString stringWithFormat:@"(RGBColor) { r:%@, g:%@, b:%@, a:%@ }",
