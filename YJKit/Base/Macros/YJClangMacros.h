@@ -40,11 +40,16 @@ static inline void YJBlockCleanUp(__strong void(^*block)(void)) { (*block)(); }
 // constructor & destructor
 
 #ifndef YJ_CONSTRUCTOR
+#if __has_attribute(constructor)
 #define YJ_CONSTRUCTOR __attribute__((constructor))
 #endif
+#endif
+
 
 #ifndef YJ_DESTRUCTOR
+#if __has_attribute(destructor)
 #define YJ_DESTRUCTOR __attribute__((destructor))
+#endif
 #endif
 
 /* ------------------------------------------------------------------------------------------------------------ */
@@ -52,7 +57,9 @@ static inline void YJBlockCleanUp(__strong void(^*block)(void)) { (*block)(); }
 // boxable
 
 #ifndef YJ_BOXABLE
+#if __has_attribute(objc_boxable)
 #define YJ_BOXABLE __attribute__((objc_boxable))
+#endif
 #endif
 
 /* ------------------------------------------------------------------------------------------------------------ */
@@ -60,7 +67,9 @@ static inline void YJBlockCleanUp(__strong void(^*block)(void)) { (*block)(); }
 // overloadable
 
 #ifndef YJ_OVERLOADABLE
+#if __has_attribute(overloadable)
 #define YJ_OVERLOADABLE __attribute__((overloadable))
+#endif
 #endif
 
 /* ------------------------------------------------------------------------------------------------------------ */
@@ -68,7 +77,9 @@ static inline void YJBlockCleanUp(__strong void(^*block)(void)) { (*block)(); }
 // final class
 
 #ifndef YJ_FINAL_CLASS
+#if __has_attribute(objc_subclassing_restricted)
 #define YJ_FINAL_CLASS __attribute__((objc_subclassing_restricted))
+#endif
 #endif
 
 /* ------------------------------------------------------------------------------------------------------------ */

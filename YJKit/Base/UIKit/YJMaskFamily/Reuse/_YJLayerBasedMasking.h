@@ -118,7 +118,7 @@
     BOOL colorChanged = NO;  \
     RGBColor newColor = [_maskColor RGBColor];  \
     if (!RGBColorEqualToColor(newColor, oldColor)) {  \
-        _oldMaskValues[@"maskColor"] = @(newColor);  \
+        _oldMaskValues[@"maskColor"] = [NSValue valueWithRGBColor:newColor];  \
         colorChanged = YES;  \
     }  \
     return (sizeChanged || colorChanged) ? YES : NO;  \

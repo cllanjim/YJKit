@@ -167,7 +167,7 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
 }
 
 - (void)setYj_originalTextColor:(RGBColor)yj_originalTextColor {
-    objc_setAssociatedObject(self, @selector(yj_originalTextColor), @(yj_originalTextColor), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(yj_originalTextColor), [NSValue valueWithRGBColor:yj_originalTextColor], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (RGBColor)yj_originalTextColor {

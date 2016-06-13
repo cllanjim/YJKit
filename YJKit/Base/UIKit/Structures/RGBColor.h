@@ -7,11 +7,14 @@
 //
 
 #import <CoreGraphics/CGGeometry.h>
-#import "YJClangMacros.h"
 
-typedef struct YJ_BOXABLE {
+typedef struct _RGBColor {
     CGFloat red, green, blue, alpha; /* 0.0 ~ 1.0 */
 } RGBColor;
+
+#if __has_attribute(objc_boxable)
+typedef struct __attribute__((objc_boxable)) _RGBColor RGBColor;
+#endif
 
 CG_EXTERN const RGBColor RGBColorNone;
 
