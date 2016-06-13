@@ -23,6 +23,7 @@
     [self.view addSubview:textField];
     
     UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(50,80,200,200)];
+    textView.autoResignFirstResponder = YES;
     textView.placeholder = @"hello";
     [self.view addSubview:textView];
     
