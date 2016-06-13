@@ -62,6 +62,15 @@ static inline void YJBlockCleanUp(__strong void(^*block)(void)) { (*block)(); }
 #endif
 #endif
 
+
+#ifndef YJ_BOX_NSVALUE_SUPPORT
+#define YJ_BOX_NSVALUE_SUPPORT __has_feature(objc_boxed_expressions) && __has_feature(objc_boxed_nsvalue_expressions)
+#endif
+
+#ifndef YJ_BOX_BOOL_SUPPORT
+#define YJ_BOX_BOOL_SUPPORT __has_feature(objc_bool)
+#endif
+
 /* ------------------------------------------------------------------------------------------------------------ */
 
 // overloadable

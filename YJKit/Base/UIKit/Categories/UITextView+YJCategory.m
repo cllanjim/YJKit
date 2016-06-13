@@ -12,6 +12,7 @@
 #import "NSObject+YJAssociatedIdentifier.h"
 #import "NSArray+YJCollection.h"
 #import "RGBColor.h"
+#import "YJClangMacros.h"
 
 static const void *YJTextViewAssociatedPlaceholderKey = &YJTextViewAssociatedPlaceholderKey;
 static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociatedPlaceholderColorKey;
@@ -95,15 +96,22 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
 #pragma mark - auto resign first responder
 
 - (void)setAutoResignFirstResponder:(BOOL)autoResignFirstResponder {
+#if YJ_BOX_BOOL_SUPPORT
     objc_setAssociatedObject(self, @selector(autoResignFirstResponder), @(autoResignFirstResponder), OBJC_ASSOCIATION_COPY_NONATOMIC);
-    
+#else
+    objc_setAssociatedObject(self, @selector(autoResignFirstResponder), (autoResignFirstResponder ? @1 : @0), OBJC_ASSOCIATION_COPY_NONATOMIC);
+#endif
     if (!autoResignFirstResponder) {
         [self yj_removeResignFirstResponderTapActionFromSuperview];
     }
 }
 
 - (BOOL)autoResignFirstResponder {
+#if YJ_BOX_BOOL_SUPPORT
     return [objc_getAssociatedObject(self, _cmd) boolValue];
+#else
+    return [objc_getAssociatedObject(self, _cmd) intValue] ? YES : NO;
+#endif
 }
 
 - (void)yj_textViewLayoutSubviews {
@@ -167,7 +175,11 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
 }
 
 - (void)setYj_originalTextColor:(RGBColor)yj_originalTextColor {
+#if YJ_BOX_NSVALUE_SUPPORT
+    objc_setAssociatedObject(self, @selector(yj_originalTextColor), @(yj_originalTextColor), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+#else
     objc_setAssociatedObject(self, @selector(yj_originalTextColor), [NSValue valueWithRGBColor:yj_originalTextColor], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+#endif
 }
 
 - (RGBColor)yj_originalTextColor {

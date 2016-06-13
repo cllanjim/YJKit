@@ -10,6 +10,7 @@
 #import "UITextField+YJCategory.h"
 #import "NSObject+YJRuntimeSwizzling.h"
 #import "NSArray+YJCollection.h"
+#import "YJClangMacros.h"
 
 @implementation UITextField (YJCategory)
 
@@ -24,15 +25,22 @@
 #pragma mark - accessor
 
 - (void)setAutoResignFirstResponder:(BOOL)autoResignFirstResponder {
+#if YJ_BOX_BOOL_SUPPORT
     objc_setAssociatedObject(self, @selector(autoResignFirstResponder), @(autoResignFirstResponder), OBJC_ASSOCIATION_COPY_NONATOMIC);
-    
+#else
+    objc_setAssociatedObject(self, @selector(autoResignFirstResponder), (autoResignFirstResponder ? @1 : @0), OBJC_ASSOCIATION_COPY_NONATOMIC);
+#endif
     if (!autoResignFirstResponder) {
         [self yj_removeResignFirstResponderTapActionFromSuperview];
     }
 }
 
 - (BOOL)autoResignFirstResponder {
+#if YJ_BOX_BOOL_SUPPORT
     return [objc_getAssociatedObject(self, _cmd) boolValue];
+#else
+    return [objc_getAssociatedObject(self, _cmd) intValue] ? YES : NO;
+#endif
 }
 
 #pragma mark - life cycle
