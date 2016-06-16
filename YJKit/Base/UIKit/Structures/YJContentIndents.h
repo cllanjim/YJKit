@@ -9,15 +9,19 @@
 #import <UIKit/UIKit.h>
 #import "YJClangMacros.h"
 
-typedef struct YJ_BOXABLE {
-    CGFloat top, left, bottom, right;
-} YJContentIndents;
-
 typedef NS_ENUM(NSInteger, YJContentIndentationStyle) {
     YJContentIndentationStyleNone,
     YJContentIndentationStyleDefault,
     YJContentIndentationStyleLarge,
 };
+
+typedef struct _YJContentIndents {
+    CGFloat top, left, bottom, right;
+} YJContentIndents;
+
+#if __has_attribute(objc_boxable)
+typedef struct __attribute__((objc_boxable)) _YJContentIndents YJContentIndents;
+#endif
 
 UIKIT_STATIC_INLINE YJContentIndents YJContentIndentsMake(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
     return (YJContentIndents){ top, left, bottom, right };
