@@ -42,15 +42,15 @@
 // UIScreen
 
 #ifndef kUIScreenBounds
-#define kUIScreenBounds YJScreenBounds()
+#define kUIScreenBounds [UIScreen mainScreen].bounds
 #endif
 
 #ifndef kUIScreenSize
-#define kUIScreenSize YJScreenSize()
+#define kUIScreenSize [UIScreen mainScreen].bounds.size
 #endif
 
 #ifndef kUIScreenScale
-#define kUIScreenScale YJScreenScale()
+#define kUIScreenScale [UIScreen mainScreen].scale
 #endif
 
 /* ------------------------------------------------------------------------------------------------------------ */

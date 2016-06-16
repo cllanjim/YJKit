@@ -12,6 +12,9 @@
 #import "NSArray+YJCollection.h"
 #import "YJClangMacros.h"
 
+@interface UITextField () <UIGestureRecognizerDelegate>
+@end
+
 @implementation UITextField (YJCategory)
 
 + (void)load {
@@ -43,24 +46,25 @@
 #endif
 }
 
-#pragma mark - life cycle
+#pragma mark - handle dismiss tap gesture
 
 - (void)yj_textFieldLayoutSubviews {
     [self yj_textFieldLayoutSubviews];
     
     if (self.autoResignFirstResponder) {
+        UITapGestureRecognizer *tap = nil;
         NSArray *taps = [self.superview.gestureRecognizers arrayByFilteringWithCondition:^BOOL(__kindof UIGestureRecognizer * _Nonnull obj) {
             return [obj isKindOfClass:[UITapGestureRecognizer class]];
         }];
-        
-        if (!taps.count) {
-            UITapGestureRecognizer *resignFirstResponderTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(yj_handleResignFirstResponderTap)];
-            [self.superview addGestureRecognizer:resignFirstResponderTap];
+        if (taps.count) {
+            tap = taps.lastObject;
         } else {
-            UITapGestureRecognizer *tap = taps.lastObject;
-            [tap removeTarget:self action:@selector(yj_handleResignFirstResponderTap)];
-            [tap addTarget:self action:@selector(yj_handleResignFirstResponderTap)];
+            tap = [[UITapGestureRecognizer alloc] initWithTarget:nil action:nil];
+            tap.delegate = self;
+            [self.superview addGestureRecognizer:tap];
         }
+        [tap removeTarget:self action:@selector(yj_handleResignFirstResponderTap)];
+        [tap addTarget:self action:@selector(yj_handleResignFirstResponderTap)];
     }
 }
 
@@ -81,6 +85,10 @@
 
 - (void)yj_handleResignFirstResponderTap {
     [self resignFirstResponder];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    return [self isFirstResponder] ? YES : NO;
 }
 
 @end

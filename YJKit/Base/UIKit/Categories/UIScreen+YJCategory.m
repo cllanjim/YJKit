@@ -9,32 +9,6 @@
 #import "UIScreen+YJCategory.h"
 #import "YJUIMacros.h"
 
-#pragma mark - Convenience Functions
-
-CGRect YJScreenBounds() {
-    static CGRect bounds;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        bounds = [[UIScreen mainScreen] bounds];
-    });
-    return bounds;
-}
-
-CGSize YJScreenSize() {
-    return YJScreenBounds().size;
-}
-
-CGFloat YJScreenScale() {
-    static CGFloat scale;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        scale = [[UIScreen mainScreen] scale];
-    });
-    return scale;
-}
-
-#pragma mark - UIScreen
-
 @implementation UIScreen (YJCategory)
 
 - (CGSize)sizeInPixel {

@@ -30,14 +30,6 @@ typedef NS_ENUM(NSInteger, YJScreenDisplayAspectRatio) {
     YJScreenDisplayAspectRatio_16_9,            // 16:9
 };
 
-/// Convenience function for acquiring [UIScreen mainScreen].bounds
-CGRect YJScreenBounds();
-/// Convenience function for acquiring [UIScreen mainScreen].bounds.size
-CGSize YJScreenSize();
-/// Convenience function for acquiring [UIScreen mainScreen].scale
-CGFloat YJScreenScale();
-
-
 @interface UIScreen (YJCategory)
 
 /// The pixel size of the screen.

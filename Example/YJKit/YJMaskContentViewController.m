@@ -8,6 +8,7 @@
 
 #import "YJMaskContentViewController.h"
 #import "UITextView+YJCategory.h"
+#import "UITextField+YJCategory.h"
 
 @interface YJMaskContentViewController ()
 @property (nonatomic, strong) UITextView *textView;
@@ -19,6 +20,7 @@
     [super viewDidLoad];
     
     UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(50, 30, 200, 20)];
+    textField.autoResignFirstResponder = YES;
     textField.placeholder = @"hello";
     [self.view addSubview:textField];
     
@@ -29,13 +31,22 @@
     
     self.textView = textView;
     
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissTextView1)];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hello)];
     [self.view addGestureRecognizer:tap];
+    
+    UIView *redView = [[UIView alloc] initWithFrame:(CGRect){150,10,100,80}];
+    redView.backgroundColor = [UIColor redColor];
+    UITapGestureRecognizer *anotherTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hi)];
+    [redView addGestureRecognizer:anotherTap];
+    [self.view addSubview:redView];
 }
 
-- (void)dismissTextView1 {
-    //[self.textView resignFirstResponder];
+- (void)hello {
     NSLog(@"hello");
+}
+
+- (void)hi {
+    NSLog(@"hi");
 }
 
 - (void)viewWillAppear:(BOOL)animated {

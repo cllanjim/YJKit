@@ -17,7 +17,7 @@
 static const void *YJTextViewAssociatedPlaceholderKey = &YJTextViewAssociatedPlaceholderKey;
 static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociatedPlaceholderColorKey;
 
-@interface UITextView ()
+@interface UITextView () <UIGestureRecognizerDelegate>
 @property (nonatomic, assign) RGBColor yj_originalTextColor;
 @end
 
@@ -118,18 +118,19 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
     [self yj_textViewLayoutSubviews];
     
     if (self.autoResignFirstResponder) {
+        UITapGestureRecognizer *tap = nil;
         NSArray *taps = [self.superview.gestureRecognizers arrayByFilteringWithCondition:^BOOL(__kindof UIGestureRecognizer * _Nonnull obj) {
             return [obj isKindOfClass:[UITapGestureRecognizer class]];
         }];
-        
-        if (!taps.count) {
-            UITapGestureRecognizer *resignFirstResponderTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(yj_handleResignFirstResponderTap)];
-            [self.superview addGestureRecognizer:resignFirstResponderTap];
+        if (taps.count) {
+            tap = taps.lastObject;
         } else {
-            UITapGestureRecognizer *tap = taps.lastObject;
-            [tap removeTarget:self action:@selector(yj_handleResignFirstResponderTap)];
-            [tap addTarget:self action:@selector(yj_handleResignFirstResponderTap)];
+            tap = [[UITapGestureRecognizer alloc] initWithTarget:nil action:nil];
+            tap.delegate = self;
+            [self.superview addGestureRecognizer:tap];
         }
+        [tap removeTarget:self action:@selector(yj_handleResignFirstResponderTap)];
+        [tap addTarget:self action:@selector(yj_handleResignFirstResponderTap)];
     }
 }
 
@@ -150,6 +151,10 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
 
 - (void)yj_handleResignFirstResponderTap {
     [self resignFirstResponder];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    return [self isFirstResponder] ? YES : NO;
 }
 
 #pragma mark - text attributes
