@@ -93,7 +93,7 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
     [self _displayPlaceholderIfNeeded];
 }
 
-#pragma mark - auto resign first responder
+#pragma mark - handle auto resigning first responder tap gesture
 
 - (void)setAutoResignFirstResponder:(BOOL)autoResignFirstResponder {
 #if YJ_BOX_BOOL_SUPPORT
@@ -102,7 +102,7 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
     objc_setAssociatedObject(self, @selector(autoResignFirstResponder), (autoResignFirstResponder ? @1 : @0), OBJC_ASSOCIATION_COPY_NONATOMIC);
 #endif
     if (!autoResignFirstResponder) {
-        [self yj_removeResignFirstResponderTapActionFromSuperview];
+        [self yj_removeResignFirstResponderTapAction];
     }
 }
 
@@ -114,12 +114,22 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
 #endif
 }
 
+- (UIView *)providedARFRView {
+    UIView *view = self.superview;
+    id <YJTextViewDelegate> delegate = (id)self.delegate;
+    if ([delegate respondsToSelector:@selector(viewForAutoResigningFirstResponderForTextView:)]) {
+        UIView *tempView = [delegate viewForAutoResigningFirstResponderForTextView:self];
+        if (tempView) view = tempView;
+    }
+    return view;
+}
+
 - (void)yj_textViewLayoutSubviews {
     [self yj_textViewLayoutSubviews];
     
     if (self.autoResignFirstResponder) {
         UITapGestureRecognizer *tap = nil;
-        NSArray *taps = [self.superview.gestureRecognizers arrayByFilteringWithCondition:^BOOL(__kindof UIGestureRecognizer * _Nonnull obj) {
+        NSArray *taps = [self.providedARFRView.gestureRecognizers filtered:^BOOL(__kindof UIGestureRecognizer * _Nonnull obj) {
             return [obj isKindOfClass:[UITapGestureRecognizer class]];
         }];
         if (taps.count) {
@@ -136,13 +146,13 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
 
 - (void)yj_textViewRemoveFromSuperview {
     if (self.autoResignFirstResponder) {
-        [self yj_removeResignFirstResponderTapActionFromSuperview];
+        [self yj_removeResignFirstResponderTapAction];
     }
     [self yj_textViewRemoveFromSuperview];
 }
 
-- (void)yj_removeResignFirstResponderTapActionFromSuperview {
-    for (UIGestureRecognizer *gesture in self.superview.gestureRecognizers) {
+- (void)yj_removeResignFirstResponderTapAction {
+    for (UIGestureRecognizer *gesture in self.providedARFRView.gestureRecognizers) {
         if ([gesture isKindOfClass:[UITapGestureRecognizer class]]) {
             [gesture removeTarget:self action:@selector(yj_handleResignFirstResponderTap)];
         }

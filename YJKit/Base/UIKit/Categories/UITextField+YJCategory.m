@@ -25,7 +25,7 @@
     });
 }
 
-#pragma mark - accessor
+#pragma mark - handle auto resigning first responder tap gesture
 
 - (void)setAutoResignFirstResponder:(BOOL)autoResignFirstResponder {
 #if YJ_BOX_BOOL_SUPPORT
@@ -34,7 +34,7 @@
     objc_setAssociatedObject(self, @selector(autoResignFirstResponder), (autoResignFirstResponder ? @1 : @0), OBJC_ASSOCIATION_COPY_NONATOMIC);
 #endif
     if (!autoResignFirstResponder) {
-        [self yj_removeResignFirstResponderTapActionFromSuperview];
+        [self yj_removeResignFirstResponderTapAction];
     }
 }
 
@@ -46,14 +46,22 @@
 #endif
 }
 
-#pragma mark - handle dismiss tap gesture
+- (UIView *)providedARFRView {
+    UIView *view = self.superview;
+    id <YJTextFieldDelegate> delegate = (id)self.delegate;
+    if ([delegate respondsToSelector:@selector(viewForAutoResigningFirstResponderForTextField:)]) {
+        UIView *tempView = [delegate viewForAutoResigningFirstResponderForTextField:self];
+        if (tempView) view = tempView;
+    }
+    return view;
+}
 
 - (void)yj_textFieldLayoutSubviews {
     [self yj_textFieldLayoutSubviews];
     
     if (self.autoResignFirstResponder) {
         UITapGestureRecognizer *tap = nil;
-        NSArray *taps = [self.superview.gestureRecognizers arrayByFilteringWithCondition:^BOOL(__kindof UIGestureRecognizer * _Nonnull obj) {
+        NSArray *taps = [self.providedARFRView.gestureRecognizers filtered:^BOOL(__kindof UIGestureRecognizer * _Nonnull obj) {
             return [obj isKindOfClass:[UITapGestureRecognizer class]];
         }];
         if (taps.count) {
@@ -70,13 +78,13 @@
 
 - (void)yj_textFieldRemoveFromSuperview {
     if (self.autoResignFirstResponder) {
-        [self yj_removeResignFirstResponderTapActionFromSuperview];
+        [self yj_removeResignFirstResponderTapAction];
     }
     [self yj_textFieldRemoveFromSuperview];
 }
 
-- (void)yj_removeResignFirstResponderTapActionFromSuperview {
-    for (UIGestureRecognizer *gesture in self.superview.gestureRecognizers) {
+- (void)yj_removeResignFirstResponderTapAction {
+    for (UIGestureRecognizer *gesture in self.providedARFRView.gestureRecognizers) {
         if ([gesture isKindOfClass:[UITapGestureRecognizer class]]) {
             [gesture removeTarget:self action:@selector(yj_handleResignFirstResponderTap)];
         }

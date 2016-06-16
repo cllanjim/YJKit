@@ -10,8 +10,9 @@
 #import "UITextView+YJCategory.h"
 #import "UITextField+YJCategory.h"
 
-@interface YJMaskContentViewController ()
+@interface YJMaskContentViewController () <YJTextViewDelegate>
 @property (nonatomic, strong) UITextView *textView;
+@property (nonatomic, strong) UIView *redView;
 @end
 
 @implementation YJMaskContentViewController
@@ -25,6 +26,7 @@
     [self.view addSubview:textField];
     
     UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(50,80,200,200)];
+    textView.delegate = self;
     textView.autoResignFirstResponder = YES;
     textView.placeholder = @"hello";
     [self.view addSubview:textView];
@@ -39,6 +41,11 @@
     UITapGestureRecognizer *anotherTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hi)];
     [redView addGestureRecognizer:anotherTap];
     [self.view addSubview:redView];
+    self.redView = redView;
+}
+
+- (UIView *)viewForAutoResigningFirstResponderForTextView:(UITextView *)textView {
+    return self.redView;
 }
 
 - (void)hello {
