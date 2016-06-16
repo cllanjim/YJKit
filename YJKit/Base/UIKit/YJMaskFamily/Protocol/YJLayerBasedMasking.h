@@ -16,7 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol YJLayerBasedMasking <NSObject>
 
 /// Call this method to update mask layer for both design phase and runtime.
-- (void)updateMaskLayer;
+/// This method does not force an immediate update, but instead waits for the next update cycle, which is usually better for performance.
+- (void)setNeedsUpdateMaskLayer;
+
+/// Call this method to update mask layer for both design phase and runtime.
+/// This method will update mask layer immediately.
+- (void)updateMaskLayerIfNeeded;
 
 /// Returns an UIBezierPath object which for rendering masked CAShapeLayer object at runtime.
 /// The mask region will be rendered in self's boundary, the size parameter is slightly larger than the boundary.

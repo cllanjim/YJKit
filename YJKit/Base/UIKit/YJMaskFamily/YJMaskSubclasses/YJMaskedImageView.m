@@ -46,13 +46,13 @@ YJ_LAYER_BASED_MASKING_PROTOCOL_DEFAULT_IMPLEMENTATION_FOR_YJMASKEDVIEW_SUBCLASS
     if (!image) return;
     self.backgroundColor = nil;
     [self updateTransparentFrameIfNeeded];
-    [self updateMaskLayer];
+    [self setNeedsUpdateMaskLayer];
 }
 
 - (void)setContentMode:(UIViewContentMode)contentMode {
     [super setContentMode:contentMode];
     [self updateTransparentFrameIfNeeded];
-    [self updateMaskLayer];
+    [self setNeedsUpdateMaskLayer];
 }
 
 #pragma mark - masking

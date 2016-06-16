@@ -65,7 +65,7 @@ YJ_ROUNDED_CORNER_VIEW_DEFAULT_IMPLEMENTATION_FOR_UIVIEW_SUBCLASS
 
 - (void)setTitleIndentationStyle:(YJContentIndentationStyle)titleIndentationStyle {
     _titleIndentationStyle = titleIndentationStyle;
-    [self updateMaskLayer];
+    [self setNeedsUpdateMaskLayer];
 }
 
 // Add default intrinsicContentSize implementation

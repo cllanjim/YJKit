@@ -29,7 +29,7 @@
     CALayer *_maskLayer;  \
     NSMutableDictionary <NSString *, NSValue *> *_oldMaskValues;  \
     CGRect _transparentFrame;  \
-    BOOL _didFirstLayout;  \
+    BOOL _markUpdate;  \
     BOOL _forceMaskColor;  \
 }  \
   \
@@ -44,7 +44,7 @@
             _forceMaskColor = NO;  \
             _maskColor = self.superview.backgroundColor;  \
         }  \
-        [self updateMaskLayer];  \
+        [self setNeedsUpdateMaskLayer];  \
     }  \
 }  \
   \
@@ -56,13 +56,13 @@
     /* added to superview */  \
     if (newSuperview.backgroundColor && !_forceMaskColor) {  \
         _maskColor = newSuperview.backgroundColor;  \
-        [self updateMaskLayer];  \
+        [self setNeedsUpdateMaskLayer];  \
     }  \
     [newSuperview registerObserverForKeyPath:@"backgroundColor" handleSetup:^(id  _Nonnull object, id  _Nullable newValue) {  \
         if (self.superview == object && newValue && [newValue isKindOfClass:[UIColor class]]) { /* not go in from design phase.*/  \
             if (![_maskColor isEqualToColor:newValue] && !_forceMaskColor) {  \
                 _maskColor = newValue;  \
-                [self updateMaskLayer];  \
+                [self setNeedsUpdateMaskLayer];  \
             }  \
         }  \
     }];  \
@@ -78,14 +78,20 @@
   \
 - (void)layoutSubviews {  \
     [super layoutSubviews];  \
-    _didFirstLayout = YES;  \
-    [self updateMaskLayer];  \
+    if (_markUpdate) {  \
+        _markUpdate = NO;  \
+        [self updateMaskLayerIfNeeded];  \
+    }  \
 }  \
   \
 /* masking */  \
   \
-- (void)updateMaskLayer {  \
-    if (!_didFirstLayout) return;  \
+- (void)setNeedsUpdateMaskLayer {  \
+    _markUpdate = YES;  \
+    [self setNeedsLayout];  \
+}  \
+  \
+- (void)updateMaskLayerIfNeeded {  \
     if (![self didChangeMaskValues]) return;  \
     [_maskLayer removeFromSuperlayer];  \
     [self configureMaskLayerWithColor:_maskColor];  \

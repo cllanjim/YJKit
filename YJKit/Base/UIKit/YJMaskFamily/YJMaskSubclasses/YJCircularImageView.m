@@ -40,12 +40,12 @@
 - (void)setCircleWidth:(CGFloat)circleWidth {
     if (circleWidth < 0.0) circleWidth = 0.0f;
     _circleWidth = circleWidth;
-    [self updateMaskLayer];
+    [self setNeedsUpdateMaskLayer];
 }
 
 - (void)setCircleColor:(UIColor *)circleColor {
     _circleColor = circleColor;
-    [self updateMaskLayer];
+    [self setNeedsUpdateMaskLayer];
 }
 
 #pragma mark - YJLayerBasedMasking

@@ -27,18 +27,18 @@
 - (void)setCornerRadius:(CGFloat)cornerRadius {   \
     if (cornerRadius < 0.0f) cornerRadius = 0.0f;   \
         _cornerRadius = cornerRadius;   \
-        [self updateMaskLayer];   \
+        [self setNeedsUpdateMaskLayer];   \
 }   \
 \
 - (void)setBorderWidth:(CGFloat)borderWidth {   \
     if (borderWidth < 0.0f) borderWidth = 0.0f;   \
         _borderWidth = borderWidth;   \
-        [self updateMaskLayer];   \
+        [self setNeedsUpdateMaskLayer];   \
 }   \
 \
 - (void)setBorderColor:(UIColor *)borderColor {   \
     _borderColor = borderColor;   \
-    [self updateMaskLayer];   \
+    [self setNeedsUpdateMaskLayer];   \
 }   \
 \
 - (UIBezierPath *)prepareMaskRegionInSize:(CGSize)size {  \
