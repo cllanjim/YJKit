@@ -10,7 +10,7 @@
 #import "UITextView+YJCategory.h"
 #import "UITextField+YJCategory.h"
 
-@interface YJMaskContentViewController () <YJTextViewDelegate>
+@interface YJMaskContentViewController () <YJTextViewDelegate, YJTextFieldDelegate>
 @property (nonatomic, strong) UITextView *textView;
 @property (nonatomic, strong) UIView *redView;
 @end
@@ -21,6 +21,7 @@
     [super viewDidLoad];
     
     UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(50, 30, 200, 20)];
+    textField.delegate = self;
     textField.autoResignFirstResponder = YES;
     textField.placeholder = @"hello";
     [self.view addSubview:textField];
@@ -45,6 +46,14 @@
 }
 
 - (UIView *)viewForAutoResigningFirstResponderForTextView:(UITextView *)textView {
+    return nil;//self.redView;
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    NSLog(@"begin");
+}
+
+- (UIView *)viewForAutoResigningFirstResponderForTextField:(UITextField *)textField {
     return self.redView;
 }
 

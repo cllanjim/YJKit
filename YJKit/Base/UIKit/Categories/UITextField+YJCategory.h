@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol YJTextFieldDelegate <UITextFieldDelegate>
 @optional
 /// Provide a view. When user taps on it, the text field will resign first responder.
-- (UIView *)viewForAutoResigningFirstResponderForTextField:(UITextField *)TextField;
+- (UIView *)viewForAutoResigningFirstResponderForTextField:(UITextField *)textField;
 @end
 
 /* -------------------- */
