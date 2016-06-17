@@ -60,8 +60,9 @@
     [self yj_textFieldLayoutSubviews];
     
     if (self.autoResignFirstResponder) {
+        UIView *view = self.providedARFRView;
         UITapGestureRecognizer *tap = nil;
-        NSArray *taps = [self.providedARFRView.gestureRecognizers filtered:^BOOL(__kindof UIGestureRecognizer * _Nonnull obj) {
+        NSArray *taps = [view.gestureRecognizers filtered:^BOOL(__kindof UIGestureRecognizer * _Nonnull obj) {
             return [obj isKindOfClass:[UITapGestureRecognizer class]];
         }];
         if (taps.count) {
@@ -69,7 +70,7 @@
         } else {
             tap = [[UITapGestureRecognizer alloc] initWithTarget:nil action:nil];
             tap.delegate = self;
-            [self.superview addGestureRecognizer:tap];
+            [view addGestureRecognizer:tap];
         }
         [tap removeTarget:self action:@selector(yj_handleResignFirstResponderTap)];
         [tap addTarget:self action:@selector(yj_handleResignFirstResponderTap)];
@@ -84,7 +85,8 @@
 }
 
 - (void)yj_removeResignFirstResponderTapAction {
-    for (UIGestureRecognizer *gesture in self.providedARFRView.gestureRecognizers) {
+    UIView *view = self.providedARFRView;
+    for (UIGestureRecognizer *gesture in view.gestureRecognizers) {
         if ([gesture isKindOfClass:[UITapGestureRecognizer class]]) {
             [gesture removeTarget:self action:@selector(yj_handleResignFirstResponderTap)];
         }
