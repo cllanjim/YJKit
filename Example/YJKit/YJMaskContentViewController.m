@@ -9,6 +9,7 @@
 #import "YJMaskContentViewController.h"
 #import "UITextView+YJCategory.h"
 #import "UITextField+YJCategory.h"
+#import "NSObject+YJRuntimeEncapsulation.h"
 
 @interface YJTextField : UITextField
 @end
@@ -27,6 +28,10 @@
     [super removeFromSuperview];
 }
 
+- (void)dealloc {
+    NSLog(@"%@ dealloc.", self.class);
+}
+
 @end
 
 @interface YJMaskContentViewController () <YJTextViewDelegate, YJTextFieldDelegate>
@@ -37,26 +42,31 @@
 
 @implementation YJMaskContentViewController
 
+
+- (void)dealloc {
+    NSLog(@"%@ dealloc.", self.class);
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     YJTextField *textField = [[YJTextField alloc] initWithFrame:CGRectMake(50, 30, 200, 20)];
-    textField.delegate = self;
     textField.autoResignFirstResponder = YES;
     textField.placeholder = @"hello";
     [self.view addSubview:textField];
     self.textField = textField;
+    textField.delegate = self;
     
-//    UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(50,80,200,200)];
-//    textView.delegate = self;
-//    textView.autoResignFirstResponder = YES;
-//    textView.placeholder = @"hello";
-//    [self.view addSubview:textView];
-//    
-//    self.textView = textView;
-//    
-//    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hello)];
-//    [self.view addGestureRecognizer:tap];
+    UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(50,80,200,200)];
+    textView.delegate = self;
+    textView.autoResignFirstResponder = YES;
+    textView.placeholder = @"hello";
+    [self.view addSubview:textView];
+    
+    self.textView = textView;
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hello)];
+    [self.view addGestureRecognizer:tap];
     
     UIView *redView = [[UIView alloc] initWithFrame:(CGRect){150,10,100,80}];
     redView.backgroundColor = [UIColor redColor];
@@ -64,6 +74,8 @@
 //    [redView addGestureRecognizer:anotherTap];
     [self.view addSubview:redView];
     self.redView = redView;
+    
+    NSLog(@"");
 }
 
 //- (UIView *)viewForAutoResigningFirstResponderForTextView:(UITextView *)textView {

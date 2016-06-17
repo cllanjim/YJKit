@@ -9,9 +9,20 @@
 #import <XCTest/XCTest.h>
 #import <objc/runtime.h>
 #import "YJCircularImageView.h"
+#import "NSObject+YJRuntimeEncapsulation.h"
 
 @interface YJGeneralTest : XCTestCase
 
+@end
+
+@interface Hi : NSObject
++ (void)hi;
+@end
+
+@implementation Hi
++ (void)hi {
+    NSLog(@"hi");
+}
 @end
 
 @implementation YJGeneralTest
@@ -30,15 +41,31 @@
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
     
-    YJCircularImageView *imageView = [[YJCircularImageView alloc] initWithFrame:CGRectMake(0,0,100,100)];
-    imageView.circleColor = [UIColor redColor];
-    imageView.circleWidth = 5.0;
-    [imageView setValue:@YES forKey:@"_didFirstLayout"];
-    [imageView setValue:@NO forKey:@"_forceMaskColor"];
-    [imageView setValue:[NSValue valueWithCGRect:(CGRect){1,2,3,4}] forKey:@"_transparentFrame"];
+//    Hi *hi = [Hi new];
+    [Hi insertImplementationBlocksIntoClassMethodForSelector:@selector(hi) identifier:@"yahoo" before:^(id  _Nonnull receiver) {
+        NSLog(@"yahoo before hi");
+    } after:^(id  _Nonnull receiver) {
+        NSLog(@"yahoo after hi");
+    }];
     
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:imageView];
-    id newView = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    [Hi insertImplementationBlocksIntoClassMethodForSelector:@selector(hi) identifier:@"google" before:^(id  _Nonnull receiver) {
+        NSLog(@"google before hi");
+    } after:^(id  _Nonnull receiver) {
+        NSLog(@"google after hi");
+    }];
+    
+    [Hi hi];
+    
+    NSLog(@"");
+//    YJCircularImageView *imageView = [[YJCircularImageView alloc] initWithFrame:CGRectMake(0,0,100,100)];
+//    imageView.circleColor = [UIColor redColor];
+//    imageView.circleWidth = 5.0;
+//    [imageView setValue:@YES forKey:@"_didFirstLayout"];
+//    [imageView setValue:@NO forKey:@"_forceMaskColor"];
+//    [imageView setValue:[NSValue valueWithCGRect:(CGRect){1,2,3,4}] forKey:@"_transparentFrame"];
+//    
+//    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:imageView];
+//    id newView = [NSKeyedUnarchiver unarchiveObjectWithData:data];
     
     NSLog(@"");
 }

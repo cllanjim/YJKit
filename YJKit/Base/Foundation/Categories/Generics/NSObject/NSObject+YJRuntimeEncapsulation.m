@@ -11,6 +11,15 @@
 #import "NSObject+YJExtension.h"
 
 /* ----------------------------------- */
+//         Class type checking
+/* ----------------------------------- */
+
+bool yj_objc_isClass(id obj) {
+    return obj == [obj class];
+}
+
+
+/* ----------------------------------- */
 //  NSObject (YJAssociatedIdentifier)
 /* ----------------------------------- */
 
@@ -139,19 +148,41 @@ __attribute__((visibility("hidden")))
 }
 @end
 
+typedef void(^YJMethodImpInsertionBlock)(id);
+
 @implementation NSObject (YJMethodImpModifying)
 
-- (void)insertImplementationBlocksIntoSelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(void))before after:(nullable void(^)(void))after {
-    
-    if (!before && !after)
++ (void)insertImplementationBlocksIntoClassMethodForSelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
+    _yj_insertImpBlocksIntoMethodForObject(self, selector, identifier, before, after);
+}
+
+- (void)insertImplementationBlocksIntoInstanceMethodForSelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
+    _yj_insertImpBlocksIntoMethodForObject(self, selector, identifier, before, after);
+}
+
+void _yj_insertImpBlocksIntoMethodForObject(id obj, SEL sel, NSString *identifier, YJMethodImpInsertionBlock before, YJMethodImpInsertionBlock after) {
+
+    if (!sel || (!before && !after))
         return;
     
-    Class class = object_getClass(self); // not self.class
-    const char *clsName = class_getName(class);
+    // get proper class
+    BOOL objIsClass = yj_objc_isClass(obj);
+    
+    Class realCls = objIsClass ? obj : object_getClass(obj);
+    Class officialCls = objIsClass ? obj : [obj class];
+    
+    // get default imp from official class
+    Method method = objIsClass ? class_getClassMethod(officialCls, sel) : class_getInstanceMethod(officialCls, sel);
+    void (*defaultImp)(__unsafe_unretained id, SEL) = (void(*)(__unsafe_unretained id, SEL))method_getImplementation(method);
+    if (!defaultImp) return;
+    
+    // get class name from real class
+    const char *clsName = class_getName(realCls);
     NSString *className = [NSString stringWithUTF8String:clsName];
     
-    _YJIMPModificationKeeper *keeper = [_YJIMPModificationKeeper sharedKeeper];
+    // keep insertion in records if possible
     if (identifier.length) {
+        _YJIMPModificationKeeper *keeper = [_YJIMPModificationKeeper sharedKeeper];
         NSMutableSet *identifiers = keeper.records[className];
         if (!identifiers) {
             identifiers = [NSMutableSet new];
@@ -164,12 +195,11 @@ __attribute__((visibility("hidden")))
         }
     }
     
-    Method method = class_getInstanceMethod(class, selector);
-    void (*defaultImp)(__unsafe_unretained id, SEL) = (void(*)(__unsafe_unretained id, SEL))method_getImplementation(method);
-    IMP newImp = imp_implementationWithBlock(^(__unsafe_unretained NSObject *_self) {
-        if (before) before();
-        defaultImp(_self, selector);
-        if (after) after();
+    // insert additional blocks of code
+    IMP newImp = imp_implementationWithBlock(^(__unsafe_unretained id _obj) {
+        if (before) before(_obj);
+        defaultImp(_obj, sel);
+        if (after) after(_obj);
     });
     method_setImplementation(method, newImp);
 }

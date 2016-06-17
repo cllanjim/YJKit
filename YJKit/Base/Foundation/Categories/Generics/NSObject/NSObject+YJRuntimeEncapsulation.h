@@ -11,6 +11,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /* ----------------------------------- */
+//         Class type checking
+/* ----------------------------------- */
+
+OBJC_EXPORT bool yj_objc_isClass(id obj);
+
+
+/* ----------------------------------- */
 //  NSObject (YJAssociatedIdentifier)
 /* ----------------------------------- */
 
@@ -51,10 +58,18 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 /// Insert blocks of code which will be executed before (or after)
 /// the default implementation of given selector.
 /// @note Specify an identifier will prevent same repeated insertion. Highly recommanded.
-- (void)insertImplementationBlocksIntoSelector:(SEL)selector
-                                    identifier:(nullable NSString *)identifier
-                                        before:(nullable void(^)(void))before
-                                         after:(nullable void(^)(void))after;
+- (void)insertImplementationBlocksIntoInstanceMethodForSelector:(SEL)selector
+                                                     identifier:(nullable NSString *)identifier
+                                                         before:(nullable void(^)(id receiver))before
+                                                          after:(nullable void(^)(id receiver))after;
+
+/// Insert blocks of code which will be executed before (or after)
+/// the default implementation of given selector.
+/// @note Specify an identifier will prevent same repeated insertion. Highly recommanded.
++ (void)insertImplementationBlocksIntoClassMethodForSelector:(SEL)selector
+                                                  identifier:(nullable NSString *)identifier
+                                                      before:(nullable void(^)(id receiver))before
+                                                       after:(nullable void(^)(id receiver))after;
 
 @end
 

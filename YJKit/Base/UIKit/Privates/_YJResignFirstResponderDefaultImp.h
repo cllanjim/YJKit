@@ -16,7 +16,7 @@
 #ifndef YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING
 #define YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING(XXX) \
     [self swizzleInstanceMethodForSelector:@selector(layoutSubviews) toSelector:@selector(yj_##XXX##LayoutSubviews)]; \
-    [self swizzleInstanceMethodForSelector:@selector(didMoveToSuperview) toSelector:@selector(yj_##XXX##DidMoveToSuperview)]; \
+    [self swizzleInstanceMethodForSelector:@selector(willMoveToSuperview:) toSelector:@selector(yj_##XXX##WillMoveToSuperview:)]; \
     [self swizzleInstanceMethodForSelector:@selector(removeFromSuperview) toSelector:@selector(yj_##XXX##RemoveFromSuperview)];
 
 #endif
@@ -67,31 +67,33 @@
     }  \
 }  \
   \
-- (void)yj_##XXX##DidMoveToSuperview {  \
-    [self yj_##XXX##DidMoveToSuperview];  \
+- (void)yj_##XXX##WillMoveToSuperview:(UIView *)superview {  \
+    [self yj_##XXX##WillMoveToSuperview:superview];  \
       \
-    /* In iOS 7.0.4, to access self.delegate when delegate is deallocated, */  \
+    if (!superview) return; \
+    /* In iOS 7.0.4. To access textView/textField.delegate when delegate is deallocated, */  \
     /* the delegate property will not being set to nil and exc_bad_access crash. */  \
-    /* So we need to modify delegate's -dealloc method. */  \
+    /* So we need to modify its delegate's -dealloc method. */  \
     if (self.delegate) {  \
-        [self yj_handle##XXX##Delegate:self.delegate];  \
+        [self yj_insertImpFor##XXX##Delegate:self.delegate];  \
     } else {  \
         [self registerObserverForKeyPath:@"delegate" handleSetup:^(id  _Nonnull object, id  _Nullable newValue) {  \
             if (newValue) {  \
-                [object yj_handle##XXX##Delegate:newValue];  \
+                [object yj_insertImpFor##XXX##Delegate:newValue];  \
             }  \
         }];  \
     }  \
 }  \
   \
-- (void)yj_handle##XXX##Delegate:(NSObject *)delegate {  \
+- (void)yj_insertImpFor##XXX##Delegate:(NSObject *)delegate {  \
     SEL deallocSel = NSSelectorFromString(@"dealloc");  \
-    __weak id weakSelf = self;  \
-    [self insertImplementationBlocksIntoSelector:deallocSel  \
-                                      identifier:@"YJ_NIL_OUT_DELEGATE"  \
-                                          before:^{  \
-                                              [weakSelf setDelegate:nil];  \
-                                          } after:nil];  \
+    __weak id weakSelf = self; \
+     /* Must not use same identifier for both textField and textView, otherwise one of them will get filtered out. */ \
+    [delegate insertImplementationBlocksIntoInstanceMethodForSelector:deallocSel  \
+                              identifier:nil \
+                                  before:^(id  _Nonnull receiver){  \
+                                      [weakSelf setDelegate:nil];  \
+                                  } after:nil];  \
 }  \
   \
 - (void)yj_##XXX##RemoveFromSuperview {  \
