@@ -9,6 +9,7 @@
 #import <objc/runtime.h>
 #import "NSObject+YJRuntimeEncapsulation.h"
 #import "NSObject+YJExtension.h"
+#import "YJUIMacros.h"
 
 /* ----------------------------------- */
 //         Class type checking
@@ -161,7 +162,7 @@ typedef void(^YJMethodImpInsertionBlock)(id);
 }
 
 void _yj_insertImpBlocksIntoMethodForObject(id obj, SEL sel, NSString *identifier, YJMethodImpInsertionBlock before, YJMethodImpInsertionBlock after) {
-
+    
     if (!sel || (!before && !after))
         return;
     
@@ -202,6 +203,24 @@ void _yj_insertImpBlocksIntoMethodForObject(id obj, SEL sel, NSString *identifie
         if (after) after(_obj);
     });
     method_setImplementation(method, newImp);
+}
+
+@end
+
+// In iOS 7, if you want imp for dealloc method for UIResponder class,
+// the system returns the dealloc imp for NSObject class, which is not
+// what I expected. So here is a simple solution to fix it.
+@implementation UIResponder (YJSwizzleDeallocForUIResponder)
+
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [self swizzleInstanceMethodForSelector:NSSelectorFromString(@"dealloc") toSelector:@selector(yj_handleResponderDealloc)];
+    });
+}
+
+- (void)yj_handleResponderDealloc {
+    [self yj_handleResponderDealloc];
 }
 
 @end
