@@ -15,6 +15,7 @@ static const void *YJControlAssociatedTargetsKey = &YJControlAssociatedTargetsKe
 
 typedef void(^YJControlActionHandler)(UIControl *);
 
+__attribute__((visibility("hidden")))
 @interface _YJControlTarget : NSObject
 @property (nonatomic, copy) YJControlActionHandler actionHandler;
 @property (nonatomic) UIControlEvents events;

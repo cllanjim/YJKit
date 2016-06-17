@@ -10,9 +10,10 @@
 #import "_YJLayerBasedMasking.h"
 #import "_YJRoundedCornerView.h"
 #import "NSObject+YJBlockBasedKVO.h"
-#import "NSObject+YJCodingExtension.h"
+#import "NSObject+YJExtension.h"
 #import "NSValue+YJGeometryExtension.h"
 #import "YJObjcMacros.h"
+#import "YJDebugMacros.h"
 
 @interface YJRoundedCornerButton ()
 @property (nonatomic) YJContentIndents titleIndents;
@@ -47,15 +48,17 @@ YJ_ROUNDED_CORNER_VIEW_DEFAULT_IMPLEMENTATION_FOR_UIVIEW_SUBCLASS
     [super encodeWithCoder:coder];
 }
 
+#if YJ_DEBUG
+- (void)dealloc {
+    NSLog(@"%@ <%p> dealloc", self.class, self);
+}
+#endif
+
 - (void)setup {
     _cornerRadius = 10.0f;
     _titleIndentationStyle = YJContentIndentationStyleDefault;
     _borderWidth = 1.0f;
     [self observeTintColor];
-}
-
-- (void)dealloc {
-    [self removeObservedKeyPath:@"tintColor"];
 }
 
 - (void)observeTintColor {

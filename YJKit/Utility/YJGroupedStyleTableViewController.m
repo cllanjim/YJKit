@@ -148,6 +148,7 @@
 //              Internal Cells
 // --------------------------------------------
 
+__attribute__((visibility("hidden")))
 @interface _YJGroupedStyleItemCell : UITableViewCell
 @end
 
@@ -164,7 +165,7 @@
 
 @end
 
-
+__attribute__((visibility("hidden")))
 @interface _YJGroupedStyleGroupSeparatorCell : UITableViewCell
 @end
 
@@ -181,7 +182,7 @@
 
 @end
 
-
+__attribute__((visibility("hidden")))
 @interface _YJGroupedStyleLineSeparatorCell : UITableViewCell
 
 @property (nonatomic) CGFloat leftIndentation;

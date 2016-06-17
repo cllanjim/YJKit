@@ -15,7 +15,7 @@ typedef NS_ENUM(NSInteger, YJAlertDelegateType) {
 
 typedef void(^YJAlertDelegateActionHandler)(UIView *alertObject, NSInteger buttonIndex, NSString *buttonTitle);
 
-
+__attribute__((visibility("hidden")))
 @interface _YJAlertDelegate : NSObject <UIAlertViewDelegate, UIActionSheetDelegate>
 
 @property (nonatomic, copy) YJAlertDelegateActionHandler actionHandler; // initialized action block code

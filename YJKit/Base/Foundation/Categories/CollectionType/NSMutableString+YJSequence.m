@@ -7,7 +7,6 @@
 //
 
 #import "NSMutableString+YJSequence.h"
-#import "NSObject+YJMutabilityChecking.h"
 
 @implementation NSMutableString (YJSequence)
 

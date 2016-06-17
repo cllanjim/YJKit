@@ -12,6 +12,7 @@
 
 static const void *YJBarButtonItemAssociatedTargetKey = &YJBarButtonItemAssociatedTargetKey;
 
+__attribute__((visibility("hidden")))
 @interface _YJBarButtonItemTarget : NSObject
 @property (nonatomic, copy) void(^actionHandler)(UIBarButtonItem *);
 - (instancetype)initWithActionHandler:(void(^)(UIBarButtonItem *barButtonItem))actionHandler;

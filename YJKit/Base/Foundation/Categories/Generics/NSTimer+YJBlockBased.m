@@ -12,6 +12,7 @@
 
 static const void *YJTimerAssociatedTargetKey = &YJTimerAssociatedTargetKey;
 
+__attribute__((visibility("hidden")))
 @interface _YJTimerTarget : NSObject
 @property (nonatomic, copy) void(^timerHandler)(NSTimer *);
 - (instancetype)initWithTimerHandler:(void(^)(NSTimer *timer))timerHandler;

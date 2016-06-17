@@ -5,36 +5,19 @@
 //  Created by huang-kun on 16/4/3.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
-//  Reference: https://github.com/zwaldowski/BlocksKit/blob/master/BlocksKit/Core/NSObject%2BBKBlockObservation.m
 
 #import <objc/runtime.h>
 #import <objc/message.h>
 #import "NSObject+YJBlockBasedKVO.h"
+#import "NSObject+YJRuntimeEncapsulation.h"
 #import "YJDebugMacros.h"
-#import "NSObject+YJRuntimeSwizzling.h"
-
-@interface _YJKVOModifiedClassesRecorder : NSObject
-+ (instancetype)recorder;
-@property (nonatomic, strong) NSMutableSet <NSString *> *modifiedClassNames;
-@end
-
-@implementation _YJKVOModifiedClassesRecorder
-+ (instancetype)recorder {
-    static _YJKVOModifiedClassesRecorder *recorder;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        recorder = [_YJKVOModifiedClassesRecorder new];
-        recorder.modifiedClassNames = [NSMutableSet new];
-    });
-    return recorder;
-}
-@end
 
 static const void *YJKVOAssociatedObserversKey = &YJKVOAssociatedObserversKey;
 
 typedef void(^YJKVOChangeHandler)(id object, id oldValue, id newValue);
 typedef void(^YJKVOSetupHandler)(id object, id newValue);
 
+__attribute__((visibility("hidden")))
 @interface _YJKeyValueObserver : NSObject
 @property (nonatomic, copy) YJKVOChangeHandler changeHandler;
 @property (nonatomic, copy) YJKVOSetupHandler setupHandler;
@@ -60,7 +43,7 @@ typedef void(^YJKVOSetupHandler)(id object, id newValue);
 
 #if YJ_DEBUG
 - (void)dealloc {
-    NSLog(@"%@ dealloc", self.class);
+    NSLog(@"%@ <%p> dealloc", self.class, self);
 }
 #endif
 
@@ -102,19 +85,14 @@ static void _yj_registerKVOForObject(NSObject *self, NSString *keyPath, NSKeyVal
 }
 
 static void _yj_modifyDeallocMethodForKeyValueObservedObject(NSObject *self) {
-    NSString *className = NSStringFromClass(self.class);
-    if ([[_YJKVOModifiedClassesRecorder recorder].modifiedClassNames containsObject:className])
-        return;
-    
-    SEL sel = sel_registerName("dealloc");
-    Method method = class_getInstanceMethod(self.class, sel);
-    void (*defaultImp)(__unsafe_unretained id, SEL) = (void(*)(__unsafe_unretained id, SEL))method_getImplementation(method);
-    IMP newImp = imp_implementationWithBlock(^(__unsafe_unretained NSObject *_self) {
-        [_self removeAllObservedKeyPaths];
-        defaultImp(_self, sel);
-    });
-    method_setImplementation(method, newImp);
-    [[_YJKVOModifiedClassesRecorder recorder].modifiedClassNames addObject:className];
+    SEL deallocSel = NSSelectorFromString(@"dealloc");
+    __weak id weakSelf = self;
+    [self insertImplementationBlocksIntoSelector:deallocSel
+                                      identifier:@"YJ_REMOVE_KVO"
+                                          before:^{
+                                              __strong id strongSelf = weakSelf;
+                                              [strongSelf removeAllObservedKeyPaths];
+                                          } after:nil];
 }
 
 - (void)registerObserverForKeyPath:(NSString *)keyPath handleChanges:(void (^)(id, id, id))changeHandler {

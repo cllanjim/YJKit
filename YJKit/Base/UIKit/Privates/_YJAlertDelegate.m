@@ -11,11 +11,13 @@
 
 /* ------------------------------------------------------------------------------------------------------------ */
 
+__attribute__((visibility("hidden")))
 @interface _YJAlertViewDelegate : _YJAlertDelegate @end
 @implementation _YJAlertViewDelegate @end
 
 /* ------------------------------------------------------------------------------------------------------------ */
 
+__attribute__((visibility("hidden")))
 @interface _YJActionSheetDelegate : _YJAlertDelegate @end
 @implementation _YJActionSheetDelegate @end
 

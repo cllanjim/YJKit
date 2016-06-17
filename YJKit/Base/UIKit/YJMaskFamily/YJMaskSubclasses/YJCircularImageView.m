@@ -10,7 +10,7 @@
 #import "YJCircularImageView.h"
 #import "UIBezierPath+YJLayerBasedMasking.h"
 #import "CAShapeLayer+YJLayerBasedMasking.h"
-#import "NSObject+YJCodingExtension.h"
+#import "NSObject+YJExtension.h"
 #import "YJDebugMacros.h"
 #import "YJUIMacros.h"
 
@@ -20,7 +20,7 @@
 
 #if YJ_DEBUG
 - (void)dealloc {
-    NSLog(@"%@ dealloc", self.class);
+    NSLog(@"%@ <%p> dealloc", self.class, self);
 }
 #endif
 

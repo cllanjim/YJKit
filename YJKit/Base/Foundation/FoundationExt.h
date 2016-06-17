@@ -8,12 +8,9 @@
 
 #if __has_include(<YJKit/FoundationExt.h>)
 
-#import <YJKit/NSObject+YJMutabilityChecking.h>
-#import <YJKit/NSObject+YJRuntimeSwizzling.h>
-#import <YJKit/NSObject+YJAssociatedIdentifier.h>
-#import <YJKit/NSObject+YJTaggedPointerChecking.h>
+#import <YJKit/NSObject+YJExtension.h>
+#import <YJKit/NSObject+YJRuntimeEncapsulation.h>
 #import <YJKit/NSObject+YJBlockBasedKVO.h>
-#import <YJKit/NSObject+YJCodingExtension.h>
 
 #import <YJKit/NSValue+YJGeometryExtension.h>
 
@@ -32,12 +29,9 @@
 
 #else
 
-#import "NSObject+YJMutabilityChecking.h"
-#import "NSObject+YJRuntimeSwizzling.h"
-#import "NSObject+YJAssociatedIdentifier.h"
-#import "NSObject+YJTaggedPointerChecking.h"
+#import "NSObject+YJExtension.h"
+#import "NSObject+YJRuntimeEncapsulation.h"
 #import "NSObject+YJBlockBasedKVO.h"
-#import "NSObject+YJCodingExtension.h"
 
 #import "NSValue+YJGeometryExtension.h"
 

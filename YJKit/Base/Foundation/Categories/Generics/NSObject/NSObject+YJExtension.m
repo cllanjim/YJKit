@@ -1,13 +1,49 @@
 //
-//  NSObject+YJCodingExtension.m
+//  NSObject+YJExtension.m
 //  YJKit
 //
-//  Created by huang-kun on 16/6/5.
+//  Created by Jack Huang on 16/6/17.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
 
+#import "NSObject+YJExtension.h"
 #import <objc/runtime.h>
-#import "NSObject+YJCodingExtension.h"
+
+/* ----------------------------------- */
+//   NSObject (YJMutabilityChecking)
+/* ----------------------------------- */
+
+@implementation NSString (YJMutabilityChecking)
+- (BOOL)isMutable { return self.copy != self; }
+@end
+
+@implementation NSArray (YJMutabilityChecking)
+- (BOOL)isMutable { return self.copy != self; }
+@end
+
+
+/* ------------------------------------ */
+//  NSObject (YJTaggedPointerChecking)
+/* ------------------------------------ */
+
+//  Reference: https://github.com/opensource-apple/objc4/blob/master/runtime/objc-internal.h
+
+@implementation NSObject (YJTaggedPointerChecking)
+
+- (BOOL)isTaggedPointer {
+#if TARGET_OS_IPHONE
+    return (intptr_t)self < 0;
+#else
+    return (uintptr_t)self & 1;
+#endif
+}
+
+@end
+
+
+/* ------------------------------------ */
+//     NSObject (YJCodingExtension)
+/* ------------------------------------ */
 
 @interface NSCoder (YJCodingPrivate)
 @property (nonatomic, strong) NSMutableSet <NSString *> *yj_encodedKeys;

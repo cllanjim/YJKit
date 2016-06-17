@@ -9,7 +9,7 @@
 #import "YJRoundedCornerImageView.h"
 #import "_YJRoundedCornerView.h"
 #import "NSValue+YJGeometryExtension.h"
-#import "NSObject+YJCodingExtension.h"
+#import "NSObject+YJExtension.h"
 
 @implementation YJRoundedCornerImageView
 

@@ -9,7 +9,7 @@
 #import "YJMaskedView.h"
 #import "_YJLayerBasedMasking.h"
 #import "YJDebugMacros.h"
-#import "NSObject+YJCodingExtension.h"
+#import "NSObject+YJExtension.h"
 
 @implementation YJMaskedView
 
@@ -18,7 +18,7 @@ YJ_LAYER_BASED_MASKING_PROTOCOL_DEFAULT_IMPLEMENTATION_FOR_YJMASKEDVIEW_SUBCLASS
 
 #if YJ_DEBUG
 - (void)dealloc {
-    NSLog(@"%@ dealloc", self.class);
+    NSLog(@"%@ <%p> dealloc", self.class, self);
 }
 #endif
 

@@ -8,11 +8,9 @@
 
 #import <objc/runtime.h>
 #import "UITextView+YJCategory.h"
-#import "NSObject+YJRuntimeSwizzling.h"
-#import "NSObject+YJAssociatedIdentifier.h"
-#import "NSArray+YJCollection.h"
+#import "NSObject+YJRuntimeEncapsulation.h"
 #import "RGBColor.h"
-#import "YJClangMacros.h"
+#import "_YJResignFirstResponderDefaultImp.h"
 
 static const void *YJTextViewAssociatedPlaceholderKey = &YJTextViewAssociatedPlaceholderKey;
 static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociatedPlaceholderColorKey;
@@ -36,8 +34,7 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
         // exchange dealloc
         [self swizzleInstanceMethodForSelector:NSSelectorFromString(@"dealloc") toSelector:@selector(yj_textViewDealloc)];
         // exchange life cycle
-        [self swizzleInstanceMethodForSelector:@selector(layoutSubviews) toSelector:@selector(yj_textViewLayoutSubviews)];
-        [self swizzleInstanceMethodForSelector:@selector(removeFromSuperview) toSelector:@selector(yj_textViewRemoveFromSuperview)];
+        YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING(TextView)
     });
 }
 
@@ -93,82 +90,6 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
     [self _displayPlaceholderIfNeeded];
 }
 
-#pragma mark - handle auto resigning first responder tap gesture
-
-- (void)setAutoResignFirstResponder:(BOOL)autoResignFirstResponder {
-#if YJ_BOX_BOOL_SUPPORT
-    objc_setAssociatedObject(self, @selector(autoResignFirstResponder), @(autoResignFirstResponder), OBJC_ASSOCIATION_COPY_NONATOMIC);
-#else
-    objc_setAssociatedObject(self, @selector(autoResignFirstResponder), (autoResignFirstResponder ? @1 : @0), OBJC_ASSOCIATION_COPY_NONATOMIC);
-#endif
-    if (!autoResignFirstResponder) {
-        [self yj_removeResignFirstResponderTapAction];
-    }
-}
-
-- (BOOL)autoResignFirstResponder {
-#if YJ_BOX_BOOL_SUPPORT
-    return [objc_getAssociatedObject(self, _cmd) boolValue];
-#else
-    return [objc_getAssociatedObject(self, _cmd) intValue] ? YES : NO;
-#endif
-}
-
-- (UIView *)providedARFRView {
-    UIView *view = self.superview;
-    id <YJTextViewDelegate> delegate = (id)self.delegate;
-    if ([delegate respondsToSelector:@selector(viewForAutoResigningFirstResponderForTextView:)]) {
-        UIView *tempView = [delegate viewForAutoResigningFirstResponderForTextView:self];
-        if (tempView) view = tempView;
-    }
-    return view;
-}
-
-- (void)yj_textViewLayoutSubviews {
-    [self yj_textViewLayoutSubviews];
-    
-    if (self.autoResignFirstResponder) {
-        UIView *view = self.providedARFRView;
-        UITapGestureRecognizer *tap = nil;
-        NSArray *taps = [view.gestureRecognizers filtered:^BOOL(__kindof UIGestureRecognizer * _Nonnull obj) {
-            return [obj isKindOfClass:[UITapGestureRecognizer class]];
-        }];
-        if (taps.count) {
-            tap = taps.lastObject;
-        } else {
-            tap = [[UITapGestureRecognizer alloc] initWithTarget:nil action:nil];
-            tap.delegate = self;
-            [view addGestureRecognizer:tap];
-        }
-        [tap removeTarget:self action:@selector(yj_handleResignFirstResponderTap)];
-        [tap addTarget:self action:@selector(yj_handleResignFirstResponderTap)];
-    }
-}
-
-- (void)yj_textViewRemoveFromSuperview {
-    if (self.autoResignFirstResponder) {
-        [self yj_removeResignFirstResponderTapAction];
-    }
-    [self yj_textViewRemoveFromSuperview];
-}
-
-- (void)yj_removeResignFirstResponderTapAction {
-    UIView *view = self.providedARFRView;
-    for (UIGestureRecognizer *gesture in view.gestureRecognizers) {
-        if ([gesture isKindOfClass:[UITapGestureRecognizer class]]) {
-            [gesture removeTarget:self action:@selector(yj_handleResignFirstResponderTap)];
-        }
-    }
-}
-
-- (void)yj_handleResignFirstResponderTap {
-    [self resignFirstResponder];
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-    return [self isFirstResponder] ? YES : NO;
-}
-
 #pragma mark - text attributes
 
 - (void)_displayPlaceholderIfNeeded {
@@ -202,5 +123,9 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
 - (RGBColor)yj_originalTextColor {
     return [objc_getAssociatedObject(self, _cmd) RGBColorValue];
 }
+
+#pragma mark - handle auto resigning first responder tap gesture
+
+YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_IMPLEMENTATION(TextView)
 
 @end

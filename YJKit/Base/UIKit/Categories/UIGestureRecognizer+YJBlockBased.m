@@ -14,6 +14,7 @@ static const void *YJRestureRecognizerAssociatedTargetsKey = &YJRestureRecognize
 
 typedef void(^YJGestureActionHandler)(UIGestureRecognizer *);
 
+__attribute__((visibility("hidden")))
 @interface _YJGestureTarget : NSObject
 @property (nonatomic, copy) YJGestureActionHandler actionHandler;
 @property (nonatomic, copy) NSString *actionTag;
