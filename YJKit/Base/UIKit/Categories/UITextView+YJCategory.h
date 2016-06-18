@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol YJTextViewDelegate <UITextViewDelegate>
 @optional
 /// Provide a view. When user taps on it, the text view will resign first responder.
+/// If you enable textView.autoResignFirstResponder and never implementing this method,
+/// the textView's superview will be handle the resigning first responder case.
 - (UIView *)viewForAutoResigningFirstResponderForTextView:(UITextView *)textView;
 @end
 
@@ -31,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Whether resign first responder when user taps the background (textView's superview). Default is NO.
 /// If you implementing -viewForAutoResigningFirstResponderForTextView:, the provided view will handle
-/// the auto resigning first responder when user taps on it.
+/// the auto resigning first responder when user taps on it instead of it's superview.
 @property (nonatomic) IBInspectable BOOL autoResignFirstResponder;
 
 /// The placeholder text for displaying when text view has no content.

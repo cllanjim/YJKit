@@ -7,7 +7,6 @@
 //
 
 #import "UIScreen+YJCategory.h"
-#import "YJUIMacros.h"
 
 @implementation UIScreen (YJCategory)
 
@@ -20,7 +19,7 @@
     CGSize tempSize = [self sizeInPixel];
     CGSize pSize = (CGSize){ MIN(tempSize.width, tempSize.height), MAX(tempSize.width, tempSize.height) };
     // iPhone
-    if (isPhone) {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         if (CGSizeEqualToSize(pSize, CGSizeMake(320, 480))) {
             resolution = YJScreenDisplayResolutionPixel320x480;
         } else if (CGSizeEqualToSize(pSize, CGSizeMake(640, 960))) {
@@ -36,7 +35,7 @@
         }
     }
     // iPad
-    else if (isPad) {
+    else if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         if (CGSizeEqualToSize(pSize, CGSizeMake(768, 1024))) {
             resolution = YJScreenDisplayResolutionPixel768x1024;
         } else if (CGSizeEqualToSize(pSize, CGSizeMake(1536, 2048))) {

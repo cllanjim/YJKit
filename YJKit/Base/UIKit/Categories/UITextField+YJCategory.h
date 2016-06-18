@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol YJTextFieldDelegate <UITextFieldDelegate>
 @optional
 /// Provide a view. When user taps on it, the text field will resign first responder.
+/// If you enable textField.autoResignFirstResponder and never implementing this method,
+/// the textField's superview will be handle the resigning first responder case.
 - (UIView *)viewForAutoResigningFirstResponderForTextField:(UITextField *)textField;
 @end
 
@@ -31,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Whether resign first responder when user tap the background (textField's superview). Default is NO.
 /// If you implementing -viewForAutoResigningFirstResponderForTextField:, the provided view will handle
-/// the auto resigning first responder when user taps on it.
+/// the auto resigning first responder when user taps on it instead of it's superview.
 @property (nonatomic) IBInspectable BOOL autoResignFirstResponder;
 
 @end

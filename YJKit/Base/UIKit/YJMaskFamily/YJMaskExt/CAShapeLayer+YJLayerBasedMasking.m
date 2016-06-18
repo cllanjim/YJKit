@@ -28,7 +28,7 @@
     maskLayer.strokeColor = fillColor; // cover the rect path of corner
     maskLayer.lineWidth = strokeWidth;
     UIBezierPath *cornerPath = [shapeBezierPath copy];
-    if (kSystemVersion < 8.0) cornerPath = [UIBezierPath bezierPathWithCGPath:shapeBezierPath.CGPath];
+    if (iOS_Version < 8.0) cornerPath = [UIBezierPath bezierPathWithCGPath:shapeBezierPath.CGPath];
     [cornerPath appendPath:frameBezierPath];
     maskLayer.path = cornerPath.CGPath;
     if (!strokeWidth) return maskLayer;

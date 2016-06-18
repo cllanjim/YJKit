@@ -27,7 +27,7 @@ void (^calculateMaskBoundaries)(CGRect *, CGRect *, UIEdgeInsets);
     CGRect maskSquare = UIEdgeInsetsInsetRect(outerSquare, edgeInsets);
     UIBezierPath *framePath = [BPClass bezierPathWithRect:frame];
     UIBezierPath *circlePath = [BPClass bezierPathWithOvalInRect:maskSquare];
-    if (kSystemVersion >= 8.0) {
+    if (iOS_Version >= 8.0) {
         if (framePathPtr) *framePathPtr = [framePath copy];
         if (circlePathPtr) *circlePathPtr = [circlePath copy];
     } else {
@@ -48,7 +48,7 @@ void (^calculateMaskBoundaries)(CGRect *, CGRect *, UIEdgeInsets);
     CGRect transparentFrame = UIEdgeInsetsInsetRect(outerFrame, edgeInsets);
     UIBezierPath *framePath = [BPClass bezierPathWithRect:outerFrame];
     UIBezierPath *roundPath = [BPClass bezierPathWithRoundedRect:transparentFrame cornerRadius:cornerRadius];
-    if (kSystemVersion >= 8.0) {
+    if (iOS_Version >= 8.0) {
         if (framePathPtr) *framePathPtr = [framePath copy];
         if (roundPathPtr) *roundPathPtr = [roundPath copy];
     } else {

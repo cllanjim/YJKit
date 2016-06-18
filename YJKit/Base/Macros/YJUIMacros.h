@@ -17,16 +17,22 @@
 
 // UIDevice
 
+#ifndef iOS_Version
+#define iOS_Version [UIDevice systemVersion]
+#endif
+
+#ifndef DeviceIsPhone
+#define DeviceIsPhone [UIDevice isPhone]
+#endif
+
+#ifndef DeviceIsPad
+#define DeviceIsPad [UIDevice isPad]
+#endif
+
+// Deprecates
+
 #ifndef kSystemVersion
-#define kSystemVersion [UIDevice systemVersion]
-#endif
-
-#ifndef isPhone 
-#define isPhone [UIDevice isPhone]
-#endif
-
-#ifndef isPad
-#define isPad [UIDevice isPad]
+#define kSystemVersion /* This macro is deprecated, use "iOS_Version" instead. */
 #endif
 
 /* ------------------------------------------------------------------------------------------------------------ */

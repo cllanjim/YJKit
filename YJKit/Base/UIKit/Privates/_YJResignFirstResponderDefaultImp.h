@@ -90,10 +90,10 @@
     __weak id weakSelf = self; \
      /* Must not use same identifier for both textField and textView, otherwise one of them will get filtered out. */ \
     [delegate insertImplementationBlocksIntoInstanceMethodForSelector:deallocSel  \
-                              identifier:nil \
-                                  before:^(id  _Nonnull receiver){  \
-                                      [weakSelf setDelegate:nil];  \
-                                  } after:nil];  \
+                                                           identifier:nil \
+                                                               before:^(id  _Nonnull receiver){  \
+                                                                   [weakSelf setDelegate:nil];  \
+                                                               } after:nil];  \
 }  \
   \
 - (void)yj_##XXX##RemoveFromSuperview {  \

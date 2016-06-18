@@ -12,13 +12,33 @@
 #import "YJUIMacros.h"
 
 /* ----------------------------------- */
-//         Class type checking
+//     NSObject (YJRuntimeExtension)
 /* ----------------------------------- */
 
 bool yj_objc_isClass(id obj) {
     return obj == [obj class];
 }
 
+@implementation NSObject (YJRuntimeExtension)
+
+- (BOOL)containsSelector:(SEL)selector {
+    BOOL result = NO;
+    unsigned int count = 0;
+    Method *methods = class_copyMethodList(self.class, &count);
+    for (int i = 0; i < count; i++) {
+        Method method = methods[i];
+        SEL sel = method_getName(method);
+        NSLog(@"%@", NSStringFromSelector(sel));
+        if (sel == selector) {
+            result = YES;
+            break;
+        }
+    }
+    free(methods);
+    return result;
+}
+
+@end
 
 /* ----------------------------------- */
 //  NSObject (YJAssociatedIdentifier)
@@ -99,7 +119,7 @@ static const void * YJObjectAssociatedTagKey = &YJObjectAssociatedTagKey;
 
 
 /* ----------------------------------- */
-//     NSObject (YJSwizzling)
+//        NSObject (YJSwizzling)
 /* ----------------------------------- */
 
 @implementation NSObject (YJSwizzling)
@@ -153,15 +173,7 @@ typedef void(^YJMethodImpInsertionBlock)(id);
 
 @implementation NSObject (YJMethodImpModifying)
 
-+ (void)insertImplementationBlocksIntoClassMethodForSelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
-    _yj_insertImpBlocksIntoMethodForObject(self, selector, identifier, before, after);
-}
-
-- (void)insertImplementationBlocksIntoInstanceMethodForSelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
-    _yj_insertImpBlocksIntoMethodForObject(self, selector, identifier, before, after);
-}
-
-void _yj_insertImpBlocksIntoMethodForObject(id obj, SEL sel, NSString *identifier, YJMethodImpInsertionBlock before, YJMethodImpInsertionBlock after) {
+static void _yj_insertImpBlocksIntoMethodForObject(id obj, SEL sel, NSString *identifier, YJMethodImpInsertionBlock before, YJMethodImpInsertionBlock after) {
     
     if (!sel || (!before && !after))
         return;
@@ -205,11 +217,20 @@ void _yj_insertImpBlocksIntoMethodForObject(id obj, SEL sel, NSString *identifie
     method_setImplementation(method, newImp);
 }
 
++ (void)insertImplementationBlocksIntoClassMethodForSelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
+    _yj_insertImpBlocksIntoMethodForObject(self, selector, identifier, before, after);
+}
+
+- (void)insertImplementationBlocksIntoInstanceMethodForSelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
+    _yj_insertImpBlocksIntoMethodForObject(self, selector, identifier, before, after);
+}
+
 @end
 
-// In iOS 7, if you want imp for dealloc method for UIResponder class,
-// the system returns the dealloc imp for NSObject class, which is not
-// what I expected. So here is a simple solution to fix it.
+// In iOS 7, if you want exact IMP for dealloc method from UIResponder class and use runtime API to get the result,
+// the system will returns the dealloc IMP from NSObject class, which may not what you expected. So here is a simple
+// solution to fix it. Call -swizzleInstanceMethodForSelector:toSelector: to add the dealloc method for UIResponder
+// first, then you can get exact dealloc IMP from UIResponder class.
 @implementation UIResponder (YJSwizzleDeallocForUIResponder)
 
 + (void)load {
