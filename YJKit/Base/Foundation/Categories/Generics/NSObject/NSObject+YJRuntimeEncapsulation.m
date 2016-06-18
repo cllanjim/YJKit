@@ -25,7 +25,7 @@ bool yj_objc_isClass(id obj) {
     BOOL result = NO;
     unsigned int count = 0;
     Method *methods = class_copyMethodList(self.class, &count);
-    for (int i = 0; i < count; i++) {
+    for (unsigned int i = 0; i < count; i++) {
         Method method = methods[i];
         SEL sel = method_getName(method);
         NSLog(@"%@", NSStringFromSelector(sel));
@@ -236,7 +236,8 @@ static void _yj_insertImpBlocksIntoMethodForObject(id obj, SEL sel, NSString *id
 + (void)load {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [self swizzleInstanceMethodForSelector:NSSelectorFromString(@"dealloc") toSelector:@selector(yj_handleResponderDealloc)];
+        [self swizzleInstanceMethodForSelector:NSSelectorFromString(@"dealloc")
+                                    toSelector:@selector(yj_handleResponderDealloc)];
     });
 }
 

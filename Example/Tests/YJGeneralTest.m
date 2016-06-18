@@ -83,10 +83,6 @@ void test(Class class) {
 //    
 //    [foo sayHi];
     
-    NSMutableArray *mutableArray = @[].mutableCopy;
-    BOOL b1 = [mutableArray respondsToSelector:@selector(containsObject:)];
-    BOOL b2 = [mutableArray containsSelector:@selector(containsObject:)];
-    
 //    NSLog(@"--------- array ---------");
 //
 //    test([NSArray class]);
