@@ -29,10 +29,10 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         // exchange init
-        [self swizzleInstanceMethodForSelector:@selector(initWithFrame:) toSelector:@selector(yj_textViewInitWithFrame:)];
-        [self swizzleInstanceMethodForSelector:@selector(initWithCoder:) toSelector:@selector(yj_textViewInitWithCoder:)];
+        [self swizzleInstanceMethodsBySelector:@selector(initWithFrame:) withSelector:@selector(yj_textViewInitWithFrame:)];
+        [self swizzleInstanceMethodsBySelector:@selector(initWithCoder:) withSelector:@selector(yj_textViewInitWithCoder:)];
         // exchange dealloc
-        [self swizzleInstanceMethodForSelector:NSSelectorFromString(@"dealloc") toSelector:@selector(yj_textViewDealloc)];
+        [self swizzleInstanceMethodsBySelector:NSSelectorFromString(@"dealloc") withSelector:@selector(yj_textViewDealloc)];
         // exchange life cycle
         YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING(TextView)
     });

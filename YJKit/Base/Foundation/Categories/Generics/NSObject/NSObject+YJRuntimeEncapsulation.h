@@ -97,14 +97,14 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 @interface NSObject (YJSwizzling)
 
 /// Exchange the implementations between two given selectors.
-/// @note If the class does not own the method by given selector originally,
-///       it will add the method first, then switch the implementations.
-+ (void)swizzleInstanceMethodForSelector:(SEL)selector toSelector:(SEL)toSelector;
+/// @note If the class does not originally implements the method by given selector,
+///       it will add the method to the class first, then switch the implementations.
++ (void)swizzleInstanceMethodsBySelector:(SEL)selector withSelector:(SEL)providedSelector;
 
 /// Exchange the implementations between two given selectors.
-/// @note If the class does not own the method by given selector originally,
-///       it will add the method first, then switch the implementations.
-+ (void)swizzleClassMethodForSelector:(SEL)selector toSelector:(SEL)toSelector;
+/// @note If the class does not originally implements the method by given selector,
+///       it will add the method to the class first, then switch the implementations.
++ (void)swizzleClassMethodsBySelector:(SEL)selector withSelector:(SEL)providedSelector;
 
 @end
 
@@ -121,14 +121,14 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 ///             chain and check its super's. If this case is not what you expected, you could:
 ///
 ///   1. Use -[obj containsSelector:] to determine if selector is from super before you call this.
-///   2. Use +[classObj swizzleInstanceMethodForSelector:toSelector:] to add method to current class first,
+///   2. Use +[classObj swizzleInstanceMethodsBySelector:withSelector:] to add method to current class first,
 ///      then call this. It will prevent you modifying the method implementation from its superclass.
 ///
 /// @note Specify an identifier will prevent same repeated insertion. Highly recommanded.
-- (void)insertImplementationBlocksIntoInstanceMethodForSelector:(SEL)selector
-                                                     identifier:(nullable NSString *)identifier
-                                                         before:(nullable void(^)(id receiver))before
-                                                          after:(nullable void(^)(id receiver))after;
+- (void)insertImplementationBlocksIntoInstanceMethodBySelector:(SEL)selector
+                                                    identifier:(nullable NSString *)identifier
+                                                        before:(nullable void(^)(id receiver))before
+                                                         after:(nullable void(^)(id receiver))after;
 
 /// @brief Insert blocks of code which will be executed before or after
 ///        the default implementation of given selector.
@@ -136,14 +136,14 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 ///             chain and check its super's. If this case is not what you expected, you could:
 ///
 ///   1. Use +[classObj containsSelector:] to determine if selector is from super before you call this.
-///   2. Use +[classObj swizzleClassMethodForSelector:toSelector:] to add method to current class first,
+///   2. Use +[classObj swizzleClassMethodsBySelector:withSelector:] to add method to current class first,
 ///      then call this. It will prevent you modifying the method implementation from its superclass.
 ///
 /// @note Specify an identifier will prevent same repeated insertion. Highly recommanded.
-+ (void)insertImplementationBlocksIntoClassMethodForSelector:(SEL)selector
-                                                  identifier:(nullable NSString *)identifier
-                                                      before:(nullable void(^)(id receiver))before
-                                                       after:(nullable void(^)(id receiver))after;
++ (void)insertImplementationBlocksIntoClassMethodBySelector:(SEL)selector
+                                                identifier:(nullable NSString *)identifier
+                                                    before:(nullable void(^)(id receiver))before
+                                                     after:(nullable void(^)(id receiver))after;
 
 @end
 

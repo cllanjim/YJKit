@@ -15,9 +15,9 @@
 
 #ifndef YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING
 #define YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING(XXX) \
-    [self swizzleInstanceMethodForSelector:@selector(layoutSubviews) toSelector:@selector(yj_##XXX##LayoutSubviews)]; \
-    [self swizzleInstanceMethodForSelector:@selector(willMoveToSuperview:) toSelector:@selector(yj_##XXX##WillMoveToSuperview:)]; \
-    [self swizzleInstanceMethodForSelector:@selector(removeFromSuperview) toSelector:@selector(yj_##XXX##RemoveFromSuperview)];
+    [self swizzleInstanceMethodsBySelector:@selector(layoutSubviews) withSelector:@selector(yj_##XXX##LayoutSubviews)]; \
+    [self swizzleInstanceMethodsBySelector:@selector(willMoveToSuperview:) withSelector:@selector(yj_##XXX##WillMoveToSuperview:)]; \
+    [self swizzleInstanceMethodsBySelector:@selector(removeFromSuperview) withSelector:@selector(yj_##XXX##RemoveFromSuperview)];
 
 #endif
 
@@ -89,7 +89,7 @@
     SEL deallocSel = NSSelectorFromString(@"dealloc");  \
     __weak id weakSelf = self; \
      /* Must not use same identifier for both textField and textView, otherwise one of them will get filtered out. */ \
-    [delegate insertImplementationBlocksIntoInstanceMethodForSelector:deallocSel  \
+    [delegate insertImplementationBlocksIntoInstanceMethodBySelector:deallocSel  \
                                                            identifier:nil \
                                                                before:^(id  _Nonnull receiver){  \
                                                                    [weakSelf setDelegate:nil];  \

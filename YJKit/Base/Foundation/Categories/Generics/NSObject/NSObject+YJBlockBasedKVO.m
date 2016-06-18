@@ -86,7 +86,7 @@ static void _yj_registerKVOForObject(NSObject *self, NSString *keyPath, NSKeyVal
 
 static void _yj_modifyDeallocMethodForKeyValueObservedObject(NSObject *self) {
     SEL deallocSel = NSSelectorFromString(@"dealloc");
-    [self insertImplementationBlocksIntoInstanceMethodForSelector:deallocSel identifier:@"YJ_REMOVE_KVO" before:^(id  _Nonnull receiver) {
+    [self insertImplementationBlocksIntoInstanceMethodBySelector:deallocSel identifier:@"YJ_REMOVE_KVO" before:^(id  _Nonnull receiver) {
         [receiver removeAllObservedKeyPaths];
     } after:nil];
 }

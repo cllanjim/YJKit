@@ -141,21 +141,21 @@ static const void * YJObjectAssociatedTagKey = &YJObjectAssociatedTagKey;
 
 @implementation NSObject (YJSwizzling)
 
-static void _yj_swizzleMethodForClass(id class, SEL selector, SEL toSelector) {
+static void _yj_swizzleMethodForClass(id class, SEL selector, SEL providedSelector) {
     Method method = class_getInstanceMethod(class, selector);
-    Method toMethod = class_getInstanceMethod(class, toSelector);
+    Method toMethod = class_getInstanceMethod(class, providedSelector);
     BOOL added = class_addMethod(class, selector, method_getImplementation(toMethod), method_getTypeEncoding(toMethod));
-    if (added) class_replaceMethod(class, toSelector, method_getImplementation(method), method_getTypeEncoding(method));
+    if (added) class_replaceMethod(class, providedSelector, method_getImplementation(method), method_getTypeEncoding(method));
     else method_exchangeImplementations(method, toMethod);
 }
 
-+ (void)swizzleInstanceMethodForSelector:(SEL)selector toSelector:(SEL)toSelector {
-    _yj_swizzleMethodForClass(self, selector, toSelector);
++ (void)swizzleInstanceMethodsBySelector:(SEL)selector withSelector:(SEL)providedSelector {
+    _yj_swizzleMethodForClass(self, selector, providedSelector);
 }
 
-+ (void)swizzleClassMethodForSelector:(SEL)selector toSelector:(SEL)toSelector {
++ (void)swizzleClassMethodsBySelector:(SEL)selector withSelector:(SEL)providedSelector {
     Class class = object_getClass((id)self);
-    _yj_swizzleMethodForClass(class, selector, toSelector);
+    _yj_swizzleMethodForClass(class, selector, providedSelector);
 }
 
 @end
@@ -234,11 +234,11 @@ static void _yj_insertImpBlocksIntoMethodForObject(id obj, SEL sel, NSString *id
     method_setImplementation(method, newImp);
 }
 
-+ (void)insertImplementationBlocksIntoClassMethodForSelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
++ (void)insertImplementationBlocksIntoClassMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
     _yj_insertImpBlocksIntoMethodForObject(self, selector, identifier, before, after);
 }
 
-- (void)insertImplementationBlocksIntoInstanceMethodForSelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
+- (void)insertImplementationBlocksIntoInstanceMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
     _yj_insertImpBlocksIntoMethodForObject(self, selector, identifier, before, after);
 }
 
@@ -246,15 +246,15 @@ static void _yj_insertImpBlocksIntoMethodForObject(id obj, SEL sel, NSString *id
 
 // In iOS 7, if you want exact IMP for dealloc method from UIResponder class and use runtime API to get the result,
 // the system will returns the dealloc IMP from NSObject class, which may not what you expected. So here is a simple
-// solution to fix it. Call -swizzleInstanceMethodForSelector:toSelector: to add the dealloc method for UIResponder
+// solution to fix it. Call -swizzleInstanceMethodsBySelector:withSelector: to add the dealloc method for UIResponder
 // first, then you can get exact dealloc IMP from UIResponder class.
 @implementation UIResponder (YJSwizzleDeallocForUIResponder)
 
 + (void)load {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [self swizzleInstanceMethodForSelector:NSSelectorFromString(@"dealloc")
-                                    toSelector:@selector(yj_handleResponderDealloc)];
+        [self swizzleInstanceMethodsBySelector:NSSelectorFromString(@"dealloc")
+                                    withSelector:@selector(yj_handleResponderDealloc)];
     });
 }
 
