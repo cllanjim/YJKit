@@ -15,21 +15,25 @@
 //     NSObject (YJRuntimeExtension)
 /* ----------------------------------- */
 
-bool yj_objc_isClass(id obj) {
-    return obj == [obj class];
-}
-
 @implementation NSObject (YJRuntimeExtension)
 
-- (BOOL)containsSelector:(SEL)selector {
+static BOOL _yj_containsSelectorForObject(id obj, SEL sel, bool shouldAssumeObjectIsClass) {
     BOOL result = NO;
     unsigned int count = 0;
-    Method *methods = class_copyMethodList(self.class, &count);
+    Class cls;
+    
+    if (shouldAssumeObjectIsClass) {
+        cls = [obj class];
+    } else {
+        bool isClass = object_isClass(obj);
+        cls = isClass ? object_getClass(obj) : [obj class];
+    }
+    
+    Method *methods = class_copyMethodList(cls, &count);
     for (unsigned int i = 0; i < count; i++) {
         Method method = methods[i];
-        SEL sel = method_getName(method);
-        NSLog(@"%@", NSStringFromSelector(sel));
-        if (sel == selector) {
+        SEL selector = method_getName(method);
+        if (selector == sel) {
             result = YES;
             break;
         }
@@ -38,7 +42,20 @@ bool yj_objc_isClass(id obj) {
     return result;
 }
 
+- (BOOL)containsSelector:(SEL)selector {
+    return _yj_containsSelectorForObject(self, selector, false);
+}
+
++ (BOOL)containsSelector:(SEL)selector {
+    return _yj_containsSelectorForObject(self, selector, false);
+}
+
++ (BOOL)containsInstanceMethodBySelector:(SEL)selector {
+    return _yj_containsSelectorForObject(self, selector, true);
+}
+
 @end
+
 
 /* ----------------------------------- */
 //  NSObject (YJAssociatedIdentifier)
@@ -154,7 +171,7 @@ static void _yj_swizzleMethodForClass(id class, SEL selector, SEL toSelector) {
 __attribute__((visibility("hidden")))
 @interface _YJIMPModificationKeeper : NSObject
 + (instancetype)sharedKeeper;
-@property (nonatomic, strong) NSMutableDictionary <NSString *, NSMutableSet *> *records;
+@property (nonatomic, strong) NSMutableDictionary <NSString */*className*/, NSMutableSet */*identifiers*/> *records;
 @end
 
 @implementation _YJIMPModificationKeeper
@@ -179,13 +196,13 @@ static void _yj_insertImpBlocksIntoMethodForObject(id obj, SEL sel, NSString *id
         return;
     
     // get proper class
-    BOOL objIsClass = yj_objc_isClass(obj);
+    BOOL isClass = object_isClass(obj);
     
-    Class realCls = objIsClass ? obj : object_getClass(obj);
-    Class officialCls = objIsClass ? obj : [obj class];
+    Class realCls = isClass ? obj : object_getClass(obj);
+    Class officialCls = isClass ? obj : [obj class];
     
     // get default imp from official class
-    Method method = objIsClass ? class_getClassMethod(officialCls, sel) : class_getInstanceMethod(officialCls, sel);
+    Method method = isClass ? class_getClassMethod(officialCls, sel) : class_getInstanceMethod(officialCls, sel);
     void (*defaultImp)(__unsafe_unretained id, SEL) = (void(*)(__unsafe_unretained id, SEL))method_getImplementation(method);
     if (!defaultImp) return;
     

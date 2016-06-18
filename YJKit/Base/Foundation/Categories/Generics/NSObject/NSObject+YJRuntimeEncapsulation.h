@@ -14,23 +14,41 @@ NS_ASSUME_NONNULL_BEGIN
 //          Runtime Extension
 /* ----------------------------------- */
 
-/// Check if the object is an instance or a class object.
-OBJC_EXPORT bool yj_objc_isClass(id obj);
-
-
 @interface NSObject (YJRuntimeExtension)
 
-/// @brief Check if the current class owns the method by given selector, which is not inherited
-///        from its superclass.
-/// @discussion e.g. NSArray class has selector -containsObject:, NSMutableArray inherits from NSArray,
-///             which doesn't override the -containsObject:, so -containsObject: is not part of
-///             NSMutableArray's own method list.
+/// @brief Check if receiver's class dispatch table contains the selector, which means the selector
+///        is not inherited from its superclass.
+/// @discussion e.g. NSArray object implements method -containsObject:, NSMutableArray inherits
+///             from NSArray, which doesn't override the -containsObject:, so -containsObject:
+///             is not part of NSMutableArray's own selector.
 /// @code
 /// NSMutableArray *mutableArray = @[].mutableCopy;
 /// BOOL b1 = [mutableArray respondsToSelector:@selector(containsObject:)]; // YES
-/// BOOL b2 = [mutableArray containsSelector:@selector(containsObject:)];   // NO
+/// BOOL b2 = [mutableArray containsSelector:@selector(containsObject:)]; // NO
 /// @endcode
 - (BOOL)containsSelector:(SEL)selector;
+
+/// @brief Check if receiver's meta class dispatch table contains the selector, which means the selector
+///        is not inherited from its superclass.
+/// @discussion e.g. NSArray class implements method +arrayWithArray:, NSMutableArray inherits
+///             from NSArray, which doesn't override the +arrayWithArray:, so +arrayWithArray:
+///             is not part of NSMutableArray's own selector.
+/// @code
+/// BOOL b1 = [NSMutableArray respondsToSelector:@selector(arrayWithArray:)]; // YES
+/// BOOL b2 = [NSMutableArray containsSelector:@selector(arrayWithArray:)]; // NO
+/// @endcode
++ (BOOL)containsSelector:(SEL)selector;
+
+/// @brief Check if receiver's dispatch table contains the selector for its instance to responds,
+///        which means the selector is not inherited from its superclass.
+/// @discussion e.g. NSArray object implements method -containsObject:, NSMutableArray inherits
+///             from NSArray, which doesn't override the -containsObject:, so -containsObject:
+///             is not part of NSMutableArray's own selector.
+/// @code
+/// BOOL b1 = [NSMutableArray instancesRespondToSelector:@selector(containsObject:)]; // YES
+/// BOOL b2 = [NSMutableArray containsInstanceMethodBySelector:@selector(containsObject:)]; // NO
+/// @endcode
++ (BOOL)containsInstanceMethodBySelector:(SEL)selector;
 
 @end
 
@@ -80,12 +98,12 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 
 /// Exchange the implementations between two given selectors.
 /// @note If the class does not own the method by given selector originally,
-///       it will add the method first, then switch the implementation.
+///       it will add the method first, then switch the implementations.
 + (void)swizzleInstanceMethodForSelector:(SEL)selector toSelector:(SEL)toSelector;
 
 /// Exchange the implementations between two given selectors.
 /// @note If the class does not own the method by given selector originally,
-///       it will add the method first, then switch the implementation.
+///       it will add the method first, then switch the implementations.
 + (void)swizzleClassMethodForSelector:(SEL)selector toSelector:(SEL)toSelector;
 
 @end
@@ -103,7 +121,7 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 ///             chain and check its super's. If this case is not what you expected, you could:
 ///
 ///   1. Use -[obj containsSelector:] to determine if selector is from super before you call this.
-///   2. Use -[obj swizzleInstanceMethodForSelector:toSelector:] to add method to current class first,
+///   2. Use +[classObj swizzleInstanceMethodForSelector:toSelector:] to add method to current class first,
 ///      then call this. It will prevent you modifying the method implementation from its superclass.
 ///
 /// @note Specify an identifier will prevent same repeated insertion. Highly recommanded.
@@ -117,7 +135,7 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 /// @discussion If the class does not own the method by given selector originally, it will go up the
 ///             chain and check its super's. If this case is not what you expected, you could:
 ///
-///   1. Use -[obj containsSelector:] to determine if selector is from super before you call this.
+///   1. Use +[classObj containsSelector:] to determine if selector is from super before you call this.
 ///   2. Use +[classObj swizzleClassMethodForSelector:toSelector:] to add method to current class first,
 ///      then call this. It will prevent you modifying the method implementation from its superclass.
 ///

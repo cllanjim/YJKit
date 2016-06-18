@@ -9,7 +9,7 @@
 
 #import "NSBundle+YJCategory.h"
 #import "YJUIMacros.h"
-#import "NSObject+YJRuntimeEncapsulation.h"
+#import <objc/runtime.h>
 
 @implementation NSBundle (YJCategory)
 
@@ -58,7 +58,7 @@
 
 static NSString *_yj_pathForScaledResouceForObject(id object, NSString *name, NSString *ext, NSString *dir) {
     NSString *path = nil;
-    BOOL objectIsClass = yj_objc_isClass(object);
+    BOOL objectIsClass = object_isClass(object);
     if (objectIsClass && !dir.length) return nil;
     if (!name.length) return [object pathForResource:name ofType:ext inDirectory:dir];
     if (iOS_Version >= 8.0) {
