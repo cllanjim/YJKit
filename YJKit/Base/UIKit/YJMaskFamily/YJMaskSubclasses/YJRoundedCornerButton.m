@@ -63,7 +63,7 @@ YJ_ROUNDED_CORNER_VIEW_DEFAULT_IMPLEMENTATION_FOR_UIVIEW_SUBCLASS
 
 - (void)observeTintColor {
     @weakify(self)
-    [self registerObserverForKeyPath:@"tintColor" handleSetup:^(id  _Nonnull object, id  _Nullable newValue) {
+    [self registerObserverForKeyPath:@keyPath(self.tintColor) handleSetup:^(id  _Nonnull object, id  _Nullable newValue) {
         @strongify(self)
         if (newValue) {
             if (![self.borderColor isEqualToColor:newValue]) {

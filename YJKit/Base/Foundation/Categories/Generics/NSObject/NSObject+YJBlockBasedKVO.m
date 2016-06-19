@@ -64,7 +64,7 @@ __attribute__((visibility("hidden")))
     return objc_getAssociatedObject(self, YJKVOAssociatedObserversKey);
 }
 
-static void _yj_registerKVOForObject(NSObject *self, NSString *keyPath, NSKeyValueObservingOptions options, YJKVOSetupHandler setupHandler, YJKVOChangeHandler changeHandler) {
+static void _yj_registerKVO(NSObject *self, NSString *keyPath, NSKeyValueObservingOptions options, YJKVOSetupHandler setupHandler, YJKVOChangeHandler changeHandler) {
     
     _YJKeyValueObserver *observer = [[_YJKeyValueObserver alloc] init];
     if (setupHandler) observer.setupHandler = setupHandler;
@@ -84,29 +84,41 @@ static void _yj_registerKVOForObject(NSObject *self, NSString *keyPath, NSKeyVal
     [self addObserver:observer forKeyPath:keyPath options:options context:NULL];
 }
 
-static void _yj_modifyDeallocMethodForKeyValueObservedObject(NSObject *self) {
-    SEL deallocSel = NSSelectorFromString(@"dealloc");
-    [self insertImplementationBlocksIntoInstanceMethodBySelector:deallocSel identifier:@"YJ_REMOVE_KVO" before:^(id  _Nonnull receiver) {
-        [receiver removeAllObservedKeyPaths];
-    } after:nil];
+// Reference: Modify method IMP from BlocksKit
+// https://github.com/zwaldowski/BlocksKit/blob/master/BlocksKit/Core/NSObject%2BBKBlockObservation.m
+
+static void _yj_modifyDealloc(NSObject *self) {
+    // Add dealloc method to the current class (subclass of NSObject) if possible.
+    SEL deallocSel = sel_registerName("dealloc");
+    IMP deallocIMP = imp_implementationWithBlock(^(__unsafe_unretained id obj){
+        struct objc_super superInfo = (struct objc_super){ obj, class_getSuperclass([obj class]) };
+        ((void (*)(struct objc_super *, SEL)) objc_msgSendSuper)(&superInfo, deallocSel);
+    });
+    __unused BOOL result = class_addMethod(self.class, deallocSel, deallocIMP, "v@:");
+    // Removing observers before executing original dealloc implementation.
+    [self insertImplementationBlocksIntoInstanceMethodBySelector:deallocSel
+                                                      identifier:@"YJ_REMOVE_KVO"
+                                                          before:^(id  _Nonnull receiver) {
+                                                              [receiver removeAllObservedKeyPaths];
+                                                          } after:nil];
 }
 
 - (void)registerObserverForKeyPath:(NSString *)keyPath handleChanges:(void (^)(id, id, id))changeHandler {
-    _yj_registerKVOForObject(self, keyPath, (NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew), nil, changeHandler);
-    _yj_modifyDeallocMethodForKeyValueObservedObject(self);
+    _yj_registerKVO(self, keyPath, (NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew), nil, changeHandler);
+    _yj_modifyDealloc(self);
 }
 
 - (void)registerObserverForKeyPath:(NSString *)keyPath handleSetup:(void(^)(id, id))setupHandler {
-    _yj_registerKVOForObject(self, keyPath, NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew, setupHandler, nil);
-    _yj_modifyDeallocMethodForKeyValueObservedObject(self);
+    _yj_registerKVO(self, keyPath, NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew, setupHandler, nil);
+    _yj_modifyDealloc(self);
 }
 
 - (void)addObservedKeyPath:(NSString *)keyPath handleChanges:(void (^)(id, id, id))changeHandler {
-    _yj_registerKVOForObject(self, keyPath, (NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew), nil, changeHandler);
+    _yj_registerKVO(self, keyPath, (NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew), nil, changeHandler);
 }
 
 - (void)addObservedKeyPath:(NSString *)keyPath handleSetup:(void(^)(id, id))setupHandler {
-    _yj_registerKVOForObject(self, keyPath, NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew, setupHandler, nil);
+    _yj_registerKVO(self, keyPath, NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew, setupHandler, nil);
 }
 
 - (void)removeObservedKeyPath:(NSString *)keyPath {

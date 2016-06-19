@@ -5,13 +5,15 @@
 //  Created by huang-kun on 16/3/20.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
-//  Reference: https://github.com/ibireme/YYKit
 
 #import "NSBundle+YJCategory.h"
+#import "NSObject+YJRuntimeEncapsulation.h"
 #import "YJUIMacros.h"
-#import <objc/runtime.h>
 
 @implementation NSBundle (YJCategory)
+
+//  Reference: Scaled resources in bundle
+//  https://github.com/ibireme/YYKit/blob/master/YYKit/Base/Foundation/NSBundle%2BYYAdd.m
 
 + (NSArray <NSNumber *> *)preferredScales {
     static NSArray *scales = nil;
@@ -45,20 +47,20 @@
 #pragma mark - Returns a bundle path
 
 + (nullable NSString *)pathForScaledResource:(nullable NSString *)name ofType:(nullable NSString *)ext inDirectory:(NSString *)bundlePath {
-    return _yj_pathForScaledResouceForObject(self, name, ext, bundlePath);
+    return _yj_pathForScaledResouce(self, name, ext, bundlePath);
 }
 
 - (nullable NSString *)pathForScaledResource:(nullable NSString *)name ofType:(nullable NSString *)ext inDirectory:(nullable NSString *)subpath {
-    return _yj_pathForScaledResouceForObject(self, name, ext, subpath);
+    return _yj_pathForScaledResouce(self, name, ext, subpath);
 }
 
 - (nullable NSString *)pathForScaledResource:(nullable NSString *)name ofType:(nullable NSString *)ext {
-    return _yj_pathForScaledResouceForObject(self, name, ext, nil);
+    return _yj_pathForScaledResouce(self, name, ext, nil);
 }
 
-static NSString *_yj_pathForScaledResouceForObject(id object, NSString *name, NSString *ext, NSString *dir) {
+static NSString *_yj_pathForScaledResouce(id object, NSString *name, NSString *ext, NSString *dir) {
     NSString *path = nil;
-    BOOL objectIsClass = object_isClass(object);
+    BOOL objectIsClass = yj_object_isClass(object);
     if (objectIsClass && !dir.length) return nil;
     if (!name.length) return [object pathForResource:name ofType:ext inDirectory:dir];
     if (iOS_Version >= 8.0) {

@@ -11,8 +11,35 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /* ----------------------------------- */
+//              Debugging
+/* ----------------------------------- */
+
+@interface NSObject (YJRuntimeDebugging)
+
+/// Print out all instance methods into console.
+/// @note The result will not include any method that inherits from it's superclass,
+/// but includes non-official methods provided by YJKit and other developers.
++ (void)debugDumpingInstanceMethodList;
+
+/// Print out all class methods into console.
+/// @note The result will not include any method that inherits from it's superclass,
+/// but includes non-official methods provided by YJKit and other developers.
++ (void)debugDumpingClassMethodList;
+
+@end
+
+
+/* ----------------------------------- */
 //          Runtime Extension
 /* ----------------------------------- */
+
+/// Returns whether an object is a class object.
+/// YES means if the object is a class or metaclass, NO means otherwise.
+/// @note The reason for using yj_object_isClass() instead of object_isClass()
+///       is object_isClass() is only support iOS 8 and above.
+/// @see object_isClass() in <objc/runtime.h>
+OBJC_EXPORT BOOL yj_object_isClass(id obj);
+
 
 @interface NSObject (YJRuntimeExtension)
 

@@ -63,7 +63,7 @@
 		326F34CD1CF5C20F00B2FF75 /* NSTimer+YJBlockBased.m in Sources */ = {isa = PBXBuildFile; fileRef = 326F34BB1CF5C20F00B2FF75 /* NSTimer+YJBlockBased.m */; };
 		326F34D01CF5C2BD00B2FF75 /* NSValue+YJGeometryExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 326F34CF1CF5C2BD00B2FF75 /* NSValue+YJGeometryExtension.m */; };
 		326F34D61CF5F70300B2FF75 /* UITextField+YJCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 326F34D51CF5F70300B2FF75 /* UITextField+YJCategory.m */; };
-		32B8C1641CED731400E2639B /* YJMaskContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 32B8C1621CED731400E2639B /* YJMaskContentViewController.m */; };
+		32B55D011D162BF300A578AD /* YJRuntimeTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 32B55D001D162BF300A578AD /* YJRuntimeTest.m */; };
 		32B8C1651CED731400E2639B /* YJMaskContentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 32B8C1631CED731400E2639B /* YJMaskContentViewController.xib */; };
 		32B8C1911CEE109700E2639B /* YJStringSequence.m in Sources */ = {isa = PBXBuildFile; fileRef = 32B8C1901CEE109700E2639B /* YJStringSequence.m */; };
 		32B8C1931CEE110F00E2639B /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32B8C1921CEE110F00E2639B /* Tests.m */; };
@@ -228,8 +228,7 @@
 		326F34CF1CF5C2BD00B2FF75 /* NSValue+YJGeometryExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+YJGeometryExtension.m"; sourceTree = "<group>"; };
 		326F34D41CF5F70300B2FF75 /* UITextField+YJCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITextField+YJCategory.h"; sourceTree = "<group>"; };
 		326F34D51CF5F70300B2FF75 /* UITextField+YJCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITextField+YJCategory.m"; sourceTree = "<group>"; };
-		32B8C1611CED731400E2639B /* YJMaskContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJMaskContentViewController.h; sourceTree = "<group>"; };
-		32B8C1621CED731400E2639B /* YJMaskContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJMaskContentViewController.m; sourceTree = "<group>"; };
+		32B55D001D162BF300A578AD /* YJRuntimeTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJRuntimeTest.m; sourceTree = "<group>"; };
 		32B8C1631CED731400E2639B /* YJMaskContentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = YJMaskContentViewController.xib; sourceTree = "<group>"; };
 		32B8C1901CEE109700E2639B /* YJStringSequence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJStringSequence.m; sourceTree = "<group>"; };
 		32B8C1921CEE110F00E2639B /* Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
@@ -662,8 +661,6 @@
 				324AB09E1CD1C6EE00A9DCF0 /* YJMaskViewController.h */,
 				324AB09F1CD1C6EE00A9DCF0 /* YJMaskViewController.m */,
 				32058DCA1CDDC4FC006AE929 /* YJMaskViewController.xib */,
-				32B8C1611CED731400E2639B /* YJMaskContentViewController.h */,
-				32B8C1621CED731400E2639B /* YJMaskContentViewController.m */,
 				32B8C1631CED731400E2639B /* YJMaskContentViewController.xib */,
 				3238B26C1CE1FDF50018D1F0 /* YJMaskTableViewController.h */,
 				3238B26D1CE1FDF50018D1F0 /* YJMaskTableViewController.m */,
@@ -700,6 +697,7 @@
 				3204386C1CEEF3E9006806EC /* YJArraySequence.m */,
 				32F0C7B51CEF2E2A00234ECF /* YJCollectionTest.m */,
 				320438711CEF14EC006806EC /* YJGeneralTest.m */,
+				32B55D001D162BF300A578AD /* YJRuntimeTest.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -845,7 +843,6 @@
 				326F34CA1CF5C20F00B2FF75 /* NSObject+YJBlockBasedKVO.m in Sources */,
 				32C1EB5B1D01798400E595EF /* YJDefaultSettingDemoViewController.m in Sources */,
 				3263890D1CF2B3390026BED8 /* RGBColor.m in Sources */,
-				32B8C1641CED731400E2639B /* YJMaskContentViewController.m in Sources */,
 				326F34C51CF5C20F00B2FF75 /* NSString+YJSequence.m in Sources */,
 				326F34BF1CF5C20F00B2FF75 /* NSMutableArray+YJCollection.m in Sources */,
 				3263891C1CF2B3390026BED8 /* YJGroupedStyleTableViewController.m in Sources */,
@@ -902,6 +899,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				32F0C7B61CEF2E2A00234ECF /* YJCollectionTest.m in Sources */,
+				32B55D011D162BF300A578AD /* YJRuntimeTest.m in Sources */,
 				320438721CEF14EC006806EC /* YJGeneralTest.m in Sources */,
 				32B8C1911CEE109700E2639B /* YJStringSequence.m in Sources */,
 				3204386D1CEEF3E9006806EC /* YJArraySequence.m in Sources */,

@@ -15,43 +15,117 @@
 //     NSObject (YJRuntimeExtension)
 /* ----------------------------------- */
 
+BOOL yj_object_isClass(id obj) {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_8_0
+    return object_isClass(obj);
+#else
+    return obj == [obj class];
+#endif
+}
+
 @implementation NSObject (YJRuntimeExtension)
 
-static BOOL _yj_containsSelectorForObject(id obj, SEL sel, bool shouldAssumeObjectIsClass) {
-    BOOL result = NO;
-    unsigned int count = 0;
+typedef void(^YJMethodListEnumerationBlock)(Method method, SEL selector, bool *stop);
+
+static void _yj_enumerateMethodList(id obj, bool lookForInstanceMethods,
+                                    unsigned int *methodCount,
+                                    YJMethodListEnumerationBlock block) {
     Class cls;
+    bool stop = false;
+    unsigned int count = 0;
     
-    if (shouldAssumeObjectIsClass) {
+    if (lookForInstanceMethods) {
         cls = [obj class];
     } else {
-        bool isClass = object_isClass(obj);
-        cls = isClass ? object_getClass(obj) : [obj class];
+        cls = object_getClass(obj);
     }
     
     Method *methods = class_copyMethodList(cls, &count);
+    if (methodCount) *methodCount = count;
+    
     for (unsigned int i = 0; i < count; i++) {
         Method method = methods[i];
         SEL selector = method_getName(method);
-        if (selector == sel) {
-            result = YES;
-            break;
-        }
+        if (block) block(method, selector, &stop);
+        if (stop) break;
     }
     free(methods);
-    return result;
 }
 
-- (BOOL)containsSelector:(SEL)selector {
-    return _yj_containsSelectorForObject(self, selector, false);
+- (BOOL)containsSelector:(SEL)sel {
+    __block BOOL includes = NO;
+    _yj_enumerateMethodList(self, true, NULL, ^(Method method, SEL selector, bool *stop) {
+        if (selector == sel) {
+            includes = YES;
+            *stop = true;
+        }
+    });
+    return includes;
 }
 
-+ (BOOL)containsSelector:(SEL)selector {
-    return _yj_containsSelectorForObject(self, selector, false);
++ (BOOL)containsSelector:(SEL)sel {
+    __block BOOL includes = NO;
+    _yj_enumerateMethodList(self, false, NULL, ^(Method method, SEL selector, bool *stop) {
+        if (selector == sel) {
+            includes = YES;
+            *stop = true;
+        }
+    });
+    return includes;
 }
 
-+ (BOOL)containsInstanceMethodBySelector:(SEL)selector {
-    return _yj_containsSelectorForObject(self, selector, true);
++ (BOOL)containsInstanceMethodBySelector:(SEL)sel {
+    __block BOOL includes = NO;
+    _yj_enumerateMethodList(self, true, NULL, ^(Method method, SEL selector, bool *stop) {
+        if (selector == sel) {
+            includes = YES;
+            *stop = true;
+        }
+    });
+    return includes;
+}
+
+@end
+
+
+/* ----------------------------------- */
+//              Debugging
+/* ----------------------------------- */
+
+@implementation NSObject (YJRuntimeDebugging)
+
+static void _yj_debugDumpingMethodList(id obj, bool dumpInstanceMethods) {
+    const char *clsName = class_getName([obj class]);
+    unsigned int count = 0;
+    printf("\n");
+    printf("-------- Dump %s %s Methods -------\n", clsName, (dumpInstanceMethods ? "Instance" : "Class"));
+    printf("\n");
+    _yj_enumerateMethodList(obj, dumpInstanceMethods, &count, ^(Method method, SEL selector, bool *stop) {
+        const char *selName = sel_getName(selector);
+        printf("%s\n", selName);
+    });
+    printf("\n");
+    printf("-------- Dumping end with %u methods --------\n", count);
+    printf("\n");
+}
+
++ (void)debugDumpingInstanceMethodList {
+    _yj_debugDumpingMethodList(self, true);
+}
+
++ (void)debugDumpingClassMethodList {
+    _yj_debugDumpingMethodList(self, false);
+}
+
+// If receiver is an instance object, it should respond to selector
+// rather than of crashing, then forward it to the class method.
+
+- (void)debugDumpingInstanceMethodList {
+    [self.class debugDumpingInstanceMethodList];
+}
+
+- (void)debugDumpingClassMethodList {
+    [self.class debugDumpingClassMethodList];
 }
 
 @end
@@ -141,12 +215,12 @@ static const void * YJObjectAssociatedTagKey = &YJObjectAssociatedTagKey;
 
 @implementation NSObject (YJSwizzling)
 
-static void _yj_swizzleMethodForClass(id class, SEL selector, SEL providedSelector) {
-    Method method = class_getInstanceMethod(class, selector);
-    Method toMethod = class_getInstanceMethod(class, providedSelector);
-    BOOL added = class_addMethod(class, selector, method_getImplementation(toMethod), method_getTypeEncoding(toMethod));
-    if (added) class_replaceMethod(class, providedSelector, method_getImplementation(method), method_getTypeEncoding(method));
-    else method_exchangeImplementations(method, toMethod);
+static void _yj_swizzleMethodForClass(id class, SEL sel1, SEL sel2) {
+    Method method1 = class_getInstanceMethod(class, sel1);
+    Method method2 = class_getInstanceMethod(class, sel2);
+    BOOL added = class_addMethod(class, sel1, method_getImplementation(method2), method_getTypeEncoding(method2));
+    if (added) class_replaceMethod(class, sel2, method_getImplementation(method1), method_getTypeEncoding(method1));
+    else method_exchangeImplementations(method1, method2);
 }
 
 + (void)swizzleInstanceMethodsBySelector:(SEL)selector withSelector:(SEL)providedSelector {
@@ -164,9 +238,6 @@ static void _yj_swizzleMethodForClass(id class, SEL selector, SEL providedSelect
 /* ----------------------------------- */
 //   NSObject (YJMethodImpModifying)
 /* ----------------------------------- */
-
-// Reference: modify method imp from BlocksKit
-// https://github.com/zwaldowski/BlocksKit/blob/master/BlocksKit/Core/NSObject%2BBKBlockObservation.m
 
 __attribute__((visibility("hidden")))
 @interface _YJIMPModificationKeeper : NSObject
@@ -190,13 +261,15 @@ typedef void(^YJMethodImpInsertionBlock)(id);
 
 @implementation NSObject (YJMethodImpModifying)
 
-static void _yj_insertImpBlocksIntoMethodForObject(id obj, SEL sel, NSString *identifier, YJMethodImpInsertionBlock before, YJMethodImpInsertionBlock after) {
+static void _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
+                                          YJMethodImpInsertionBlock before,
+                                          YJMethodImpInsertionBlock after) {
     
     if (!sel || (!before && !after))
         return;
     
     // get proper class
-    BOOL isClass = object_isClass(obj);
+    BOOL isClass = yj_object_isClass(obj);
     
     Class realCls = isClass ? obj : object_getClass(obj);
     Class officialCls = isClass ? obj : [obj class];
@@ -235,31 +308,34 @@ static void _yj_insertImpBlocksIntoMethodForObject(id obj, SEL sel, NSString *id
 }
 
 + (void)insertImplementationBlocksIntoClassMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
-    _yj_insertImpBlocksIntoMethodForObject(self, selector, identifier, before, after);
+    _yj_insertImpBlocksIntoMethod(self, selector, identifier, before, after);
 }
 
 - (void)insertImplementationBlocksIntoInstanceMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
-    _yj_insertImpBlocksIntoMethodForObject(self, selector, identifier, before, after);
+    _yj_insertImpBlocksIntoMethod(self, selector, identifier, before, after);
 }
 
 @end
+
+// ------------------ Deprecated Implementation ------------------
 
 // In iOS 7, if you want exact IMP for dealloc method from UIResponder class and use runtime API to get the result,
 // the system will returns the dealloc IMP from NSObject class, which may not what you expected. So here is a simple
 // solution to fix it. Call -swizzleInstanceMethodsBySelector:withSelector: to add the dealloc method for UIResponder
 // first, then you can get exact dealloc IMP from UIResponder class.
-@implementation UIResponder (YJSwizzleDeallocForUIResponder)
-
-+ (void)load {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [self swizzleInstanceMethodsBySelector:NSSelectorFromString(@"dealloc")
-                                    withSelector:@selector(yj_handleResponderDealloc)];
-    });
-}
-
-- (void)yj_handleResponderDealloc {
-    [self yj_handleResponderDealloc];
-}
-
-@end
+//
+//@implementation UIResponder (YJSwizzleDeallocForUIResponder)
+//
+//+ (void)load {
+//    static dispatch_once_t onceToken;
+//    dispatch_once(&onceToken, ^{
+//        [self swizzleInstanceMethodsBySelector:NSSelectorFromString(@"dealloc")
+//                                  withSelector:@selector(yj_handleResponderDealloc)];
+//    });
+//}
+//
+//- (void)yj_handleResponderDealloc {
+//    [self yj_handleResponderDealloc];
+//}
+//
+//@end
