@@ -12,6 +12,7 @@
 #import "YJDebugMacros.h"
 #import "_YJLayerBasedMasking.h"
 #import "NSObject+YJExtension.h"
+#import "YJUIMacros.h"
 
 @implementation YJMaskedImageView
 

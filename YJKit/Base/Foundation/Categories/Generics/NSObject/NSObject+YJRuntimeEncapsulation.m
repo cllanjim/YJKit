@@ -11,6 +11,8 @@
 #import "NSObject+YJExtension.h"
 #import "YJUIMacros.h"
 
+#pragma mark - YJRuntimeExtension
+
 /* ----------------------------------- */
 //     NSObject (YJRuntimeExtension)
 /* ----------------------------------- */
@@ -25,23 +27,32 @@ BOOL yj_object_isClass(id obj) {
 
 @implementation NSObject (YJRuntimeExtension)
 
+/* ------------------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------------------ */
+
+Class (^YJProperClassForObject)(id, bool) = ^Class(id obj, bool searchingDispatchTableForClassObject/* not for meta class */) {
+    Class cls;
+    if (yj_object_isClass(obj)) {
+        NSCAssert(!class_isMetaClass(obj), @"Don't use meta class as parameter.");
+        cls = searchingDispatchTableForClassObject ? obj : object_getClass(obj);
+    } else {
+        cls = searchingDispatchTableForClassObject ? [obj class] : object_getClass([obj class]);
+    }
+    return cls;
+};
+
 typedef void(^YJMethodListEnumerationBlock)(Method method, SEL selector, bool *stop);
 
-static void _yj_enumerateMethodList(id obj, bool lookForInstanceMethods,
-                                    unsigned int *methodCount,
+static void _yj_enumerateMethodList(id obj, bool searchingDispatchTableForClassObject,
+                                    unsigned int *totalCount,
                                     YJMethodListEnumerationBlock block) {
-    Class cls;
+    Class cls = YJProperClassForObject(obj, searchingDispatchTableForClassObject);
+    
     bool stop = false;
     unsigned int count = 0;
     
-    if (lookForInstanceMethods) {
-        cls = [obj class];
-    } else {
-        cls = object_getClass(obj);
-    }
-    
     Method *methods = class_copyMethodList(cls, &count);
-    if (methodCount) *methodCount = count;
+    if (totalCount) *totalCount = count;
     
     for (unsigned int i = 0; i < count; i++) {
         Method method = methods[i];
@@ -51,6 +62,9 @@ static void _yj_enumerateMethodList(id obj, bool lookForInstanceMethods,
     }
     free(methods);
 }
+
+/* ------------------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------------------ */
 
 - (BOOL)containsSelector:(SEL)sel {
     __block BOOL includes = NO;
@@ -87,6 +101,8 @@ static void _yj_enumerateMethodList(id obj, bool lookForInstanceMethods,
 
 @end
 
+
+#pragma mark - Debugging
 
 /* ----------------------------------- */
 //              Debugging
@@ -130,6 +146,8 @@ static void _yj_debugDumpingMethodList(id obj, bool dumpInstanceMethods) {
 
 @end
 
+
+#pragma mark - YJAssociatedIdentifier
 
 /* ----------------------------------- */
 //  NSObject (YJAssociatedIdentifier)
@@ -209,6 +227,8 @@ static const void * YJObjectAssociatedTagKey = &YJObjectAssociatedTagKey;
 @end
 
 
+#pragma mark - YJSwizzling
+
 /* ----------------------------------- */
 //        NSObject (YJSwizzling)
 /* ----------------------------------- */
@@ -234,6 +254,8 @@ static void _yj_swizzleMethodForClass(id class, SEL sel1, SEL sel2) {
 
 @end
 
+
+#pragma mark - YJMethodImpModifying
 
 /* ----------------------------------- */
 //   NSObject (YJMethodImpModifying)

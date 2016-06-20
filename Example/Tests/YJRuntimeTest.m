@@ -50,6 +50,24 @@
     [NSObject debugDumpingClassMethodList];
 }
 
+- (void)testContainsSelector {
+    NSMutableArray *mutableArray = @[].mutableCopy;
+    BOOL b1 = [mutableArray respondsToSelector:@selector(containsObject:)]; // YES
+    BOOL b2 = [mutableArray containsSelector:@selector(containsObject:)]; // NO
+    XCTAssertTrue(b1 == YES);
+    XCTAssertTrue(b2 == NO);
+    
+    BOOL b3 = [NSMutableArray respondsToSelector:@selector(arrayWithArray:)]; // YES
+    BOOL b4 = [NSMutableArray containsSelector:@selector(arrayWithArray:)]; // NO
+    XCTAssertTrue(b3 == YES);
+    XCTAssertTrue(b4 == NO);
+    
+    BOOL b5 = [NSMutableArray instancesRespondToSelector:@selector(containsObject:)]; // YES
+    BOOL b6 = [NSMutableArray containsInstanceMethodBySelector:@selector(containsObject:)]; // NO
+    XCTAssertTrue(b5 == YES);
+    XCTAssertTrue(b6 == NO);
+}
+
 - (void)testKVO {
     Foo *foo = [Foo new];
     Bar *bar = [Bar new];
