@@ -28,7 +28,6 @@
     CALayer *_maskLayer;  \
     NSMutableDictionary <NSString *, NSValue *> *_oldMaskValues;  \
     CGRect _transparentFrame;  \
-    BOOL _markUpdate;  \
     BOOL _forceMaskColor;  \
 }  \
   \
@@ -75,25 +74,14 @@
   \
 /* override frame updates (e.g. update auto-layout constraints or view's size changed) */  \
   \
-- (void)setFrame:(CGRect)frame {  \
-    if (!CGSizeEqualToSize(self.bounds.size, frame.size)) {  \
-        _markUpdate = YES;  \
-    }  \
-    [super setFrame:frame];  \
-}  \
-  \
 - (void)layoutSubviews {  \
     [super layoutSubviews];  \
-    if (_markUpdate) {  \
-        _markUpdate = NO;  \
-        [self updateMaskLayerIfNeeded];  \
-    }  \
+    [self updateMaskLayerIfNeeded];  \
 }  \
   \
 /* masking */  \
   \
 - (void)setNeedsUpdateMaskLayer {  \
-    _markUpdate = YES;  \
     [self setNeedsLayout];  \
 }  \
   \
