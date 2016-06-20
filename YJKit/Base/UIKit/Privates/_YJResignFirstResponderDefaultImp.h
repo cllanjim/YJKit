@@ -2,7 +2,7 @@
 //  _YJResignFirstResponderDefaultImp.h
 //  YJKit
 //
-//  Created by Jack Huang on 16/6/17.
+//  Created by huang-kun on 16/6/17.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
 
@@ -15,9 +15,9 @@
 
 #ifndef YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING
 #define YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING(XXX) \
-    [self swizzleInstanceMethodsBySelector:@selector(layoutSubviews) withSelector:@selector(yj_##XXX##LayoutSubviews)]; \
-    [self swizzleInstanceMethodsBySelector:@selector(willMoveToSuperview:) withSelector:@selector(yj_##XXX##WillMoveToSuperview:)]; \
-    [self swizzleInstanceMethodsBySelector:@selector(removeFromSuperview) withSelector:@selector(yj_##XXX##RemoveFromSuperview)];
+    [self swizzleInstanceMethodsBySelector:@selector(layoutSubviews) andSelector:@selector(yj_##XXX##LayoutSubviews)]; \
+    [self swizzleInstanceMethodsBySelector:@selector(willMoveToSuperview:) andSelector:@selector(yj_##XXX##WillMoveToSuperview:)]; \
+    [self swizzleInstanceMethodsBySelector:@selector(removeFromSuperview) andSelector:@selector(yj_##XXX##RemoveFromSuperview)];
 
 #endif
 

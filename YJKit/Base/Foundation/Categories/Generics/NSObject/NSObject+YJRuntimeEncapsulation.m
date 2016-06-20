@@ -223,11 +223,11 @@ static void _yj_swizzleMethodForClass(id class, SEL sel1, SEL sel2) {
     else method_exchangeImplementations(method1, method2);
 }
 
-+ (void)swizzleInstanceMethodsBySelector:(SEL)selector withSelector:(SEL)providedSelector {
++ (void)swizzleInstanceMethodsBySelector:(SEL)selector andSelector:(SEL)providedSelector {
     _yj_swizzleMethodForClass(self, selector, providedSelector);
 }
 
-+ (void)swizzleClassMethodsBySelector:(SEL)selector withSelector:(SEL)providedSelector {
++ (void)swizzleClassMethodsBySelector:(SEL)selector andSelector:(SEL)providedSelector {
     Class class = object_getClass((id)self);
     _yj_swizzleMethodForClass(class, selector, providedSelector);
 }
@@ -321,7 +321,7 @@ static void _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
 
 // In iOS 7, if you want exact IMP for dealloc method from UIResponder class and use runtime API to get the result,
 // the system will returns the dealloc IMP from NSObject class, which may not what you expected. So here is a simple
-// solution to fix it. Call -swizzleInstanceMethodsBySelector:withSelector: to add the dealloc method for UIResponder
+// solution to fix it. Call -swizzleInstanceMethodsBySelector:andSelector: to add the dealloc method for UIResponder
 // first, then you can get exact dealloc IMP from UIResponder class.
 //
 //@implementation UIResponder (YJSwizzleDeallocForUIResponder)
@@ -330,7 +330,7 @@ static void _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
 //    static dispatch_once_t onceToken;
 //    dispatch_once(&onceToken, ^{
 //        [self swizzleInstanceMethodsBySelector:NSSelectorFromString(@"dealloc")
-//                                  withSelector:@selector(yj_handleResponderDealloc)];
+//                                  andSelector:@selector(yj_handleResponderDealloc)];
 //    });
 //}
 //

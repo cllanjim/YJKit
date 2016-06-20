@@ -2,7 +2,7 @@
 //  YJRuntimeTest.m
 //  YJKit
 //
-//  Created by Jack Huang on 16/6/19.
+//  Created by huang-kun on 16/6/19.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
 
@@ -57,13 +57,16 @@
     [foo registerObserverForKeyPath:@keyPath(foo.friend) handleChanges:^(id  _Nonnull object, id  _Nullable oldValue, id  _Nullable newValue) {
         NSLog(@"object: %@, old: %@, new: %@", object, oldValue, newValue);
     }];
-    
+
     [foo registerObserverForKeyPath:@keyPath(foo.friend.name) handleChanges:^(id  _Nonnull object, id  _Nullable oldValue, id  _Nullable newValue) {
         NSLog(@"object: %@, old: %@, new: %@", object, oldValue, newValue);
     }];
     
     foo.friend = bar;
     bar.name = @"bar";
+    
+    [bar setValue:@"Bar" forKey:@keyPath(bar.name)];
+    [foo setValue:@"bar" forKeyPath:@keyPath(foo.friend.name)];
 }
 
 @end

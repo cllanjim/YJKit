@@ -20,7 +20,7 @@
 + (void)load {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [self swizzleInstanceMethodsBySelector:@selector(setImage:) withSelector:@selector(yj_setImage:)];
+        [self swizzleInstanceMethodsBySelector:@selector(setImage:) andSelector:@selector(yj_setImage:)];
     });
 }
 

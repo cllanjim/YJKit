@@ -2,7 +2,7 @@
 //  NSObject+YJExtension.m
 //  YJKit
 //
-//  Created by Jack Huang on 16/6/17.
+//  Created by huang-kun on 16/6/17.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
 

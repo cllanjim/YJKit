@@ -126,12 +126,12 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 /// Exchange the implementations between two given selectors.
 /// @note If the class does not originally implements the method by given selector,
 ///       it will add the method to the class first, then switch the implementations.
-+ (void)swizzleInstanceMethodsBySelector:(SEL)selector withSelector:(SEL)providedSelector;
++ (void)swizzleInstanceMethodsBySelector:(SEL)selector andSelector:(SEL)providedSelector;
 
 /// Exchange the implementations between two given selectors.
 /// @note If the class does not originally implements the method by given selector,
 ///       it will add the method to the class first, then switch the implementations.
-+ (void)swizzleClassMethodsBySelector:(SEL)selector withSelector:(SEL)providedSelector;
++ (void)swizzleClassMethodsBySelector:(SEL)selector andSelector:(SEL)providedSelector;
 
 @end
 
@@ -148,7 +148,7 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 ///             chain and check its super's. If this case is not what you expected, you could:
 ///
 ///   1. Use -[obj containsSelector:] to determine if selector is from super before you call this.
-///   2. Use +[classObj swizzleInstanceMethodsBySelector:withSelector:] to add method to current class first,
+///   2. Use +[classObj swizzleInstanceMethodsBySelector:andSelector:] to add method to current class first,
 ///      then call this. It will prevent you modifying the method implementation from its superclass.
 ///
 /// @note Specify an identifier will prevent same repeated insertion. Highly recommanded.
@@ -163,7 +163,7 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 ///             chain and check its super's. If this case is not what you expected, you could:
 ///
 ///   1. Use +[classObj containsSelector:] to determine if selector is from super before you call this.
-///   2. Use +[classObj swizzleClassMethodsBySelector:withSelector:] to add method to current class first,
+///   2. Use +[classObj swizzleClassMethodsBySelector:andSelector:] to add method to current class first,
 ///      then call this. It will prevent you modifying the method implementation from its superclass.
 ///
 /// @note Specify an identifier will prevent same repeated insertion. Highly recommanded.

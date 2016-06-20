@@ -112,14 +112,14 @@
   \
 - (BOOL)didChangeMaskValues {  \
     if (!_oldMaskValues) _oldMaskValues = @{}.mutableCopy;  \
-        CGSize oldSize = [_oldMaskValues[@"maskSize"] CGSizeValue];  \
-        RGBColor oldColor = [_oldMaskValues[@"maskColor"] RGBColorValue];  \
+    CGSize oldSize = [_oldMaskValues[@"maskSize"] CGSizeValue];  \
+    RGBColor oldColor = [_oldMaskValues[@"maskColor"] RGBColorValue];  \
     /* check if size has changed */  \
-        BOOL sizeChanged = NO;  \
-        if (!CGSizeEqualToSize(oldSize, self.bounds.size)) {  \
-            _oldMaskValues[@"maskSize"] = [NSValue valueWithCGSize:self.bounds.size];  \
-            sizeChanged = YES;  \
-        }  \
+    BOOL sizeChanged = NO;  \
+    if (!CGSizeEqualToSize(oldSize, self.bounds.size)) {  \
+        _oldMaskValues[@"maskSize"] = [NSValue valueWithCGSize:self.bounds.size];  \
+        sizeChanged = YES;  \
+    }  \
     /* check if color has changed */  \
     BOOL colorChanged = NO;  \
     RGBColor newColor = [_maskColor RGBColor];  \
