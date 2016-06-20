@@ -142,7 +142,7 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 
 @interface NSObject (YJMethodImpModifying)
 
-/// @brief Insert blocks of code which will be executed before or after
+/// @brief Insert blocks of code which will be executed before and after
 ///        the default implementation of given selector.
 /// @discussion If the class does not own the method by given selector originally, it will go up the
 ///             chain and check its super's. If this case is not what you expected, you could:
@@ -157,7 +157,7 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
                                                         before:(nullable void(^)(id receiver))before
                                                          after:(nullable void(^)(id receiver))after;
 
-/// @brief Insert blocks of code which will be executed before or after
+/// @brief Insert blocks of code which will be executed before and after
 ///        the default implementation of given selector.
 /// @discussion If the class does not own the method by given selector originally, it will go up the
 ///             chain and check its super's. If this case is not what you expected, you could:

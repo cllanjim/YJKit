@@ -16,7 +16,6 @@
 #import "CAShapeLayer+YJLayerBasedMasking.h"
 #import "UIColor+YJCategory.h"
 #import "RGBColor.h"
-#import "YJUIMacros.h"
 
 /**
  * Must declare a kind of YJMaskView abstract class which conforms protocol <YJLayerBasedMasking>
@@ -74,7 +73,14 @@
     [super removeFromSuperview];  \
 }  \
   \
-/* override layouts (e.g. update auto-layout constraints or view's size changed) */  \
+/* override frame updates (e.g. update auto-layout constraints or view's size changed) */  \
+  \
+- (void)setFrame:(CGRect)frame {  \
+    if (!CGSizeEqualToSize(self.bounds.size, frame.size)) {  \
+        _markUpdate = YES;  \
+    }  \
+    [super setFrame:frame];  \
+}  \
   \
 - (void)layoutSubviews {  \
     [super layoutSubviews];  \
@@ -99,7 +105,7 @@
   \
 - (void)configureMaskLayerWithColor:(UIColor *)color {  \
     if (_maskLayer.superlayer || !color) return;  \
-    CGFloat onePixelInPoint = 1 / kUIScreenScale;  \
+    CGFloat onePixelInPoint = 1 / [UIScreen mainScreen].scale;  \
     CGSize size = (CGSize){ self.bounds.size.width + onePixelInPoint * 2, self.bounds.size.height + onePixelInPoint * 2 };  \
     _maskLayer = [self prepareMaskLayerInSize:size withDefaultMaskColor:color];  \
     if (!_maskLayer) {  \
