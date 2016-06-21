@@ -28,7 +28,6 @@ BOOL yj_object_isClass(id obj) {
 @implementation NSObject (YJRuntimeExtension)
 
 /* ------------------------------------------------------------------------------------ */
-/* ------------------------------------------------------------------------------------ */
 
 Class (^YJProperClassForObject)(id, bool) = ^Class(id obj, bool searchingDispatchTableForClassObject/* not for meta class */) {
     Class cls;
@@ -63,7 +62,6 @@ static void _yj_enumerateMethodList(id obj, bool searchingDispatchTableForClassO
     free(methods);
 }
 
-/* ------------------------------------------------------------------------------------ */
 /* ------------------------------------------------------------------------------------ */
 
 - (BOOL)containsSelector:(SEL)sel {

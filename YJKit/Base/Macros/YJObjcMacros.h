@@ -63,19 +63,38 @@
 
 /**
  @code
- @keyPath(foo.name) // @"name"
+ // It's not safe to use string literal for key path as method parameter. The reasons are:
+ // 1. No compiler warning when key path is invalid.
+ // 2. No compiler warning when property name get changed in the future.
+ 
+ [foo setValue:@"Jack" forKeyPath:@"friend.name"];
+ 
+ 
+ // The string literal key path is not recommended by Apple any more in WWDC 2016 
+ // because Apple announced swift 3 would support #keyPath feature officially.
+ // For objective c code, use @keyPath instead:
+ 
+ [foo setValue:@"Jack" forKeyPath:@keyPath(foo.friend.name)];
+ 
+ 
+ // Thanks to Justin Spahr-Summers for great extobjc with EXTKeyPathCoding and David Hart for introducing #keyPath in swift 3.
+ // https://github.com/jspahrsummers/libextobjc/blob/master/extobjc/EXTKeyPathCoding.h
+ // https://github.com/apple/swift-evolution/blob/master/proposals/0062-objc-keypaths.md
  @endcode
  */
 
 #ifndef keyPath
 
-#define _UTF8StringByTrimmingFirstPathComponent(Path) strchr(# Path, '.') + 1
-#define _return_last(A, B) ((void)A, B)
+// The @keyPath implementation is taking advantage of the "Comma operator".
+// https://en.wikipedia.org/wiki/Comma_operator
 
-#define _compile_check_key_path_validation(Path) _return_last(Path, "")
-#define _return_key_path_c_string(Path) _UTF8StringByTrimmingFirstPathComponent(Path)
+#define _CStringKeyPathByTrimmingFirstPathComponent(Path) strchr(# Path, '.') + 1
+#define _comma_operate(A, B) ((void)A, B) /* returns B */
 
-#define keyPath(Path) (_return_last(_compile_check_key_path_validation(Path), _return_key_path_c_string(Path)))
+#define _compile_check_key_path_validation(Path) _comma_operate(Path, "")
+#define _get_valid_key_path_as_c_string(Path) _CStringKeyPathByTrimmingFirstPathComponent(Path)
+
+#define keyPath(Path) (_comma_operate(_compile_check_key_path_validation(Path), _get_valid_key_path_as_c_string(Path)))
 
 #endif
 
