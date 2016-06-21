@@ -261,8 +261,14 @@ static void _yj_swizzleMethodForClass(id class, SEL sel1, SEL sel2) {
 //   NSObject (YJMethodImpModifying)
 /* ----------------------------------- */
 
+// Reference: Make thread safe mutable collection
+// https://github.com/ibireme/YYKit/blob/master/YYKit/Utility/YYThreadSafeDictionary.m
+
 __attribute__((visibility("hidden")))
-@interface _YJIMPModificationKeeper : NSObject
+@interface _YJIMPModificationKeeper : NSObject {
+    @package
+    dispatch_semaphore_t _lock;
+}
 + (instancetype)sharedKeeper;
 @property (nonatomic, strong) NSMutableDictionary <NSString */*className*/, NSMutableSet */*identifiers*/> *records;
 @end
@@ -274,6 +280,7 @@ __attribute__((visibility("hidden")))
     dispatch_once(&onceToken, ^{
         keeper = [_YJIMPModificationKeeper new];
         keeper.records = [NSMutableDictionary new];
+        keeper->_lock = dispatch_semaphore_create(1);
     });
     return keeper;
 }
@@ -308,16 +315,19 @@ static void _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
     // keep insertion in records if possible
     if (identifier.length) {
         _YJIMPModificationKeeper *keeper = [_YJIMPModificationKeeper sharedKeeper];
+        dispatch_semaphore_wait(keeper->_lock, DISPATCH_TIME_FOREVER);
         NSMutableSet *identifiers = keeper.records[className];
         if (!identifiers) {
             identifiers = [NSMutableSet new];
             keeper.records[className] = identifiers;
         }
         if ([identifiers containsObject:identifier]) {
+            dispatch_semaphore_signal(keeper->_lock);
             return;
         } else {
             [identifiers addObject:[identifier copy]];
         }
+        dispatch_semaphore_signal(keeper->_lock);
     }
     
     // insert additional blocks of code
