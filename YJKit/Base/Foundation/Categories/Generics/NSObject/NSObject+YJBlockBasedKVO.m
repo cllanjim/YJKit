@@ -208,12 +208,13 @@ static void _yj_modifyDealloc(NSObject *self) {
         ((void (*)(struct objc_super *, SEL)) objc_msgSendSuper)(&superInfo, deallocSel);
     });
     __unused BOOL result = class_addMethod(self.class, deallocSel, deallocIMP, "v@:");
+    
     // Removing all observers before executing original dealloc implementation.
-    [self insertImplementationBlocksIntoInstanceMethodBySelector:deallocSel
-                                                      identifier:@"YJ_REMOVE_KVO"
-                                                          before:^(id  _Nonnull receiver) {
-                                                              [receiver stopObservingAllKeyPaths];
-                                                          } after:nil];
+    [self insertBlocksIntoMethodBySelector:deallocSel
+                                identifier:@"YJ_REMOVE_KVO"
+                                    before:^(id  _Nonnull receiver) {
+                                        [receiver stopObservingAllKeyPaths];
+                                    } after:nil];
 }
 
 - (void)observeKeyPath:(NSString *)keyPath forChanges:(void(^)(id object, id _Nullable oldValue, id _Nullable newValue))changeHandler {

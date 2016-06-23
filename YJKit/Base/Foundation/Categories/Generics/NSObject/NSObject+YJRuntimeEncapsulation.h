@@ -143,7 +143,7 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 @interface NSObject (YJMethodImpModifying)
 
 /// @brief Insert blocks of code which will be executed before and after the default implementation of
-///        an instance method by given selector.
+///        receiver's instance method by given selector.
 ///
 /// @discussion If the class does not own the method by given selector originally, it will go up the
 ///             chain and check its super's. If this case is not what you expected, you could:
@@ -160,14 +160,14 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 ///
 /// @return Whether insertion success or not.
 ///
-- (BOOL)insertImplementationBlocksIntoInstanceMethodBySelector:(SEL)selector
-                                                    identifier:(nullable NSString *)identifier
-                                                        before:(nullable void(^)(id receiver))before
-                                                         after:(nullable void(^)(id receiver))after;
+- (BOOL)insertBlocksIntoMethodBySelector:(SEL)selector
+                              identifier:(nullable NSString *)identifier
+                                  before:(nullable void(^)(id receiver))before
+                                   after:(nullable void(^)(id receiver))after;
 
 
 /// @brief Insert blocks of code which will be executed before and after the default implementation of
-///        a class method by given selector.
+///        receiver's class method by given selector.
 ///
 /// @discussion If the class does not own the method by given selector originally, it will go up the
 ///             chain and check its super's. If this case is not what you expected, you could:
@@ -184,10 +184,10 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 ///
 /// @return Whether insertion success or not.
 ///
-+ (BOOL)insertImplementationBlocksIntoClassMethodBySelector:(SEL)selector
-                                                identifier:(nullable NSString *)identifier
-                                                    before:(nullable void(^)(id receiver))before
-                                                     after:(nullable void(^)(id receiver))after;
++ (BOOL)insertBlocksIntoMethodBySelector:(SEL)selector
+                              identifier:(nullable NSString *)identifier
+                                  before:(nullable void(^)(id receiver))before
+                                   after:(nullable void(^)(id receiver))after;
 
 @end
 

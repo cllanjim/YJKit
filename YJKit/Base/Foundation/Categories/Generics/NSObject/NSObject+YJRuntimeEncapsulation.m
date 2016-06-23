@@ -322,21 +322,20 @@ static BOOL _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
     
     // get proper class
     BOOL isClass = yj_object_isClass(obj);
+    Class cls = isClass ? obj : [obj class]; // NOT object_getClass(obj);
     
-    Class realCls = isClass ? obj : object_getClass(obj);
-    Class officialCls = isClass ? obj : [obj class];
-    
-    // get default imp from official class
-    Method method = isClass ? class_getClassMethod(officialCls, sel) : class_getInstanceMethod(officialCls, sel);
+    // get default imp from class
+    Method method = isClass ? class_getClassMethod(cls, sel) : class_getInstanceMethod(cls, sel);
     void (*defaultImp)(__unsafe_unretained id, SEL) = (void(*)(__unsafe_unretained id, SEL))method_getImplementation(method);
     if (!defaultImp) return NO;
     
-    // get class name from real class
-    const char *clsName = class_getName(realCls);
+    // get class name
+    const char *clsName = class_getName(cls);
     NSString *className = [NSString stringWithUTF8String:clsName];
     
     // keep insertion in records
-    if (identifier.length && ![[_YJIMPInsertionKeeper keeper] addIdentifier:identifier forClassName:className]) {
+    NSString *internalID = [NSString stringWithFormat:@"(%@)%@", (isClass ? @"+" : @"-"), identifier];
+    if (identifier.length && ![[_YJIMPInsertionKeeper keeper] addIdentifier:internalID forClassName:className]) {
         return NO;
     }
     
@@ -350,11 +349,11 @@ static BOOL _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
     return YES;
 }
 
-- (BOOL)insertImplementationBlocksIntoInstanceMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
+- (BOOL)insertBlocksIntoMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
     return _yj_insertImpBlocksIntoMethod(self, selector, identifier, before, after);
 }
 
-+ (BOOL)insertImplementationBlocksIntoClassMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
++ (BOOL)insertBlocksIntoMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
     return _yj_insertImpBlocksIntoMethod(self, selector, identifier, before, after);
 }
 

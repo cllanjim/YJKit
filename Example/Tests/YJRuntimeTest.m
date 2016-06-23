@@ -14,20 +14,24 @@
 
 @interface Bar : NSObject
 @property (nonatomic, copy) NSString *name;
-- (void)sayHi;
+- (void)sayYoo;
++ (void)sayYoo;
 @end
 
 @implementation Bar
-- (void)sayHi { NSLog(@"hi"); }
+- (void)sayYoo { NSLog(@"instance yoo"); }
++ (void)sayYoo { NSLog(@"class yoo"); }
 @end
 
 @interface Foo : NSObject
 @property (nonatomic, strong) Bar *friend;
 - (void)sayHello;
++ (void)sayHello;
 @end
 
 @implementation Foo
-- (void)sayHello { NSLog(@"hello"); }
+- (void)sayHello { NSLog(@"instance hello"); }
++ (void)sayHello { NSLog(@"class hello"); }
 @end
 
 @interface YJRuntimeTest : XCTestCase
@@ -95,36 +99,68 @@
     Foo *foo = [Foo new];
     Bar *bar = [Bar new];
     
-    [foo insertImplementationBlocksIntoInstanceMethodBySelector:@selector(sayHi)
-                                                     identifier:nil
-                                                         before:^(id  _Nonnull receiver) {
-                                                             NSLog(@"Before hello");
-                                                         } after:^(id  _Nonnull receiver) {
-                                                             NSLog(@"After hello");
-                                                         }];
-    [foo insertImplementationBlocksIntoInstanceMethodBySelector:@selector(sayHello)
-                                                     identifier:nil
-                                                         before:^(id  _Nonnull receiver) {
-                                                             NSLog(@"Before hello again");
-                                                         } after:^(id  _Nonnull receiver) {
-                                                             NSLog(@"After hello again");
-                                                         }];
-    [bar insertImplementationBlocksIntoInstanceMethodBySelector:@selector(sayHi)
-                                                     identifier:@"Say Hi"
-                                                         before:^(id  _Nonnull receiver) {
-                                                             NSLog(@"Before hi");
-                                                         } after:^(id  _Nonnull receiver) {
-                                                             NSLog(@"After hi");
-                                                         }];
-    [bar insertImplementationBlocksIntoInstanceMethodBySelector:@selector(sayHi)
-                                                     identifier:@"Say Hi"
-                                                         before:^(id  _Nonnull receiver) {
-                                                             NSLog(@"Before hi again");
-                                                         } after:^(id  _Nonnull receiver) {
-                                                             NSLog(@"After hi again");
-                                                         }];
+    [foo insertBlocksIntoMethodBySelector:@selector(sayHello)
+                                 identifier:nil
+                                     before:^(id  _Nonnull receiver) {
+                                         NSLog(@"%@ -Before instance hello", receiver);
+                                     } after:^(id  _Nonnull receiver) {
+                                         NSLog(@"%@ -After instance hello", receiver);
+                                     }];
+    [foo insertBlocksIntoMethodBySelector:@selector(sayHello)
+                                 identifier:nil
+                                     before:^(id  _Nonnull receiver) {
+                                         NSLog(@"%@ -Before instance hello again", receiver);
+                                     } after:^(id  _Nonnull receiver) {
+                                         NSLog(@"%@ -After instance hello again", receiver);
+                                     }];
+    [bar insertBlocksIntoMethodBySelector:@selector(sayYoo)
+                                 identifier:@"Say Yoo"
+                                     before:^(id  _Nonnull receiver) {
+                                         NSLog(@"%@ -Before instance yoo", receiver);
+                                     } after:^(id  _Nonnull receiver) {
+                                         NSLog(@"%@ -After instance yoo", receiver);
+                                     }];
+    [bar insertBlocksIntoMethodBySelector:@selector(sayYoo)
+                                 identifier:@"Say Yoo"
+                                     before:^(id  _Nonnull receiver) {
+                                         NSLog(@"%@ -Before instance yoo again", receiver);
+                                     } after:^(id  _Nonnull receiver) {
+                                         NSLog(@"%@ -After instance yoo again", receiver);
+                                     }];
     [foo sayHello];
-    [bar sayHi];
+    [bar sayYoo];
+    
+    
+    [Foo insertBlocksIntoMethodBySelector:@selector(sayHello)
+                               identifier:nil
+                                   before:^(id  _Nonnull receiver) {
+                                       NSLog(@"%@ -Before class hello", receiver);
+                                   } after:^(id  _Nonnull receiver) {
+                                       NSLog(@"%@ -After class hello", receiver);
+                                   }];
+    [Foo insertBlocksIntoMethodBySelector:@selector(sayHello)
+                               identifier:nil
+                                   before:^(id  _Nonnull receiver) {
+                                       NSLog(@"%@ -Before class hello again", receiver);
+                                   } after:^(id  _Nonnull receiver) {
+                                       NSLog(@"%@ -After class hello again", receiver);
+                                   }];
+    [Bar insertBlocksIntoMethodBySelector:@selector(sayYoo)
+                               identifier:@"Say Yoo"
+                                   before:^(id  _Nonnull receiver) {
+                                       NSLog(@"%@ -Before class yoo", receiver);
+                                   } after:^(id  _Nonnull receiver) {
+                                       NSLog(@"%@ -After class yoo", receiver);
+                                   }];
+    [Bar insertBlocksIntoMethodBySelector:@selector(sayYoo)
+                               identifier:@"Say Yoo"
+                                   before:^(id  _Nonnull receiver) {
+                                       NSLog(@"%@ -Before class yoo again", receiver);
+                                   } after:^(id  _Nonnull receiver) {
+                                       NSLog(@"%@ -After class yoo again", receiver);
+                                   }];
+    [Foo sayHello];
+    [Bar sayYoo];
 }
 
 @end
