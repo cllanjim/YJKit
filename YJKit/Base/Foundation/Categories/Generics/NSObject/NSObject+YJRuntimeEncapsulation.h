@@ -142,32 +142,49 @@ FOUNDATION_EXTERN const NSInteger YJAssociatedTagNone;
 
 @interface NSObject (YJMethodImpModifying)
 
-/// @brief Insert blocks of code which will be executed before and after
-///        the default implementation of given selector.
+/// @brief Insert blocks of code which will be executed before and after the default implementation of
+///        an instance method by given selector.
+///
 /// @discussion If the class does not own the method by given selector originally, it will go up the
 ///             chain and check its super's. If this case is not what you expected, you could:
 ///
-///   1. Use -[obj containsSelector:] to determine if selector is from super before you call this.
-///   2. Use +[classObj swizzleInstanceMethodsBySelector:andSelector:] to add method to current class first,
-///      then call this. It will prevent you modifying the method implementation from its superclass.
+///    . Use -[obj containsSelector:] to determine if selector is from super before you call this.
+///    . Use +[classObj swizzleInstanceMethodsBySelector:andSelector:] to add method to current class.
+///      It will prevent you modifying the method implementation from receiver's superclass.
 ///
-/// @note Specify an identifier will prevent same repeated insertion. Highly recommanded.
-- (void)insertImplementationBlocksIntoInstanceMethodBySelector:(SEL)selector
+/// @param selector   The selector for receiver (which responds to) for locating target method. If the
+///                   selector is not responded by receiver, it will not crash but returns NO.
+/// @param identifier Specify an identifier will prevent insertion with same identifier in same class.
+/// @param before     The block of code which will be executed before the method implementation.
+/// @param after      The block of code which will be executed after the method implementation.
+///
+/// @return Whether insertion success or not.
+///
+- (BOOL)insertImplementationBlocksIntoInstanceMethodBySelector:(SEL)selector
                                                     identifier:(nullable NSString *)identifier
                                                         before:(nullable void(^)(id receiver))before
                                                          after:(nullable void(^)(id receiver))after;
 
-/// @brief Insert blocks of code which will be executed before and after
-///        the default implementation of given selector.
+
+/// @brief Insert blocks of code which will be executed before and after the default implementation of
+///        a class method by given selector.
+///
 /// @discussion If the class does not own the method by given selector originally, it will go up the
 ///             chain and check its super's. If this case is not what you expected, you could:
 ///
-///   1. Use +[classObj containsSelector:] to determine if selector is from super before you call this.
-///   2. Use +[classObj swizzleClassMethodsBySelector:andSelector:] to add method to current class first,
-///      then call this. It will prevent you modifying the method implementation from its superclass.
+///    . Use +[classObj containsSelector:] to determine if selector is from super before you call this.
+///    . Use +[classObj swizzleClassMethodsBySelector:andSelector:] to add method to current class.
+///      It will prevent you modifying the method implementation from receiver's superclass.
 ///
-/// @note Specify an identifier will prevent same repeated insertion. Highly recommanded.
-+ (void)insertImplementationBlocksIntoClassMethodBySelector:(SEL)selector
+/// @param selector   The selector for receiver (which responds to) for locating target method. If the
+///                   selector is not responded by receiver, it will not crash but returns NO.
+/// @param identifier Specify an identifier will prevent insertion with same identifier in same class.
+/// @param before     The block of code which will be executed before the method implementation.
+/// @param after      The block of code which will be executed after the method implementation.
+///
+/// @return Whether insertion success or not.
+///
++ (BOOL)insertImplementationBlocksIntoClassMethodBySelector:(SEL)selector
                                                 identifier:(nullable NSString *)identifier
                                                     before:(nullable void(^)(id receiver))before
                                                      after:(nullable void(^)(id receiver))after;

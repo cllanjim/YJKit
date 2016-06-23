@@ -256,44 +256,69 @@ static void _yj_swizzleMethodForClass(id class, SEL sel1, SEL sel2) {
 #pragma mark - YJMethodImpModifying
 
 /* ----------------------------------- */
-//   NSObject (YJMethodImpModifying)
+//        _YJIMPInsertionKeeper
 /* ----------------------------------- */
-
-// Reference: Make thread safe mutable collection
-// https://github.com/ibireme/YYKit/blob/master/YYKit/Utility/YYThreadSafeDictionary.m
-
-__attribute__((visibility("hidden")))
-@interface _YJIMPModificationKeeper : NSObject {
-    @package
-    dispatch_semaphore_t _lock;
-}
-+ (instancetype)sharedKeeper;
-@property (nonatomic, strong) NSMutableDictionary <NSString */*className*/, NSMutableSet */*identifiers*/> *records;
-@end
-
-@implementation _YJIMPModificationKeeper
-+ (instancetype)sharedKeeper {
-    static _YJIMPModificationKeeper *keeper;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        keeper = [_YJIMPModificationKeeper new];
-        keeper.records = [NSMutableDictionary new];
-        keeper->_lock = dispatch_semaphore_create(1);
-    });
-    return keeper;
-}
-@end
 
 typedef void(^YJMethodImpInsertionBlock)(id);
 
+__attribute__((visibility("hidden")))
+@interface _YJIMPInsertionKeeper : NSObject
+
++ (instancetype)keeper;
+
+// Returns YES means add identifier successfully, NO means identifier has been added already.
+// Must passing a valid non-null string as identifier.
+- (BOOL)addIdentifier:(NSString *)identifier forClassName:(NSString *)className;
+
+@end
+
+@implementation _YJIMPInsertionKeeper {
+    NSMutableDictionary <NSString */*className*/, NSMutableSet */*identifiers*/> *_records;
+    dispatch_semaphore_t _semaphore;
+}
+
++ (instancetype)keeper {
+    static _YJIMPInsertionKeeper *keeper;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        keeper = [_YJIMPInsertionKeeper new];
+        keeper->_records = [NSMutableDictionary new];
+        keeper->_semaphore = dispatch_semaphore_create(1);
+    });
+    return keeper;
+}
+
+- (BOOL)addIdentifier:(NSString *)identifier forClassName:(NSString *)className {
+    dispatch_semaphore_wait(_semaphore, DISPATCH_TIME_FOREVER);
+    
+    NSMutableSet *identifiers = _records[className];
+    if (!identifiers) {
+        identifiers = [NSMutableSet new];
+        _records[className] = identifiers;
+    }
+    if ([identifiers containsObject:identifier]) {
+        dispatch_semaphore_signal(_semaphore);
+        return NO;
+    }
+    [identifiers addObject:[identifier copy]];
+    dispatch_semaphore_signal(_semaphore);
+    return YES;
+}
+
+@end
+
+
+/* ----------------------------------- */
+//   NSObject (YJMethodImpModifying)
+/* ----------------------------------- */
+
 @implementation NSObject (YJMethodImpModifying)
 
-static void _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
+static BOOL _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
                                           YJMethodImpInsertionBlock before,
                                           YJMethodImpInsertionBlock after) {
-    
     if (!sel || (!before && !after))
-        return;
+        return NO;
     
     // get proper class
     BOOL isClass = yj_object_isClass(obj);
@@ -304,28 +329,15 @@ static void _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
     // get default imp from official class
     Method method = isClass ? class_getClassMethod(officialCls, sel) : class_getInstanceMethod(officialCls, sel);
     void (*defaultImp)(__unsafe_unretained id, SEL) = (void(*)(__unsafe_unretained id, SEL))method_getImplementation(method);
-    if (!defaultImp) return;
+    if (!defaultImp) return NO;
     
     // get class name from real class
     const char *clsName = class_getName(realCls);
     NSString *className = [NSString stringWithUTF8String:clsName];
     
-    // keep insertion in records if possible
-    if (identifier.length) {
-        _YJIMPModificationKeeper *keeper = [_YJIMPModificationKeeper sharedKeeper];
-        dispatch_semaphore_wait(keeper->_lock, DISPATCH_TIME_FOREVER);
-        NSMutableSet *identifiers = keeper.records[className];
-        if (!identifiers) {
-            identifiers = [NSMutableSet new];
-            keeper.records[className] = identifiers;
-        }
-        if ([identifiers containsObject:identifier]) {
-            dispatch_semaphore_signal(keeper->_lock);
-            return;
-        } else {
-            [identifiers addObject:[identifier copy]];
-        }
-        dispatch_semaphore_signal(keeper->_lock);
+    // keep insertion in records
+    if (identifier.length && ![[_YJIMPInsertionKeeper keeper] addIdentifier:identifier forClassName:className]) {
+        return NO;
     }
     
     // insert additional blocks of code
@@ -335,14 +347,15 @@ static void _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
         if (after) after(_obj);
     });
     method_setImplementation(method, newImp);
+    return YES;
 }
 
-+ (void)insertImplementationBlocksIntoClassMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
-    _yj_insertImpBlocksIntoMethod(self, selector, identifier, before, after);
+- (BOOL)insertImplementationBlocksIntoInstanceMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
+    return _yj_insertImpBlocksIntoMethod(self, selector, identifier, before, after);
 }
 
-- (void)insertImplementationBlocksIntoInstanceMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
-    _yj_insertImpBlocksIntoMethod(self, selector, identifier, before, after);
++ (BOOL)insertImplementationBlocksIntoClassMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
+    return _yj_insertImpBlocksIntoMethod(self, selector, identifier, before, after);
 }
 
 @end

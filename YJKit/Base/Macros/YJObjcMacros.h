@@ -88,8 +88,8 @@
 // The @keyPath implementation is taking advantage of the "Comma operator".
 // https://en.wikipedia.org/wiki/Comma_operator
 
-#define _CStringKeyPathByTrimmingFirstPathComponent(Path) strchr(# Path, '.') + 1
 #define _comma_operate(A, B) ((void)A, B) /* returns B */
+#define _CStringKeyPathByTrimmingFirstPathComponent(Path) strchr(# Path, '.') + 1
 
 #define _compile_check_key_path_validation(Path) _comma_operate(Path, "")
 #define _get_valid_key_path_as_c_string(Path) _CStringKeyPathByTrimmingFirstPathComponent(Path)

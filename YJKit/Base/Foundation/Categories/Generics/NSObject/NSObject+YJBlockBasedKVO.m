@@ -26,9 +26,15 @@ typedef void(^YJKVOSetupHandler)(id object, id newValue);
 
 __attribute__((visibility("hidden")))
 @interface _YJKeyValueObserver : NSObject
+
+// block property for handling value changes with option (NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew)
 @property (nonatomic, copy) YJKVOChangeHandler changeHandler;
+
+// block property for handling value setup with option (NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew)
 @property (nonatomic, copy) YJKVOSetupHandler setupHandler;
+
 @end
+
 
 @implementation _YJKeyValueObserver
 
@@ -63,13 +69,26 @@ __attribute__((visibility("hidden")))
 //   _YJKeyValueObserverManager
 /* ------------------------------ */
 
+// Reference: Make thread safe mutable collection
+// https://github.com/ibireme/YYKit/blob/master/YYKit/Utility/YYThreadSafeDictionary.m
+
 __attribute__((visibility("hidden")))
 @interface _YJKeyValueObserverManager : NSObject
+
+// initialize a manager instance by knowing it's caller.
 - (instancetype)initWithOwner:(id)owner;
+
+// add observer to the internal collection.
 - (void)registerObserver:(_YJKeyValueObserver *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options;
+
+// remove observers from internal collection for specific key path.
 - (void)unregisterObserversForKeyPath:(NSString *)keyPath;
+
+// remove all observers from internal collection.
 - (void)unregisterAllObservers;
+
 @end
+
 
 @implementation _YJKeyValueObserverManager {
     __unsafe_unretained id _owner;
@@ -145,8 +164,14 @@ __attribute__((visibility("hidden")))
 //      YJBlockBasedKVO
 /* ------------------------- */
 
+// Reference: Modify method IMP from BlocksKit
+// https://github.com/zwaldowski/BlocksKit/blob/master/BlocksKit/Core/NSObject%2BBKBlockObservation.m
+
 @interface NSObject ()
+
+// Associated with a manager for managing observers
 @property (nonatomic, strong) _YJKeyValueObserverManager *kvoManager;
+
 @end
 
 @implementation NSObject (YJBlockBasedKVO)
@@ -173,9 +198,6 @@ static void _yj_registerKVO(NSObject *self, NSString *keyPath, NSKeyValueObservi
     }
     [kvoManager registerObserver:observer forKeyPath:keyPath options:options];
 }
-
-// Reference: Modify method IMP from BlocksKit
-// https://github.com/zwaldowski/BlocksKit/blob/master/BlocksKit/Core/NSObject%2BBKBlockObservation.m
 
 static void _yj_modifyDealloc(NSObject *self) {
     // Add dealloc method to the current class if it doesn't implement one.

@@ -14,16 +14,20 @@
 
 @interface Bar : NSObject
 @property (nonatomic, copy) NSString *name;
+- (void)sayHi;
 @end
 
 @implementation Bar
+- (void)sayHi { NSLog(@"hi"); }
 @end
 
 @interface Foo : NSObject
 @property (nonatomic, strong) Bar *friend;
+- (void)sayHello;
 @end
 
 @implementation Foo
+- (void)sayHello { NSLog(@"hello"); }
 @end
 
 @interface YJRuntimeTest : XCTestCase
@@ -85,6 +89,42 @@
     
     [bar setValue:@"Bar" forKey:@keyPath(bar.name)];
     [foo setValue:@"bar" forKeyPath:@keyPath(foo.friend.name)];
+}
+
+- (void)testMethodIMPInsertion {
+    Foo *foo = [Foo new];
+    Bar *bar = [Bar new];
+    
+    [foo insertImplementationBlocksIntoInstanceMethodBySelector:@selector(sayHi)
+                                                     identifier:nil
+                                                         before:^(id  _Nonnull receiver) {
+                                                             NSLog(@"Before hello");
+                                                         } after:^(id  _Nonnull receiver) {
+                                                             NSLog(@"After hello");
+                                                         }];
+    [foo insertImplementationBlocksIntoInstanceMethodBySelector:@selector(sayHello)
+                                                     identifier:nil
+                                                         before:^(id  _Nonnull receiver) {
+                                                             NSLog(@"Before hello again");
+                                                         } after:^(id  _Nonnull receiver) {
+                                                             NSLog(@"After hello again");
+                                                         }];
+    [bar insertImplementationBlocksIntoInstanceMethodBySelector:@selector(sayHi)
+                                                     identifier:@"Say Hi"
+                                                         before:^(id  _Nonnull receiver) {
+                                                             NSLog(@"Before hi");
+                                                         } after:^(id  _Nonnull receiver) {
+                                                             NSLog(@"After hi");
+                                                         }];
+    [bar insertImplementationBlocksIntoInstanceMethodBySelector:@selector(sayHi)
+                                                     identifier:@"Say Hi"
+                                                         before:^(id  _Nonnull receiver) {
+                                                             NSLog(@"Before hi again");
+                                                         } after:^(id  _Nonnull receiver) {
+                                                             NSLog(@"After hi again");
+                                                         }];
+    [foo sayHello];
+    [bar sayHi];
 }
 
 @end
