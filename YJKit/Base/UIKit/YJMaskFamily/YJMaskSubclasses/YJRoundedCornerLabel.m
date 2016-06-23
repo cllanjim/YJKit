@@ -60,7 +60,7 @@ YJ_ROUNDED_CORNER_VIEW_DEFAULT_IMPLEMENTATION_FOR_UIVIEW_SUBCLASS
 
 - (void)observeTextColor {
     @weakify(self)
-    [self registerObserverForKeyPath:@keyPath(self.textColor) handleSetup:^(id  _Nonnull object, id  _Nullable newValue) {
+    [self observeKeyPath:@keyPath(self.textColor) forInitialSetup:^(id  _Nonnull object, id  _Nullable newValue) {
         @strongify(self)
         if (newValue) {
             if (![self.borderColor isEqualToColor:newValue]) {

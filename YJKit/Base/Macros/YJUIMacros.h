@@ -89,14 +89,14 @@
 
 #ifndef UIWindowSnapshotBegin
 #define UIWindowSnapshotBegin() \
-UIWindow *window = [UIApplication sharedApplication].keyWindow; \
-UIView *yj_snapview_ = [window snapshotViewAfterScreenUpdates:NO]; \
-[window addSubview:yj_snapview_];
+    UIWindow *window = [UIApplication sharedApplication].keyWindow; \
+    UIView *yj_snapview_ = [window snapshotViewAfterScreenUpdates:NO]; \
+    [window addSubview:yj_snapview_];
 #endif
 
 #ifndef UIWindowSnapshotEnd
 #define UIWindowSnapshotEnd() \
-[yj_snapview_ removeFromSuperview];
+    [yj_snapview_ removeFromSuperview];
 #endif
 
 /* ------------------------------------------------------------------------------------------------------------ */

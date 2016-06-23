@@ -77,7 +77,7 @@
     if (self.delegate) {  \
         [self yj_insertImpFor##XXX##Delegate:self.delegate];  \
     } else {  \
-        [self registerObserverForKeyPath:@"delegate" handleSetup:^(id  _Nonnull object, id  _Nullable newValue) {  \
+        [self observeKeyPath:@"delegate" forInitialSetup:^(id  _Nonnull object, id  _Nullable newValue) {  \
             if (newValue) {  \
                 [object yj_insertImpFor##XXX##Delegate:newValue];  \
             }  \

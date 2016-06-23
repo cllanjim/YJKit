@@ -72,11 +72,11 @@
     Foo *foo = [Foo new];
     Bar *bar = [Bar new];
     
-    [foo registerObserverForKeyPath:@keyPath(foo.friend) handleChanges:^(id  _Nonnull object, id  _Nullable oldValue, id  _Nullable newValue) {
-        NSLog(@"object: %@, old: %@, new: %@", object, oldValue, newValue);
+    [foo observeKeyPath:@keyPath(foo.friend) forChanges:^(id  _Nonnull object, id  _Nullable oldValue, id  _Nullable newValue) {
+        NSLog(@"foo <%@> meets its new friend <%@>", object, newValue);
     }];
 
-    [foo registerObserverForKeyPath:@keyPath(foo.friend.name) handleChanges:^(id  _Nonnull object, id  _Nullable oldValue, id  _Nullable newValue) {
+    [foo observeKeyPath:@keyPath(foo.friend.name) forChanges:^(id  _Nonnull object, id  _Nullable oldValue, id  _Nullable newValue) {
         NSLog(@"object: %@, old: %@, new: %@", object, oldValue, newValue);
     }];
     

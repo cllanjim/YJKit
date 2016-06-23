@@ -9,9 +9,9 @@
 Pod::Spec.new do |s|
 
   s.name             = "YJKit"
-  s.version          = "0.1.71"
+  s.version          = "0.2.0"
   s.license          = 'MIT'
-  s.summary          = "YJKit is a simple wrapper for iOS library."
+  s.summary          = "A useful extension for iOS library."
   s.homepage         = "https://github.com/huang-kun/YJKit"
   s.author           = { "huang-kun" => "jack-huang-developer@foxmail.com" }
   s.source           = { :git => "https://github.com/huang-kun/YJKit.git", :tag => s.version.to_s }
