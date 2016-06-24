@@ -12,6 +12,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSObject (YJBlockBasedKVO)
 
+/*
+ 
+    The difference for using -observeKeyPath:forChanges: and -observeKeyPath:forUpdates:
+    
+    1. Only -observeKeyPath:forChanges: contains an old value.
+    2. Only -observeKeyPath:forUpdates: block gets called immediately after observing the key path.
+ 
+ */
+
 /**
  *  @brief      Key-Value observing the key path and execute the handler block when observed value changes.
  *
@@ -33,24 +42,25 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param keyPath       The key path, relative to the array, of the property to observe. This value must not be nil.
  *  @param changeHandler The block of code will be performed when observed value get changed.
  */
-- (void)observeKeyPath:(NSString *)keyPath forChanges:(void(^)(id object, id _Nullable oldValue, id _Nullable newValue))changeHandler;
+- (void)observeKeyPath:(NSString *)keyPath forChanges:(void(^)(id receiver, id _Nullable oldValue, id _Nullable newValue))changeHandler;
 
 
 /**
- *  @brief      Key-Value observing the key path and execute the handler block when observed value get initially setup.
+ *  @brief      Key-Value observing the key path and execute the handler block when observed value gets updated. After observing the key
+                path, the block gets immediately called.
  *
  *  @discussion This method performs as same as add observer with options (NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew). 
                 The observer will be generated implicitly and it's safe for not removing observer explicitly because eventually observer 
-                will be removed when receiver gets deallocated. It's vaild to use it multiple times for applying different setupHandler 
+                will be removed when receiver gets deallocated. It's vaild to use it multiple times for applying different updateHandler 
                 block with same key path.
  *
  *  @remark     The handler block captures inner objects while the receiver is alive.
  *  @see        \@keyPath in YJObjcMacros.h
 
- *  @param keyPath       The key path, relative to the array, of the property to observe. This value must not be nil.
- *  @param setupHandler  The block of code will be performed when observed value get setup.
+ *  @param keyPath        The key path, relative to the array, of the property to observe. This value must not be nil.
+ *  @param updateHandler  The block of code will be performed when observed value get setup.
  */
-- (void)observeKeyPath:(NSString *)keyPath forInitialSetup:(void(^)(id object, id _Nullable newValue))setupHandler;
+- (void)observeKeyPath:(NSString *)keyPath forUpdates:(void(^)(id receiver, id _Nullable newValue))updateHandler;
 
 
 /**
@@ -90,7 +100,7 @@ NS_ASSUME_NONNULL_BEGIN
 /* -------------------- Deprecated ------------------- */
 
 - (void)registerObserverForKeyPath:(NSString *)keyPath handleChanges:(void(^)(id object, id _Nullable oldValue, id _Nullable newValue))changeHandler DEPRECATED_MSG_ATTRIBUTE("This method is deprecated. Call observeKeyPath:forChanges: instead.");
-- (void)registerObserverForKeyPath:(NSString *)keyPath handleSetup:(void(^)(id object, id _Nullable newValue))setupHandler DEPRECATED_MSG_ATTRIBUTE("This method is deprecated. Call observeKeyPath:forInitialSetup: instead.");
+- (void)registerObserverForKeyPath:(NSString *)keyPath handleSetup:(void(^)(id object, id _Nullable newValue))updateHandler DEPRECATED_MSG_ATTRIBUTE("This method is deprecated. Call observeKeyPath:forUpdates: instead.");
 - (void)removeObservedKeyPath:(NSString *)keyPath DEPRECATED_MSG_ATTRIBUTE("This method is deprecated. Call stopObservingKeyPath: instead.");
 - (void)removeAllObservedKeyPaths DEPRECATED_MSG_ATTRIBUTE("This method is deprecated. Call stopObservingAllKeyPaths instead.");
 

@@ -31,7 +31,7 @@ __attribute__((visibility("hidden")))
 @property (nonatomic, copy) YJKVOChangeHandler changeHandler;
 
 // block property for handling value setup with option (NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew)
-@property (nonatomic, copy) YJKVOSetupHandler setupHandler;
+@property (nonatomic, copy) YJKVOSetupHandler updateHandler;
 
 @end
 
@@ -41,10 +41,10 @@ __attribute__((visibility("hidden")))
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     if (change[NSKeyValueChangeNotificationIsPriorKey]) return;
     
-    if (self.setupHandler) {
+    if (self.updateHandler) {
         id newValue = change[NSKeyValueChangeNewKey];
         if (newValue == [NSNull null]) newValue = nil;
-        self.setupHandler(object, newValue);
+        self.updateHandler(object, newValue);
     } else if (self.changeHandler) {
         id oldValue = change[NSKeyValueChangeOldKey];
         if (oldValue == [NSNull null]) oldValue = nil;
@@ -185,10 +185,10 @@ __attribute__((visibility("hidden")))
     return objc_getAssociatedObject(self, YJKVOAssociatedKVOMKey);
 }
 
-static void _yj_registerKVO(NSObject *self, NSString *keyPath, NSKeyValueObservingOptions options, YJKVOSetupHandler setupHandler, YJKVOChangeHandler changeHandler) {
+static void _yj_registerKVO(NSObject *self, NSString *keyPath, NSKeyValueObservingOptions options, YJKVOSetupHandler updateHandler, YJKVOChangeHandler changeHandler) {
     
     _YJKeyValueObserver *observer = [_YJKeyValueObserver new];
-    if (setupHandler) observer.setupHandler = setupHandler;
+    if (updateHandler) observer.updateHandler = updateHandler;
     if (changeHandler) observer.changeHandler = changeHandler;
     
     _YJKeyValueObserverManager *kvoManager = self.kvoManager;
@@ -222,8 +222,8 @@ static void _yj_modifyDealloc(NSObject *self) {
     _yj_modifyDealloc(self);
 }
 
-- (void)observeKeyPath:(NSString *)keyPath forInitialSetup:(void(^)(id object, id _Nullable newValue))setupHandler {
-    _yj_registerKVO(self, keyPath, NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew, setupHandler, nil);
+- (void)observeKeyPath:(NSString *)keyPath forUpdates:(void(^)(id object, id _Nullable newValue))updateHandler {
+    _yj_registerKVO(self, keyPath, NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew, updateHandler, nil);
     _yj_modifyDealloc(self);
 }
 
@@ -241,8 +241,8 @@ static void _yj_modifyDealloc(NSObject *self) {
     [self observeKeyPath:keyPath forChanges:changeHandler];
 }
 
-- (void)registerObserverForKeyPath:(NSString *)keyPath handleSetup:(void(^)(id, id))setupHandler {
-    [self observeKeyPath:keyPath forInitialSetup:setupHandler];
+- (void)registerObserverForKeyPath:(NSString *)keyPath handleSetup:(void(^)(id, id))updateHandler {
+    [self observeKeyPath:keyPath forUpdates:updateHandler];
 }
 
 - (void)removeObservedKeyPath:(NSString *)keyPath {

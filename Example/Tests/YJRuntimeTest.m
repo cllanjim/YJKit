@@ -27,11 +27,13 @@
 @property (nonatomic, strong) Bar *friend;
 - (void)sayHello;
 + (void)sayHello;
++ (void)sayHi;
 @end
 
 @implementation Foo
 - (void)sayHello { NSLog(@"instance hello"); }
 + (void)sayHello { NSLog(@"class hello"); }
++ (void)sayHi { NSLog(@"class hi"); }
 @end
 
 @interface YJRuntimeTest : XCTestCase
@@ -79,13 +81,14 @@
 - (void)testKVO {
     Foo *foo = [Foo new];
     Bar *bar = [Bar new];
-    
-    [foo observeKeyPath:@keyPath(foo.friend) forChanges:^(id  _Nonnull object, id  _Nullable oldValue, id  _Nullable newValue) {
-        NSLog(@"foo <%@> meets its new friend <%@>", object, newValue);
-    }];
 
+    [foo observeKeyPath:@keyPath(foo.friend.name) forUpdates:^(id  _Nonnull object, id  _Nullable newValue) {
+        NSLog(@"new <%@>", newValue);
+    }];
+    
+    
     [foo observeKeyPath:@keyPath(foo.friend.name) forChanges:^(id  _Nonnull object, id  _Nullable oldValue, id  _Nullable newValue) {
-        NSLog(@"object: %@, old: %@, new: %@", object, oldValue, newValue);
+        NSLog(@"old <%@>, new <%@>", oldValue, newValue);
     }];
     
     foo.friend = bar;
@@ -99,7 +102,7 @@
     Foo *foo = [Foo new];
     Bar *bar = [Bar new];
     
-    [foo insertBlocksIntoMethodBySelector:@selector(sayHello)
+    [foo insertBlocksIntoMethodBySelector:@selector(sayHi)
                                  identifier:nil
                                      before:^(id  _Nonnull receiver) {
                                          NSLog(@"%@ -Before instance hello", receiver);
