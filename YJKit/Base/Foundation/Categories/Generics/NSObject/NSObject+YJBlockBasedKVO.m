@@ -84,6 +84,9 @@ __attribute__((visibility("hidden")))
 // remove observers from internal collection for specific key path.
 - (void)unregisterObserversForKeyPath:(NSString *)keyPath;
 
+// remove observers from internal collection only for both matched key path and identifier.
+- (void)unregisterObserversForKeyPath:(NSString *)keyPath withIdentifier:(NSString *)identifier;
+
 // remove all observers from internal collection.
 - (void)unregisterAllObservers;
 
@@ -140,6 +143,28 @@ __attribute__((visibility("hidden")))
     dispatch_semaphore_signal(_semaphore);
 }
 
+- (void)unregisterObserversForKeyPath:(NSString *)keyPath withIdentifier:(NSString *)identifier {
+    NSMutableSet <_YJKeyValueObserver *> *observersForKeyPath = _observers[keyPath];
+    if (!observersForKeyPath.count) return;
+    
+    dispatch_semaphore_wait(_semaphore, DISPATCH_TIME_FOREVER);
+    
+    NSMutableSet *collector = [[NSMutableSet alloc] initWithCapacity:observersForKeyPath.count];
+    [observersForKeyPath enumerateObjectsUsingBlock:^(_YJKeyValueObserver * _Nonnull observer, BOOL * _Nonnull stop) {
+        if ([observer.associatedIdentifier isEqualToString:identifier]) {
+            [_owner removeObserver:observer forKeyPath:keyPath];
+            [collector addObject:observer];
+        }
+    }];
+    
+    [observersForKeyPath minusSet:collector];
+    if (!observersForKeyPath.count) {
+        [_observers removeObjectForKey:keyPath];
+    }
+    
+    dispatch_semaphore_signal(_semaphore);
+}
+
 - (void)unregisterAllObservers {
     if (!_observers.count) return;
     
@@ -185,11 +210,13 @@ __attribute__((visibility("hidden")))
     return objc_getAssociatedObject(self, YJKVOAssociatedKVOMKey);
 }
 
-static void _yj_registerKVO(NSObject *self, NSString *keyPath, NSKeyValueObservingOptions options, YJKVOSetupHandler updateHandler, YJKVOChangeHandler changeHandler) {
+static void _yj_registerKVO(NSObject *self, NSString *keyPath, NSString *identifier,
+                            NSKeyValueObservingOptions options, YJKVOSetupHandler updateHandler, YJKVOChangeHandler changeHandler) {
     
     _YJKeyValueObserver *observer = [_YJKeyValueObserver new];
     if (updateHandler) observer.updateHandler = updateHandler;
     if (changeHandler) observer.changeHandler = changeHandler;
+    if (identifier.length) observer.associatedIdentifier = identifier;
     
     _YJKeyValueObserverManager *kvoManager = self.kvoManager;
     if (!kvoManager) {
@@ -217,13 +244,15 @@ static void _yj_modifyDealloc(NSObject *self) {
                                     } after:nil];
 }
 
+/* -------------------- Basic APIs ------------------- */
+
 - (void)observeKeyPath:(NSString *)keyPath forChanges:(void(^)(id object, id _Nullable oldValue, id _Nullable newValue))changeHandler {
-    _yj_registerKVO(self, keyPath, (NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew), nil, changeHandler);
+    _yj_registerKVO(self, keyPath, nil, (NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew), nil, changeHandler);
     _yj_modifyDealloc(self);
 }
 
 - (void)observeKeyPath:(NSString *)keyPath forUpdates:(void(^)(id object, id _Nullable newValue))updateHandler {
-    _yj_registerKVO(self, keyPath, NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew, updateHandler, nil);
+    _yj_registerKVO(self, keyPath, nil, NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew, updateHandler, nil);
     _yj_modifyDealloc(self);
 }
 
@@ -235,7 +264,23 @@ static void _yj_modifyDealloc(NSObject *self) {
     [self.kvoManager unregisterAllObservers];
 }
 
-/* -------------------- Deprecated ------------------- */
+/* -------------------- Extended APIs ------------------- */
+
+- (void)observeKeyPath:(NSString *)keyPath identifier:(NSString *)identifier forChanges:(void(^)(id receiver, id _Nullable oldValue, id _Nullable newValue))changeHandler {
+    _yj_registerKVO(self, keyPath, identifier, (NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew), nil, changeHandler);
+    _yj_modifyDealloc(self);
+}
+
+- (void)observeKeyPath:(NSString *)keyPath identifier:(NSString *)identifier forUpdates:(void(^)(id receiver, id _Nullable newValue))updateHandler {
+    _yj_registerKVO(self, keyPath, identifier, NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew, updateHandler, nil);
+    _yj_modifyDealloc(self);
+}
+
+- (void)stopObservingKeyPath:(NSString *)keyPath forIdentifier:(NSString *)identifier {
+    [self.kvoManager unregisterObserversForKeyPath:keyPath withIdentifier:identifier];
+}
+
+/* -------------------- Deprecated APIs ------------------- */
 
 - (void)registerObserverForKeyPath:(NSString *)keyPath handleChanges:(void (^)(id, id, id))changeHandler {
     [self observeKeyPath:keyPath forChanges:changeHandler];

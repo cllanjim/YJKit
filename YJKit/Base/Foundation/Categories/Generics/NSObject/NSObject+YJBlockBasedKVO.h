@@ -96,6 +96,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)stopObservingAllKeyPaths;
 
 
+/// @see   observeKeyPath:forChanges:
+/// @param identifier For identifying the current observing operation.
+- (void)observeKeyPath:(NSString *)keyPath identifier:(NSString *)identifier forChanges:(void(^)(id receiver, id _Nullable oldValue, id _Nullable newValue))changeHandler;
+
+/// @see   observeKeyPath:forUpdates:
+/// @param identifier For identifying the current observing operation.
+- (void)observeKeyPath:(NSString *)keyPath identifier:(NSString *)identifier forUpdates:(void(^)(id receiver, id _Nullable newValue))updateHandler;
+
+/// @brief This call will only stop observing operation with specified identifier.
+/// @see   stopObservingKeyPath:
+/// @param identifier The string represents the observing operation.
+- (void)stopObservingKeyPath:(NSString *)keyPath forIdentifier:(NSString *)identifier;
+
 
 /* -------------------- Deprecated ------------------- */
 

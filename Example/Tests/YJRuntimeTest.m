@@ -81,15 +81,24 @@
 - (void)testKVO {
     Foo *foo = [Foo new];
     Bar *bar = [Bar new];
-
-    [foo observeKeyPath:@keyPath(foo.friend.name) forUpdates:^(id  _Nonnull object, id  _Nullable newValue) {
-        NSLog(@"new <%@>", newValue);
-    }];
-    
     
     [foo observeKeyPath:@keyPath(foo.friend.name) forChanges:^(id  _Nonnull object, id  _Nullable oldValue, id  _Nullable newValue) {
         NSLog(@"old <%@>, new <%@>", oldValue, newValue);
     }];
+
+    [foo observeKeyPath:@keyPath(foo.friend.name) identifier:@"Foo1" forUpdates:^(id  _Nonnull object, id  _Nullable newValue) {
+        NSLog(@"Foo 1 new <%@>", newValue);
+    }];
+    
+    [foo observeKeyPath:@keyPath(foo.friend.name) identifier:@"Foo2" forUpdates:^(id  _Nonnull object, id  _Nullable newValue) {
+        NSLog(@"Foo 2 new <%@>", newValue);
+    }];
+    
+    [foo observeKeyPath:@keyPath(foo.friend.name) forUpdates:^(id  _Nonnull object, id  _Nullable newValue) {
+        NSLog(@"Foo new <%@>", newValue);
+    }];
+    
+    [foo stopObservingKeyPath:@keyPath(foo.friend.name) forIdentifier:@"Foo1"];
     
     foo.friend = bar;
     bar.name = @"bar";
