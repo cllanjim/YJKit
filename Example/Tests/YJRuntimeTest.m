@@ -81,30 +81,23 @@
 - (void)testKVO {
     Foo *foo = [Foo new];
     Bar *bar = [Bar new];
-    
-    [foo observeKeyPath:@keyPath(foo.friend.name) forChanges:^(id  _Nonnull object, id  _Nullable oldValue, id  _Nullable newValue) {
-        NSLog(@"old <%@>, new <%@>", oldValue, newValue);
-    }];
 
-    [foo observeKeyPath:@keyPath(foo.friend.name) identifier:@"Foo1" forUpdates:^(id  _Nonnull object, id  _Nullable newValue) {
-        NSLog(@"Foo 1 new <%@>", newValue);
+    [foo observeKeyPath:@keyPath(foo.friend.name) identifier:@"Foo1" queue:[NSOperationQueue mainQueue] forUpdates:^(id  _Nonnull object, id  _Nullable newValue) {
+        NSLog(@"Foo1 name: %@ on thread %@", newValue, [NSThread currentThread]);
     }];
     
-    [foo observeKeyPath:@keyPath(foo.friend.name) identifier:@"Foo2" forUpdates:^(id  _Nonnull object, id  _Nullable newValue) {
-        NSLog(@"Foo 2 new <%@>", newValue);
+    [foo observeKeyPath:@keyPath(foo.friend.name) identifier:@"Foo2" queue:nil forUpdates:^(id  _Nonnull object, id  _Nullable newValue) {
+        NSLog(@"Foo2 name: %@ on thread %@", newValue, [NSThread currentThread]);
     }];
-    
-    [foo observeKeyPath:@keyPath(foo.friend.name) forUpdates:^(id  _Nonnull object, id  _Nullable newValue) {
-        NSLog(@"Foo new <%@>", newValue);
-    }];
-    
-    [foo stopObservingKeyPath:@keyPath(foo.friend.name) forIdentifier:@"Foo1"];
     
     foo.friend = bar;
-    bar.name = @"bar";
     
-    [bar setValue:@"Bar" forKey:@keyPath(bar.name)];
-    [foo setValue:@"bar" forKeyPath:@keyPath(foo.friend.name)];
+    dispatch_queue_t q = dispatch_queue_create("queue", 0);
+    dispatch_async(q, ^{
+        bar.name = @"new bar";
+    });
+    
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
 }
 
 - (void)testMethodIMPInsertion {
