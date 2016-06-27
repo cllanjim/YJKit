@@ -26,3 +26,6 @@
 #endif
 
 #endif /* YJConfigureMacros_h */
+
+// UNAVAILABLE_ATTRIBUTE
+// DEPRECATED_MSG_ATTRIBUTE

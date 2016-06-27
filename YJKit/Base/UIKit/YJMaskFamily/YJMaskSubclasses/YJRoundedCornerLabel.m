@@ -9,10 +9,11 @@
 #import "YJRoundedCornerLabel.h"
 #import "_YJLayerBasedMasking.h"
 #import "_YJRoundedCornerView.h"
-#import "NSObject+YJBlockBasedKVO.h"
+#import "NSObject+YJSafeKVO.h"
 #import "NSObject+YJExtension.h"
 #import "NSValue+YJGeometryExtension.h"
 #import "YJObjcMacros.h"
+#import "YJKVCMacros.h"
 #import "YJDebugMacros.h"
 
 @implementation YJRoundedCornerLabel

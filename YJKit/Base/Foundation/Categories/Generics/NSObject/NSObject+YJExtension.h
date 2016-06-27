@@ -29,15 +29,6 @@
 
 
 /* ------------------------------------ */
-//  NSObject (YJTaggedPointerChecking)
-/* ------------------------------------ */
-
-@interface NSObject (YJTaggedPointerChecking)
-@property (nonatomic, readonly) BOOL isTaggedPointer;
-@end
-
-
-/* ------------------------------------ */
 //     NSObject (YJCodingExtension)
 /* ------------------------------------ */
 

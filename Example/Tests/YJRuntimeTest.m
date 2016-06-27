@@ -7,9 +7,9 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "NSObject+YJBlockBasedKVO.h"
+#import "NSObject+YJSafeKVO.h"
 #import "NSObject+YJRuntimeEncapsulation.h"
-#import "YJObjcMacros.h"
+#import "YJKVCMacros.h"
 #import <objc/runtime.h>
 
 @interface Bar : NSObject
@@ -90,7 +90,7 @@
         NSLog(@"Foo2 name: %@ on thread %@", newValue, [NSThread currentThread]);
     }];
     
-    [foo stopObservingKeyPath:@keyPath(foo.friend.name)];
+//    [foo unobserveKeyPath:@keyPath(foo.friend.name)];
     
     foo.friend = bar;
     

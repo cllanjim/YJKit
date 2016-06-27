@@ -10,7 +10,7 @@
 #define _YJResignFirstResponderDefaultImp_h
 
 #import "NSObject+YJRuntimeEncapsulation.h"
-#import "NSObject+YJBlockBasedKVO.h"
+#import "NSObject+YJSafeKVO.h"
 #import "NSArray+YJCollection.h"
 
 #ifndef YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING

@@ -12,7 +12,7 @@
 // Debug Tip for TARGET_INTERFACE_BUILDER:
 // Compiler won't warn you if you make typos under TARGET_INTERFACE_BUILDER. So if you failed to build Xcode for IBDesignable phase by selecting Xcode menu bar (in interface builder, either .storyboard or .xib) -> Editor -> Debug Selected Views, then check your code under TARGET_INTERFACE_BUILDER.
 
-#import "NSObject+YJBlockBasedKVO.h"
+#import "NSObject+YJSafeKVO.h"
 #import "CAShapeLayer+YJLayerBasedMasking.h"
 #import "UIColor+YJCategory.h"
 #import "RGBColor.h"
@@ -68,7 +68,7 @@
   \
 - (void)removeFromSuperview {  \
     _maskColor = nil;  \
-    [self.superview stopObservingKeyPath:@"backgroundColor"];  \
+    [self.superview unobserveKeyPath:@"backgroundColor"];  \
     [super removeFromSuperview];  \
 }  \
   \

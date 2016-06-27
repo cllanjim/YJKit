@@ -1,16 +1,20 @@
 //
-//  NSObject+YJBlockBasedKVO.m
+//  NSObject+YJSafeKVO.m
 //  YJKit
 //
 //  Created by huang-kun on 16/4/3.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
+//  References:
+//  Modify method IMP from BlocksKit
+//  https://github.com/zwaldowski/BlocksKit/blob/master/BlocksKit/Core/NSObject%2BBKBlockObservation.m
+//  Make thread safe mutable collection
+//  https://github.com/ibireme/YYKit/blob/master/YYKit/Utility/YYThreadSafeDictionary.m
 
 #import <objc/runtime.h>
 #import <objc/message.h>
-#import "NSObject+YJBlockBasedKVO.h"
+#import "NSObject+YJSafeKVO.h"
 #import "NSObject+YJRuntimeEncapsulation.h"
-#import "YJDebugMacros.h"
 
 static const void *YJKVOAssociatedKVOMKey = &YJKVOAssociatedKVOMKey;
 
@@ -66,12 +70,6 @@ __attribute__((visibility("hidden")))
     }
 }
 
-#if YJ_DEBUG
-- (void)dealloc {
-    NSLog(@"%@ <%p> dealloc", self.class, self);
-}
-#endif
-
 @end
 
 
@@ -80,9 +78,6 @@ __attribute__((visibility("hidden")))
 /* ------------------------------ */
 //   _YJKeyValueObserverManager
 /* ------------------------------ */
-
-// Reference: Make thread safe mutable collection
-// https://github.com/ibireme/YYKit/blob/master/YYKit/Utility/YYThreadSafeDictionary.m
 
 __attribute__((visibility("hidden")))
 @interface _YJKeyValueObserverManager : NSObject
@@ -120,12 +115,6 @@ __attribute__((visibility("hidden")))
     }
     return self;
 }
-
-#if YJ_DEBUG
-- (void)dealloc {
-    NSLog(@"%@ <%p> dealloc", self.class, self);
-}
-#endif
 
 - (void)registerObserver:(_YJKeyValueObserver *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options {
     dispatch_semaphore_wait(_semaphore, DISPATCH_TIME_FOREVER);
@@ -198,11 +187,8 @@ __attribute__((visibility("hidden")))
 #pragma mark - block based kvo implementation
 
 /* ------------------------- */
-//      YJBlockBasedKVO
+//         YJSafeKVO
 /* ------------------------- */
-
-// Reference: Modify method IMP from BlocksKit
-// https://github.com/zwaldowski/BlocksKit/blob/master/BlocksKit/Core/NSObject%2BBKBlockObservation.m
 
 @interface NSObject ()
 
@@ -211,18 +197,20 @@ __attribute__((visibility("hidden")))
 
 @end
 
-@implementation NSObject (YJBlockBasedKVO)
+
+@implementation NSObject (YJSafeKVO)
 
 - (void)setKvoManager:(_YJKeyValueObserverManager *)kvoManager {
     objc_setAssociatedObject(self, YJKVOAssociatedKVOMKey, kvoManager, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-// Avoid lazy instantiation here for unnecessary instantiation when removing observers before -[self dealloc]
+// Avoid lazy instantiation in the getter method for unnecessary
+// instantiation when removing observers before -[self dealloc]
 - (_YJKeyValueObserverManager *)kvoManager {
     return objc_getAssociatedObject(self, YJKVOAssociatedKVOMKey);
 }
 
-static void _yj_registerKVO(NSObject *self, NSString *keyPath, NSString *identifier, NSOperationQueue *queue,
+static void _yj_registerKVO(__kindof NSObject *self, NSString *keyPath, NSString *identifier, NSOperationQueue *queue,
                             NSKeyValueObservingOptions options, YJKVOUpdateHandler updateHandler, YJKVOChangeHandler changeHandler) {
     
     _YJKeyValueObserver *observer = [_YJKeyValueObserver new];
@@ -241,10 +229,11 @@ static void _yj_registerKVO(NSObject *self, NSString *keyPath, NSString *identif
 
 static void _yj_modifyDealloc(__kindof NSObject *self) {
     
-    if ([self isMemberOfClass:[NSObject class]]) return;
+    // Restriction for modifying -dealloc
+    if (![self isKindOfClass:[NSObject class]] || [self isMemberOfClass:[NSObject class]])
+        return;
     
     // Add dealloc method to the current class if it doesn't implement one.
-    // (The current class must be any class as subclass of NSObject)
     SEL deallocSel = sel_registerName("dealloc");
     IMP deallocIMP = imp_implementationWithBlock(^(__unsafe_unretained id obj){
         struct objc_super superInfo = (struct objc_super){ obj, class_getSuperclass([obj class]) };
@@ -256,7 +245,7 @@ static void _yj_modifyDealloc(__kindof NSObject *self) {
     [self insertBlocksIntoMethodBySelector:deallocSel
                                 identifier:@"YJ_REMOVE_KVO"
                                     before:^(id  _Nonnull receiver) {
-                                        [receiver stopObservingAllKeyPaths];
+                                        [receiver unobserveAllKeyPaths];
                                     } after:nil];
 }
 
@@ -272,11 +261,11 @@ static void _yj_modifyDealloc(__kindof NSObject *self) {
     _yj_modifyDealloc(self);
 }
 
-- (void)stopObservingKeyPath:(NSString *)keyPath {
+- (void)unobserveKeyPath:(NSString *)keyPath {
     [self.kvoManager unregisterObserversForKeyPath:keyPath];
 }
 
-- (void)stopObservingAllKeyPaths {
+- (void)unobserveAllKeyPaths {
     [self.kvoManager unregisterAllObservers];
 }
 
@@ -292,26 +281,8 @@ static void _yj_modifyDealloc(__kindof NSObject *self) {
     _yj_modifyDealloc(self);
 }
 
-- (void)stopObservingKeyPath:(NSString *)keyPath forIdentifier:(NSString *)identifier {
+- (void)unobserveKeyPath:(NSString *)keyPath forIdentifier:(NSString *)identifier {
     [self.kvoManager unregisterObserversForKeyPath:keyPath withIdentifier:identifier];
-}
-
-/* -------------------- Deprecated APIs ------------------- */
-
-- (void)registerObserverForKeyPath:(NSString *)keyPath handleChanges:(void (^)(id, id, id))changeHandler {
-    [self observeKeyPath:keyPath forChanges:changeHandler];
-}
-
-- (void)registerObserverForKeyPath:(NSString *)keyPath handleSetup:(void(^)(id, id))updateHandler {
-    [self observeKeyPath:keyPath forUpdates:updateHandler];
-}
-
-- (void)removeObservedKeyPath:(NSString *)keyPath {
-    [self stopObservingKeyPath:keyPath];
-}
-
-- (void)removeAllObservedKeyPaths {
-    [self stopObservingAllKeyPaths];
 }
 
 @end

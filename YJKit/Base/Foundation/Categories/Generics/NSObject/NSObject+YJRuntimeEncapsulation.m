@@ -8,13 +8,30 @@
 
 #import <objc/runtime.h>
 #import "NSObject+YJRuntimeEncapsulation.h"
-#import "NSObject+YJExtension.h"
-#import "YJUIMacros.h"
 
 #pragma mark - YJRuntimeExtension
 
+/* ------------------------------------ */
+//        YJTaggedPointerChecking
+/* ------------------------------------ */
+
+//  Reference: https://github.com/opensource-apple/objc4/blob/master/runtime/objc-internal.h
+
+@implementation NSObject (YJTaggedPointerChecking)
+
+- (BOOL)isTaggedPointer {
+#if TARGET_OS_IPHONE
+    return (intptr_t)self < 0;
+#else
+    return (uintptr_t)self & 1;
+#endif
+}
+
+@end
+
+
 /* ----------------------------------- */
-//     NSObject (YJRuntimeExtension)
+//          YJRuntimeExtension
 /* ----------------------------------- */
 
 BOOL yj_object_isClass(id obj) {
@@ -148,7 +165,7 @@ static void _yj_debugDumpingMethodList(id obj, bool dumpInstanceMethods) {
 #pragma mark - YJAssociatedIdentifier
 
 /* ----------------------------------- */
-//  NSObject (YJAssociatedIdentifier)
+//        YJAssociatedIdentifier
 /* ----------------------------------- */
 
 // Reference: Tagged pointer crash
@@ -228,7 +245,7 @@ static const void * YJObjectAssociatedTagKey = &YJObjectAssociatedTagKey;
 #pragma mark - YJSwizzling
 
 /* ----------------------------------- */
-//        NSObject (YJSwizzling)
+//             YJSwizzling
 /* ----------------------------------- */
 
 @implementation NSObject (YJSwizzling)
@@ -309,7 +326,7 @@ __attribute__((visibility("hidden")))
 
 
 /* ----------------------------------- */
-//   NSObject (YJMethodImpModifying)
+//         YJMethodImpModifying
 /* ----------------------------------- */
 
 @implementation NSObject (YJMethodImpModifying)

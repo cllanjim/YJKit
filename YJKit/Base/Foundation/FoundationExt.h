@@ -10,7 +10,7 @@
 
 #import <YJKit/NSObject+YJExtension.h>
 #import <YJKit/NSObject+YJRuntimeEncapsulation.h>
-#import <YJKit/NSObject+YJBlockBasedKVO.h>
+#import <YJKit/NSObject+YJSafeKVO.h>
 
 #import <YJKit/NSValue+YJGeometryExtension.h>
 
@@ -31,7 +31,7 @@
 
 #import "NSObject+YJExtension.h"
 #import "NSObject+YJRuntimeEncapsulation.h"
-#import "NSObject+YJBlockBasedKVO.h"
+#import "NSObject+YJSafeKVO.h"
 
 #import "NSValue+YJGeometryExtension.h"
 

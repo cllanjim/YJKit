@@ -14,6 +14,7 @@
 #import <YJKit/YJExecutionMacros.h>
 #import <YJKit/YJConfigureMacros.h>
 #import <YJKit/YJClangMacros.h>
+#import <YJKit/YJKVCMacros.h>
 
 #else
 
@@ -23,5 +24,6 @@
 #import "YJExecutionMacros.h"
 #import "YJConfigureMacros.h"
 #import "YJClangMacros.h"
+#import "YJKVCMacros.h"
 
 #endif

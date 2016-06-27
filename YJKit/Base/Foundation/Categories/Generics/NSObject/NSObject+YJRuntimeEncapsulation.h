@@ -10,6 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/* ------------------------------------ */
+//        YJTaggedPointerChecking
+/* ------------------------------------ */
+
+@interface NSObject (YJTaggedPointerChecking)
+@property (nonatomic, readonly) BOOL isTaggedPointer;
+@end
+
+
 /* ----------------------------------- */
 //              Debugging
 /* ----------------------------------- */
