@@ -63,9 +63,8 @@ YJ_ROUNDED_CORNER_VIEW_DEFAULT_IMPLEMENTATION_FOR_UIVIEW_SUBCLASS
 }
 
 - (void)observeTintColor {
-    @weakify(self)
-    [self observeKeyPath:@keyPath(self.tintColor) forUpdates:^(id  _Nonnull object, id  _Nullable newValue) {
-        @strongify(self)
+    [self observeKeyPath:@keyPath(self.tintColor) options:YJKeyValueObservingUpToDate changes:^(id  _Nonnull receiver, id  _Nullable newValue, NSDictionary<NSString *,id> * _Nonnull change) {
+        YJRoundedCornerButton *self = (id)receiver;
         if (newValue) {
             if (![self.borderColor isEqualToColor:newValue]) {
                 self.borderColor = newValue;

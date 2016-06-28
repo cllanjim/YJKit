@@ -77,9 +77,9 @@
     if (self.delegate) {  \
         [self yj_insertImpFor##XXX##Delegate:self.delegate];  \
     } else {  \
-        [self observeKeyPath:@"delegate" forUpdates:^(id  _Nonnull object, id  _Nullable newValue) {  \
+        [self observeKeyPath:@"delegate" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) changes:^(id receiver, id  _Nullable newValue, NSDictionary<NSString *,id> * change) {  \
             if (newValue) {  \
-                [object yj_insertImpFor##XXX##Delegate:newValue];  \
+                [receiver yj_insertImpFor##XXX##Delegate:newValue];  \
             }  \
         }];  \
     }  \

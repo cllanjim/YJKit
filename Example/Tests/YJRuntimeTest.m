@@ -82,15 +82,15 @@
     Foo *foo = [Foo new];
     Bar *bar = [Bar new];
 
-    [foo observeKeyPath:@keyPath(foo.friend.name) identifier:@"Foo1" queue:[NSOperationQueue mainQueue] forChanges:^(id  _Nonnull receiver, id  _Nullable oldValue, id  _Nullable newValue) {
+    [foo observeKeyPath:@keyPath(foo.friend.name) options:YJKeyValueObservingUpToDate identifier:@"Foo1" queue:nil changes:^(id receiver, id  _Nullable newValue, NSDictionary<NSString *,id> * change) {
         NSLog(@"Foo1 name: %@ on thread %@", newValue, [NSThread currentThread]);
     }];
     
-    [foo observeKeyPath:@keyPath(foo.friend.name) identifier:@"Foo2" queue:nil forChanges:^(id  _Nonnull receiver, id  _Nullable oldValue, id  _Nullable newValue) {
+    [foo observeKeyPath:@keyPath(foo.friend.name) options:YJKeyValueObservingUpToDate identifier:@"Foo2" queue:[NSOperationQueue mainQueue] changes:^(id  _Nonnull receiver, id  _Nullable newValue, NSDictionary<NSString *,id> * _Nonnull change) {
         NSLog(@"Foo2 name: %@ on thread %@", newValue, [NSThread currentThread]);
     }];
     
-//    [foo unobserveKeyPath:@keyPath(foo.friend.name)];
+    [foo unobserveKeyPath:@keyPath(foo.friend.name) forIdentifier:@"Foo1"];
     
     foo.friend = bar;
     

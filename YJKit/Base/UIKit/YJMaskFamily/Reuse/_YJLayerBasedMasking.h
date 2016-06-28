@@ -56,8 +56,8 @@
         _maskColor = newSuperview.backgroundColor;  \
         [self setNeedsUpdateMaskLayer];  \
     }  \
-    [newSuperview observeKeyPath:@"backgroundColor" forUpdates:^(id  _Nonnull object, id  _Nullable newValue) {  \
-        if (self.superview == object && newValue && [newValue isKindOfClass:[UIColor class]]) { /* not go in from design phase.*/  \
+    [newSuperview observeKeyPath:@"backgroundColor" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) changes:^(id receiver, id  _Nullable newValue, NSDictionary<NSString *,id> * change) {  \
+        if (self.superview == receiver && newValue && [newValue isKindOfClass:[UIColor class]]) { /* not go in from design phase.*/  \
             if (![_maskColor isEqualToColor:newValue] && !_forceMaskColor) {  \
                 _maskColor = newValue;  \
                 [self setNeedsUpdateMaskLayer];  \
