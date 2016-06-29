@@ -42,24 +42,32 @@
     // Using block-based APIs for nesting code
     @weakify(self)
     [self.saveButton addActionForControlEvents:UIControlEventTouchUpInside actionHandler:^(UIControl * _Nonnull sender) {
+        
         UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Do you want to save the image to photo album ?" cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", nil];
+        
         [actionSheet setActionHandler:^(UIActionSheet * _Nonnull actionSheet, NSInteger buttonIndex, NSString * _Nonnull buttonTitle) {
             if (actionSheet.firstOtherButtonIndex == buttonIndex) {
+                
                 // Save image to album
                 [[YJPhotoLibrary sharedLibrary] saveImage:demoImage metadata:nil success:^{
                     [[[UIAlertView alloc] initWithTitle:@"Well Done" message:@"The image has been saved to the photo album under your app's name." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
                 } failure:^(NSError * _Nonnull error) {
+                    
                     // If you deny the photo access, saving will be failed.
                     if (YJPhotoLibrary.authorizationStatus != YJPhotoLibraryAuthorizationStatusAuthorized) {
                         // For iOS 8 above, you can jump to setting and get photo access directly.
                         if (iOS_Version > 8.0) {
+                            
                             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Failed" message:@"You do not have photo access. Tap the Setting button and turn on the photo switch if you'd like to save the image to photo album." cancelButtonTitle:@"Cancel" otherButtonTitles:@"Setting", nil];
+                            
                             [alert setActionHandler:^(UIAlertView * _Nonnull alertView, NSInteger buttonIndex, NSString * _Nonnull buttonTitle) {
                                 if (alertView.firstOtherButtonIndex == buttonIndex) {
                                     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
                                 }
                             }];
+                            
                             [alert show];
+                            
                         } else {
                             [[[UIAlertView alloc] initWithTitle:@"Failed" message:@"You do not have photo access. Please go to Settings App -> Privacy -> Photo -> turn on the switch of your app if you'd like to save the image to photo album." cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
                         }
@@ -69,8 +77,10 @@
                 }];
             }
         }];
+        
         @strongify(self)
         [actionSheet showInView:self.view];
+        
     }];
 }
 

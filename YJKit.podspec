@@ -1,15 +1,8 @@
-#
-# Be sure to run `pod lib lint YJKit.podspec' to ensure this is a
-# valid spec before submitting.
-#
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
-#
 
 Pod::Spec.new do |s|
 
   s.name             = "YJKit"
-  s.version          = "0.2.9"
+  s.version          = "0.2.10"
   s.license          = 'MIT'
   s.summary          = "A useful extension for iOS library."
   s.homepage         = "https://github.com/huang-kun/YJKit"

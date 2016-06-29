@@ -99,6 +99,10 @@
         bar.name = @"new bar";
     });
     
+    [bar observeKeyPath:@keyPath(bar.name) changes:^(id  _Nonnull receiver, id  _Nullable newValue) {
+        NSLog(@"Get name: %@ on %@", newValue, [NSThread currentThread]);
+    }];
+    
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
 }
 
