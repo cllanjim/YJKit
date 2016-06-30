@@ -27,33 +27,33 @@
 /* ------------------------------------ */
 
 @interface NSCoder (YJCodingPrivate)
-@property (nonatomic, strong) NSMutableSet <NSString *> *yj_encodedKeys;
-@property (nonatomic, strong) NSMutableSet <NSString *> *yj_decodedKeys;
+@property (nonatomic, strong) NSMutableArray <NSString *> *yj_encodedKeys;
+@property (nonatomic, strong) NSMutableArray <NSString *> *yj_decodedKeys;
 @end
 
 @implementation NSCoder (YJCodingPrivate)
 
-- (void)setYj_encodedKeys:(NSMutableSet <NSString *> *)yj_encodedKeys {
+- (void)setYj_encodedKeys:(NSMutableArray <NSString *> *)yj_encodedKeys {
     objc_setAssociatedObject(self, @selector(yj_encodedKeys), yj_encodedKeys, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (NSMutableSet <NSString *> *)yj_encodedKeys {
-    NSMutableSet *ivarNames = objc_getAssociatedObject(self, _cmd);
+- (NSMutableArray <NSString *> *)yj_encodedKeys {
+    NSMutableArray *ivarNames = objc_getAssociatedObject(self, _cmd);
     if (!ivarNames) {
-        ivarNames = [NSMutableSet new];
+        ivarNames = [NSMutableArray new];
         self.yj_encodedKeys = ivarNames;
     }
     return ivarNames;
 }
 
-- (void)setYj_decodedKeys:(NSMutableSet<NSString *> *)yj_decodedKeys {
+- (void)setYj_decodedKeys:(NSMutableArray<NSString *> *)yj_decodedKeys {
     objc_setAssociatedObject(self, @selector(yj_decodedKeys), yj_decodedKeys, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (NSMutableSet <NSString *> *)yj_decodedKeys {
-    NSMutableSet *ivarNames = objc_getAssociatedObject(self, _cmd);
+- (NSMutableArray <NSString *> *)yj_decodedKeys {
+    NSMutableArray *ivarNames = objc_getAssociatedObject(self, _cmd);
     if (!ivarNames) {
-        ivarNames = [NSMutableSet new];
+        ivarNames = [NSMutableArray new];
         self.yj_decodedKeys = ivarNames;
     }
     return ivarNames;

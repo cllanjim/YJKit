@@ -94,14 +94,14 @@
     
     foo.friend = bar;
     
+    [bar observeKeyPath:@keyPath(bar.name) changes:^(id  _Nonnull receiver, id  _Nullable newValue) {
+        NSLog(@"Get name: %@ on %@", newValue, [NSThread currentThread]);
+    }];
+    
     dispatch_queue_t q = dispatch_queue_create("queue", 0);
     dispatch_async(q, ^{
         bar.name = @"new bar";
     });
-    
-    [bar observeKeyPath:@keyPath(bar.name) changes:^(id  _Nonnull receiver, id  _Nullable newValue) {
-        NSLog(@"Get name: %@ on %@", newValue, [NSThread currentThread]);
-    }];
     
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
 }

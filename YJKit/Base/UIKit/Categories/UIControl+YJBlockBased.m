@@ -48,19 +48,19 @@ __attribute__((visibility("hidden")))
 @end
 
 @interface UIControl ()
-@property (nonatomic, strong) NSMutableSet *yj_targets;
+@property (nonatomic, strong) NSMutableArray *yj_targets;
 @end
 
 @implementation UIControl (YJBlockBased)
 
-- (void)setYj_targets:(NSMutableSet *)yj_targets {
+- (void)setYj_targets:(NSMutableArray *)yj_targets {
     objc_setAssociatedObject(self, YJControlAssociatedTargetsKey, yj_targets, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (NSMutableSet *)yj_targets {
-    NSMutableSet *targets = objc_getAssociatedObject(self, YJControlAssociatedTargetsKey);
+- (NSMutableArray *)yj_targets {
+    NSMutableArray *targets = objc_getAssociatedObject(self, YJControlAssociatedTargetsKey);
     if (!targets) {
-        targets = [NSMutableSet new];
+        targets = [NSMutableArray new];
         [self setYj_targets:targets];
     }
     return targets;
@@ -69,7 +69,7 @@ __attribute__((visibility("hidden")))
 static void _yj_registerTargetActionPairForUIControl(UIControl *control, UIControlEvents events, NSString *actionTag, YJControlActionHandler actionHandler) {
     _YJControlTarget *target = [[_YJControlTarget alloc] initWithControlEvents:events actionHandler:actionHandler];
     if (actionTag) target.actionTag = actionTag;
-    NSMutableSet *targets = [control yj_targets];
+    NSMutableArray *targets = [control yj_targets];
     [targets addObject:target];
     [control addTarget:target action:@selector(invokeActionFromControl:) forControlEvents:events];
 }
@@ -88,9 +88,9 @@ static void _yj_registerTargetActionPairForUIControl(UIControl *control, UIContr
 }
 
 static void _yj_removeTargetActionPairForUIControl(UIControl *control, BOOL(^condition)(_YJControlTarget *target)) {
-    NSMutableSet <_YJControlTarget *> *targets = [control yj_targets];
+    NSMutableArray <_YJControlTarget *> *targets = [control yj_targets];
     NSMutableArray *collector = [NSMutableArray arrayWithCapacity:targets.count];
-    [targets enumerateObjectsUsingBlock:^(_YJControlTarget * _Nonnull target, BOOL * _Nonnull stop) {
+    [targets enumerateObjectsUsingBlock:^(_YJControlTarget * _Nonnull target, NSUInteger idx, BOOL * _Nonnull stop) {
         if (condition(target)) {
             [control removeTarget:target action:@selector(invokeActionFromControl:) forControlEvents:target.events];
             [collector addObject:target];
@@ -115,17 +115,17 @@ static void _yj_removeTargetActionPairForUIControl(UIControl *control, BOOL(^con
 }
 
 - (void)removeAllActions {
-    NSMutableSet <_YJControlTarget *> *targets = self.yj_targets;
-    [targets enumerateObjectsUsingBlock:^(_YJControlTarget * _Nonnull target, BOOL * _Nonnull stop) {
+    NSMutableArray <_YJControlTarget *> *targets = self.yj_targets;
+    [targets enumerateObjectsUsingBlock:^(_YJControlTarget * _Nonnull target, NSUInteger idx, BOOL * _Nonnull stop) {
         [self removeTarget:target action:@selector(invokeActionFromControl:) forControlEvents:target.events];
     }];
     [targets removeAllObjects];
 }
 
 - (nullable NSArray *)actionTagsForControlEvents:(UIControlEvents)events {
-    NSMutableSet <_YJControlTarget *> *targets = self.yj_targets;
+    NSMutableArray <_YJControlTarget *> *targets = self.yj_targets;
     NSMutableArray *collector = [NSMutableArray arrayWithCapacity:targets.count];
-    [targets enumerateObjectsUsingBlock:^(_YJControlTarget * _Nonnull target, BOOL * _Nonnull stop) {
+    [targets enumerateObjectsUsingBlock:^(_YJControlTarget * _Nonnull target, NSUInteger idx, BOOL * _Nonnull stop) {
         if (target.actionTag.length && target.events == events) {
             [collector addObject:target.actionTag];
         }

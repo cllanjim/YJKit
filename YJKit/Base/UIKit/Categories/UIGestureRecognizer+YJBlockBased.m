@@ -43,19 +43,19 @@ __attribute__((visibility("hidden")))
 @end
 
 @interface UIGestureRecognizer ()
-@property (nonatomic, strong) NSMutableSet *yj_targets;
+@property (nonatomic, strong) NSMutableArray *yj_targets;
 @end
 
 @implementation UIGestureRecognizer (YJBlockBased)
 
-- (void)setYj_targets:(NSMutableSet *)yj_targets {
+- (void)setYj_targets:(NSMutableArray *)yj_targets {
     objc_setAssociatedObject(self, YJRestureRecognizerAssociatedTargetsKey, yj_targets, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (NSMutableSet *)yj_targets {
-    NSMutableSet *targets = objc_getAssociatedObject(self, YJRestureRecognizerAssociatedTargetsKey);
+- (NSMutableArray *)yj_targets {
+    NSMutableArray *targets = objc_getAssociatedObject(self, YJRestureRecognizerAssociatedTargetsKey);
     if (!targets) {
-        targets = [NSMutableSet new];
+        targets = [NSMutableArray new];
         [self setYj_targets:targets];
     }
     return targets;
@@ -64,7 +64,7 @@ __attribute__((visibility("hidden")))
 static _YJGestureTarget * _yj_targetForUIGestureRecognizer(UIGestureRecognizer *gestureRecognizer, NSString *actionTag, YJGestureActionHandler actionHandler) {
     _YJGestureTarget *target = [[_YJGestureTarget alloc] initWithActionHandler:actionHandler];
     if (actionTag) target.actionTag = actionTag;
-    NSMutableSet *targets = [gestureRecognizer yj_targets];
+    NSMutableArray *targets = [gestureRecognizer yj_targets];
     [targets addObject:target];
     return target;
 }
@@ -95,9 +95,9 @@ static _YJGestureTarget * _yj_targetForUIGestureRecognizer(UIGestureRecognizer *
 }
 
 - (void)removeActionForTag:(NSString *)tag {
-    NSMutableSet <_YJGestureTarget *> *targets = [self yj_targets];
+    NSMutableArray <_YJGestureTarget *> *targets = [self yj_targets];
     NSMutableArray *collector = [NSMutableArray arrayWithCapacity:targets.count];
-    [targets enumerateObjectsUsingBlock:^(_YJGestureTarget * _Nonnull target, BOOL * _Nonnull stop) {
+    [targets enumerateObjectsUsingBlock:^(_YJGestureTarget * _Nonnull target, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([target.actionTag isEqualToString:tag]) {
             [self removeTarget:target action:@selector(invokeGestureRecognizer:)];
             [collector addObject:target];
@@ -110,15 +110,15 @@ static _YJGestureTarget * _yj_targetForUIGestureRecognizer(UIGestureRecognizer *
 }
 
 - (void)removeAllActions {
-    NSMutableSet <_YJGestureTarget *> *targets = [self yj_targets];
-    [targets enumerateObjectsUsingBlock:^(_YJGestureTarget * _Nonnull target, BOOL * _Nonnull stop) {
+    NSMutableArray <_YJGestureTarget *> *targets = [self yj_targets];
+    [targets enumerateObjectsUsingBlock:^(_YJGestureTarget * _Nonnull target, NSUInteger idx, BOOL * _Nonnull stop) {
         [self removeTarget:target action:@selector(invokeGestureRecognizer:)];
     }];
     [targets removeAllObjects];
 }
 
 - (nullable NSArray *)actionTags {
-    NSMutableSet <_YJGestureTarget *> *targets = [self yj_targets];
+    NSMutableArray <_YJGestureTarget *> *targets = [self yj_targets];
     NSMutableArray *collector = [NSMutableArray arrayWithCapacity:targets.count];
     for (_YJGestureTarget *target in targets) {
         if (target.actionTag.length) [collector addObject:target.actionTag];
