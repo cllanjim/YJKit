@@ -79,6 +79,8 @@
 		32C1EB6F1D01899000E595EF /* YJCustomDemoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C1EB6D1D01899000E595EF /* YJCustomDemoCell.m */; };
 		32C1EB701D01899000E595EF /* YJCustomDemoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 32C1EB6E1D01899000E595EF /* YJCustomDemoCell.xib */; };
 		32CB4AAB1CCA3C880050C01B /* YJSavingImageToAlbumViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 32CB4AAA1CCA3C880050C01B /* YJSavingImageToAlbumViewController.m */; };
+		32CEA1741D275F4300FBF82C /* YJKVOTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 32CEA1731D275F4300FBF82C /* YJKVOTest.m */; };
+		32CEA1761D275F8200FBF82C /* YJTestClasses.m in Sources */ = {isa = PBXBuildFile; fileRef = 32CEA1751D275F8200FBF82C /* YJTestClasses.m */; };
 		32E5D29F1CDC7DEE0070B96D /* yj_head_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 32E5D29E1CDC7DEE0070B96D /* yj_head_icon.png */; };
 		32F0C7B61CEF2E2A00234ECF /* YJCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 32F0C7B51CEF2E2A00234ECF /* YJCollectionTest.m */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
@@ -255,6 +257,9 @@
 		32C1EB6E1D01899000E595EF /* YJCustomDemoCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = YJCustomDemoCell.xib; sourceTree = "<group>"; };
 		32CB4AA91CCA3C880050C01B /* YJSavingImageToAlbumViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJSavingImageToAlbumViewController.h; sourceTree = "<group>"; };
 		32CB4AAA1CCA3C880050C01B /* YJSavingImageToAlbumViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJSavingImageToAlbumViewController.m; sourceTree = "<group>"; };
+		32CEA1731D275F4300FBF82C /* YJKVOTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJKVOTest.m; sourceTree = "<group>"; };
+		32CEA1751D275F8200FBF82C /* YJTestClasses.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJTestClasses.m; sourceTree = "<group>"; };
+		32CEA1771D275FA100FBF82C /* YJTestClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJTestClasses.h; sourceTree = "<group>"; };
 		32E5D29E1CDC7DEE0070B96D /* yj_head_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = yj_head_icon.png; sourceTree = "<group>"; };
 		32F0C7B51CEF2E2A00234ECF /* YJCollectionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJCollectionTest.m; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* YJKit_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YJKit_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -700,6 +705,9 @@
 				32F0C7B51CEF2E2A00234ECF /* YJCollectionTest.m */,
 				320438711CEF14EC006806EC /* YJGeneralTest.m */,
 				32B55D001D162BF300A578AD /* YJRuntimeTest.m */,
+				32CEA1731D275F4300FBF82C /* YJKVOTest.m */,
+				32CEA1771D275FA100FBF82C /* YJTestClasses.h */,
+				32CEA1751D275F8200FBF82C /* YJTestClasses.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -901,8 +909,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				32F0C7B61CEF2E2A00234ECF /* YJCollectionTest.m in Sources */,
+				32CEA1761D275F8200FBF82C /* YJTestClasses.m in Sources */,
 				32B55D011D162BF300A578AD /* YJRuntimeTest.m in Sources */,
 				320438721CEF14EC006806EC /* YJGeneralTest.m in Sources */,
+				32CEA1741D275F4300FBF82C /* YJKVOTest.m in Sources */,
 				32B8C1911CEE109700E2639B /* YJStringSequence.m in Sources */,
 				3204386D1CEEF3E9006806EC /* YJArraySequence.m in Sources */,
 			);

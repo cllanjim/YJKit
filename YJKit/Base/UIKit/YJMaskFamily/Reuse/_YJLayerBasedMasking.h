@@ -56,19 +56,22 @@
         _maskColor = newSuperview.backgroundColor;  \
         [self setNeedsUpdateMaskLayer];  \
     }  \
-    [newSuperview observeKeyPath:@"backgroundColor" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) changes:^(id receiver, id  _Nullable newValue, NSDictionary<NSString *,id> * change) {  \
-        if (self.superview == receiver && newValue && [newValue isKindOfClass:[UIColor class]]) { /* not go in from design phase.*/  \
-            if (![_maskColor isEqualToColor:newValue] && !_forceMaskColor) {  \
-                _maskColor = newValue;  \
-                [self setNeedsUpdateMaskLayer];  \
+    \
+    if (newSuperview) {  \
+        [self observeTarget:newSuperview keyPath:@"backgroundColor" updates:^(id self, id newSuperview, id _Nullable newValue) {  \
+            if (newValue && [newValue isKindOfClass:[UIColor class]]) { /* not go in from design phase.*/  \
+                if (![_maskColor isEqualToColor:newValue] && !_forceMaskColor) {  \
+                    _maskColor = newValue;  \
+                    [self setNeedsUpdateMaskLayer];  \
+                }  \
             }  \
-        }  \
-    }];  \
+        }];  \
+    }  \
 }  \
   \
 - (void)removeFromSuperview {  \
     _maskColor = nil;  \
-    [self.superview unobserveKeyPath:@"backgroundColor"];  \
+    [self unobserveTarget:self.superview keyPath:@"backgroundColor"];  \
     [super removeFromSuperview];  \
 }  \
   \

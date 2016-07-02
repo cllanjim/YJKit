@@ -11,30 +11,7 @@
 #import "NSObject+YJSafeKVO.h"
 #import "YJKVCMacros.h"
 #import <objc/runtime.h>
-
-@interface Bar : NSObject
-@property (nonatomic, copy) NSString *name;
-- (void)sayYoo;
-+ (void)sayYoo;
-@end
-
-@implementation Bar
-- (void)sayYoo { NSLog(@"instance yoo"); }
-+ (void)sayYoo { NSLog(@"class yoo"); }
-@end
-
-@interface Foo : NSObject
-@property (nonatomic, strong) Bar *friend;
-- (void)sayHello;
-+ (void)sayHello;
-+ (void)sayHi;
-@end
-
-@implementation Foo
-- (void)sayHello { NSLog(@"instance hello"); }
-+ (void)sayHello { NSLog(@"class hello"); }
-+ (void)sayHi { NSLog(@"class hi"); }
-@end
+#import "YJTestClasses.h"
 
 @interface YJRuntimeTest : XCTestCase
 @end
@@ -82,11 +59,11 @@
     Foo *foo = [Foo new];
     Bar *bar = [Bar new];
 
-    [foo observeKeyPath:@keyPath(foo.friend.name) options:YJKeyValueObservingUpToDate identifier:@"Foo1" queue:nil changes:^(id receiver, id  _Nullable newValue, NSDictionary<NSString *,id> * change) {
+    [foo observeKeyPath:@keyPath(foo.friend.name) options:0 identifier:@"Foo1" queue:nil changes:^(id receiver, id  _Nullable newValue, NSDictionary<NSString *,id> * change) {
         NSLog(@"Foo1 name: %@ on thread %@", newValue, [NSThread currentThread]);
     }];
     
-    [foo observeKeyPath:@keyPath(foo.friend.name) options:YJKeyValueObservingUpToDate identifier:@"Foo2" queue:[NSOperationQueue mainQueue] changes:^(id  _Nonnull receiver, id  _Nullable newValue, NSDictionary<NSString *,id> * _Nonnull change) {
+    [foo observeKeyPath:@keyPath(foo.friend.name) options:0 identifier:@"Foo2" queue:[NSOperationQueue mainQueue] changes:^(id  _Nonnull receiver, id  _Nullable newValue, NSDictionary<NSString *,id> * _Nonnull change) {
         NSLog(@"Foo2 name: %@ on thread %@", newValue, [NSThread currentThread]);
     }];
     
