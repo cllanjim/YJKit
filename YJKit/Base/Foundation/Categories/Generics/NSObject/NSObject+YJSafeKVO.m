@@ -376,10 +376,15 @@ static BOOL _yj_KVOMacroParse(id targetAndKeyPath, id *target, NSString **keyPat
     if (target) {
         *target = combiner.target;
         NSCAssert(*target != nil, @"YJSafeKVO - Target can not be nil for Key value observing.");
+    } else {
+        return NO;
     }
+    
     if (keyPath) {
         *keyPath = combiner.keyPath;
         NSCAssert((*keyPath).length > 0, @"YJSafeKVO - KeyPath can not be empty for Key value observing.");
+    } else {
+        return NO;
     }
     
     return YES;
@@ -394,7 +399,7 @@ static BOOL _yj_KVOMacroParse(id targetAndKeyPath, id *target, NSString **keyPat
 
 @implementation NSObject (YJSafeKVO)
 
-- (void)observe:(YJKVO)targetAndKeyPath updates:(void(^)(id receiver, id target, id _Nullable newValue))updates {
+- (void)observe:(OBSV)targetAndKeyPath updates:(void(^)(id receiver, id target, id _Nullable newValue))updates {
     
     __kindof NSObject *target; NSString *keyPath;
     if (_yj_KVOMacroParse(targetAndKeyPath, &target, &keyPath)) {
@@ -407,7 +412,7 @@ static BOOL _yj_KVOMacroParse(id targetAndKeyPath, id *target, NSString **keyPat
     }
 }
 
-- (void)observe:(YJKVO)targetAndKeyPath
+- (void)observe:(OBSV)targetAndKeyPath
         options:(NSKeyValueObservingOptions)options
           queue:(nullable NSOperationQueue *)queue
         changes:(void(^)(id receiver, id target, NSDictionary *change))changes {
@@ -423,7 +428,7 @@ static BOOL _yj_KVOMacroParse(id targetAndKeyPath, id *target, NSString **keyPat
     }
 }
 
-- (void)unobserve:(YJKVO)targetAndKeyPath {
+- (void)unobserve:(OBSV)targetAndKeyPath {
     __kindof NSObject *target; NSString *keyPath;
     if (_yj_KVOMacroParse(targetAndKeyPath, &target, &keyPath)) {
         [target.yj_KVOManager unregisterObserversForKeyPath:keyPath withIdentifier:self.yj_KVOIdentifier];

@@ -60,7 +60,7 @@ YJ_ROUNDED_CORNER_VIEW_DEFAULT_IMPLEMENTATION_FOR_UIVIEW_SUBCLASS
 }
 
 - (void)observeTextColor {
-    [self observe:YJKVO(self, textColor) updates:^(YJRoundedCornerLabel *self, id  _Nonnull target, UIColor *  _Nullable newValue) {
+    [self observe:OBSV(self, textColor) updates:^(YJRoundedCornerLabel *self, id  _Nonnull target, UIColor *  _Nullable newValue) {
         if (newValue) {
             if (![self.borderColor isEqualToColor:newValue]) {
                 self.borderColor = newValue;

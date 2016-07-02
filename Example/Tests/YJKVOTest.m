@@ -53,7 +53,7 @@
 
 - (void)testSimpleKVO {
     __block int i = 0;
-    [self.foo observe:YJKVO(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
+    [self.foo observe:OBSV(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
         [foo sayHello];
         [bar sayYoo];
         i++;
@@ -63,7 +63,7 @@
 
 - (void)testFullKVO {
     __block int i = 0;
-    [self.foo observe:YJKVO(self.bar, name) options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew queue:[NSOperationQueue mainQueue] changes:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, NSDictionary * _Nonnull change) {
+    [self.foo observe:OBSV(self.bar, name) options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew queue:[NSOperationQueue mainQueue] changes:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, NSDictionary * _Nonnull change) {
         NSLog(@"%@", change);
         [foo sayHello];
         [bar sayYoo];
@@ -76,7 +76,7 @@
 - (void)testNilKeyPath {
     __block int i = 0;
     self.bar.name = nil;
-    [self.foo observe:YJKVO(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
+    [self.foo observe:OBSV(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
         NSLog(@"%@", newValue);
         i++;
     }];
@@ -87,7 +87,7 @@
 - (void)testKVOTargetDealloc {
     __block int i = 0;
     Bar *bar = [Bar new];
-    [self.foo observe:YJKVO(bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
+    [self.foo observe:OBSV(bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
         NSLog(@"%@", newValue);
         i++;
     }];
@@ -98,7 +98,7 @@
 - (void)testKVOSubscriberDealloc {
     __block int i = 0;
     Foo *foo = [Foo new];
-    [foo observe:YJKVO(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
+    [foo observe:OBSV(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
         NSLog(@"%@", newValue);
         i++;
     }];
@@ -110,7 +110,7 @@
     __block int i = 0;
     int count = 10;
     for (int j = 0; j < count; j++) {
-        [self.foo observe:YJKVO(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
+        [self.foo observe:OBSV(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
             NSLog(@"%@", newValue);
             i++;
         }];
@@ -123,7 +123,7 @@
     __block int i = 0;
     int count = 10;
     for (int j = 0; j < count; j++) {
-        [self.foo observe:YJKVO(self.bar, name) options:NSKeyValueObservingOptionNew queue:[NSOperationQueue new] changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
+        [self.foo observe:OBSV(self.bar, name) options:NSKeyValueObservingOptionNew queue:[NSOperationQueue new] changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
             id newValue = change[NSKeyValueChangeNewKey];
             NSLog(@"%@ on %@", newValue, [NSThread currentThread]);
             i++;
@@ -145,17 +145,17 @@
     int count = 2;
     Foo *foo = [Foo new];
     for (int j = 0; j < count; j++) {
-        [self.foo observe:YJKVO(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
+        [self.foo observe:OBSV(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
             id newValue = change[NSKeyValueChangeNewKey];
             NSLog(@"CAN NOT PRINT: %@", newValue);
             i++;
         }];
-        [foo observe:YJKVO(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
+        [foo observe:OBSV(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
             id newValue = change[NSKeyValueChangeNewKey];
             NSLog(@"%@", newValue);
         }];
     }
-    [self.foo unobserve:YJKVO(self.bar, name)];
+    [self.foo unobserve:OBSV(self.bar, name)];
     self.bar.name = @"Baaar";
     XCTAssertTrue(i == 0);
 }
@@ -163,7 +163,7 @@
 - (void)testRetainCycleBreaks {
     @autoreleasepool {
         Foo *foo = [Foo new];
-        [self.foo observe:YJKVO(self.bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        [self.foo observe:OBSV(self.bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
             [self.foo sayHello];
             [self.bar sayYoo];
             [foo sayHello];
@@ -193,11 +193,9 @@
 - (void)testKVOSelf {
     Bar *bar = [Bar new];
     bar.name = @"Barrrr";
-    [bar observe:YJKVO(bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+    [bar observe:OBSV(bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"new name: %@", newValue);
     }];
 }
-
-
 
 @end

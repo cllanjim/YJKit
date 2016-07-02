@@ -63,7 +63,7 @@ YJ_ROUNDED_CORNER_VIEW_DEFAULT_IMPLEMENTATION_FOR_UIVIEW_SUBCLASS
 }
 
 - (void)observeTintColor {
-    [self observe:YJKVO(self, tintColor) updates:^(YJRoundedCornerButton *self, id  _Nonnull target, UIColor * _Nullable newColor) {
+    [self observe:OBSV(self, tintColor) updates:^(YJRoundedCornerButton *self, id  _Nonnull target, UIColor * _Nullable newColor) {
         if (newColor) {
             if (![self.borderColor isEqualToColor:newColor]) {
                 self.borderColor = newColor;
