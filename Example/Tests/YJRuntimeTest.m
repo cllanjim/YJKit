@@ -55,34 +55,6 @@
     XCTAssertTrue(b6 == NO);
 }
 
-- (void)testKVO {
-    Foo *foo = [Foo new];
-    Bar *bar = [Bar new];
-
-    [foo observeKeyPath:@keyPath(foo.friend.name) options:0 identifier:@"Foo1" queue:nil changes:^(id receiver, id  _Nullable newValue, NSDictionary<NSString *,id> * change) {
-        NSLog(@"Foo1 name: %@ on thread %@", newValue, [NSThread currentThread]);
-    }];
-    
-    [foo observeKeyPath:@keyPath(foo.friend.name) options:0 identifier:@"Foo2" queue:[NSOperationQueue mainQueue] changes:^(id  _Nonnull receiver, id  _Nullable newValue, NSDictionary<NSString *,id> * _Nonnull change) {
-        NSLog(@"Foo2 name: %@ on thread %@", newValue, [NSThread currentThread]);
-    }];
-    
-    [foo unobserveKeyPath:@keyPath(foo.friend.name) forIdentifier:@"Foo1"];
-    
-    foo.friend = bar;
-    
-    [bar observeKeyPath:@keyPath(bar.name) changes:^(id  _Nonnull receiver, id  _Nullable newValue) {
-        NSLog(@"Get name: %@ on %@", newValue, [NSThread currentThread]);
-    }];
-    
-    dispatch_queue_t q = dispatch_queue_create("queue", 0);
-    dispatch_async(q, ^{
-        bar.name = @"new bar";
-    });
-    
-    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
-}
-
 - (void)testMethodIMPInsertion {
     Foo *foo = [Foo new];
     Bar *bar = [Bar new];
