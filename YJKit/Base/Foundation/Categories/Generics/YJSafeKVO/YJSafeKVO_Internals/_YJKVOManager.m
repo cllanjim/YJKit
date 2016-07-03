@@ -62,7 +62,7 @@
     
     dispatch_semaphore_wait(_semaphore, DISPATCH_TIME_FOREVER);
     
-    [portersForKeyPath enumerateObjectsUsingBlock:^(_YJKVOPorter * _Nonnull porter, NSUInteger idx, BOOL * _Nonnull stop) {
+    [porters enumerateObjectsUsingBlock:^(_YJKVOPorter * _Nonnull porter, NSUInteger idx, BOOL * _Nonnull stop) {
         [_target removeObserver:porter forKeyPath:keyPath];
     }];
     

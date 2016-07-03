@@ -162,47 +162,109 @@
 }
 
 - (void)testRetainCycleBreaks {
+    __block int i = 0;
     @autoreleasepool {
         Foo *foo = [Foo new];
         [self.foo observe:OBSV(self.bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
             [self.foo sayHello];
             [self.bar sayYoo];
             [foo sayHello];
+            i++;
         }];
         self.bar = nil;
         self.foo = nil;
     }
-    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
+    XCTAssertTrue(i == 1);
 }
 
 - (void)testKVOCallbacks {
+    __block int i = 0;
     @autoreleasepool {
         __block Foo *foo = [Foo new];
         __block Bar *bar = [Bar new];
-        for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 3; j++) {
             [foo observeTarget:bar keyPath:@"name" updates:^(Foo *  _Nonnull foo_, Bar *  _Nonnull bar_, id  _Nullable newValue) {
                 [foo_ sayHello];
                 [bar_ sayYoo];
-                
+                i++;
                 foo = nil;
                 bar = nil;
             }];
         }
     }
+    XCTAssertTrue(i == 1);
 }
 
 - (void)testKVOSelf {
+    __block int i = 0;
     Bar *bar = [Bar new];
     bar.name = @"Barrrr";
     [bar observe:OBSV(bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"new name: %@", newValue);
+        i++;
     }];
+    XCTAssertTrue(i == 1);
 }
 
 - (void)testOwnership {
-    [self observe:OBSV(self.bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+    __block int i = 0;
+    [self observe:OBSV(self.bar, name) updates:^(id  _Nonnull self, id  _Nonnull target, id  _Nullable newValue) {
+        i++;
         NSLog(@"%@", self);
     }];
+    XCTAssertTrue(i == 1);
+}
+
+- (void)testMultipleObservedTargets {
+    Foo *foo1 = [Foo new];
+    Foo *foo2 = [Foo new];
+    Bar *bar1 = [Bar new];
+    Bar *bar2 = [Bar new];
+    Bar *bar3 = [Bar bar];
+    
+    [foo1 observe:OBSV(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        NSLog(@"%@ - %@", target, newValue);
+    }];
+    
+    [foo1 observe:OBSV(bar2, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        NSLog(@"%@ - %@", target, newValue);
+    }];
+
+    [foo1 observe:OBSV(bar3, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        NSLog(@"%@ - %@", target, newValue);
+    }];
+    
+    [foo2 observe:OBSV(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        NSLog(@"%@ - %@", target, newValue);
+    }];
+
+    [foo2 observe:OBSV(bar2, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        NSLog(@"%@ - %@", target, newValue);
+    }];
+    
+    [foo2 observe:OBSV(bar3, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        NSLog(@"%@ - %@", target, newValue);
+    }];
+    
+    NSLog(@"");
+    
+    foo1 = nil;
+    foo2 = nil;
+
+    NSLog(@"");
+}
+
+- (void)testObserveEachOther {
+    Foo *foo1 = [Foo new];
+    Bar *bar1 = [Bar new];
+    [foo1 observe:OBSV(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        NSLog(@"%@ - %@", target, newValue);
+    }];
+    [bar1 observe:OBSV(foo1, friend) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        NSLog(@"%@ - %@", target, newValue);
+    }];
+    foo1 = nil;
 }
 
 @end

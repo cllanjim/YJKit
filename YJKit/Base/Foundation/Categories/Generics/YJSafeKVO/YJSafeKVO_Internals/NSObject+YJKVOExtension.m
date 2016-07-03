@@ -25,10 +25,6 @@
     return objc_getAssociatedObject(self, _cmd);
 }
 
-- (void)yj_kvoDismissAllPorters {
-    [self.yj_KVOManager unemployAllPorters];
-}
-
 @end
 
 
@@ -44,10 +40,6 @@
 
 - (_YJKVOTracker *)yj_KVOTracker {
     return objc_getAssociatedObject(self, _cmd);
-}
-
-- (void)yj_kvoDismissRelatedPorters {
-    [self.yj_KVOTracker untrackAllRelatedPorters];
 }
 
 @end

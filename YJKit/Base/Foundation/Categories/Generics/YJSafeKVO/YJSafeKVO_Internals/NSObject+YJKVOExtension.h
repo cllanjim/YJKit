@@ -17,10 +17,8 @@
 
 @interface NSObject (YJKVOTarget)
 
-// Associated with a manager for managing porters
+/// Associated with a manager for managing porters
 @property (nonatomic, strong) _YJKVOManager *yj_KVOManager;
-
-- (void)yj_kvoDismissAllPorters;
 
 @end
 
@@ -31,12 +29,7 @@
 
 @interface NSObject (YJKVOObserver)
 
-// The tracker object
+/// Associated with a tracker for tracking porters
 @property (nonatomic, strong) _YJKVOTracker *yj_KVOTracker;
-
-// The identifier for KVO registering, which will connect observer with related porters
-//@property (nonatomic, copy) NSString *yj_KVOIdentifier;
-
-- (void)yj_kvoDismissRelatedPorters;
 
 @end

@@ -43,11 +43,13 @@ static void _yj_registerKVO(__kindof NSObject *observer, __kindof NSObject *targ
     [tracker trackPorter:porter forKeyPath:keyPath target:target];
     
     // release porters before dealloc
+    [observer performBlockBeforeDeallocating:^(__kindof NSObject *observer) {
+        [observer.yj_KVOManager unemployAllPorters]; // In case if observer is also a target
+        [observer.yj_KVOTracker untrackAllRelatedPorters];
+    }];
     [target performBlockBeforeDeallocating:^(__kindof NSObject *target) {
         [target.yj_KVOManager unemployAllPorters];
-    }];
-    [observer performBlockBeforeDeallocating:^(__kindof NSObject *observer) {
-        [observer.yj_KVOTracker untrackAllRelatedPorters];
+        [target.yj_KVOTracker untrackAllRelatedPorters]; // In case if target is also an observer
     }];
 }
 
