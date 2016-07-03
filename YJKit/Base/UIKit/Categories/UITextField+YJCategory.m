@@ -8,7 +8,7 @@
 
 #import <objc/runtime.h>
 #import "UITextField+YJCategory.h"
-#import "NSObject+YJRuntimeEncapsulation.h"
+#import "YJRuntimeEncapsulation.h"
 #import "_YJResignFirstResponderDefaultImp.h"
 
 @interface UITextField () <UIGestureRecognizerDelegate>

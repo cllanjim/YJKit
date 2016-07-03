@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "NSObject+YJRuntimeEncapsulation.h"
+#import "YJRuntimeEncapsulation.h"
 #import "NSObject+YJSafeKVO.h"
 #import "YJKVCMacros.h"
 #import <objc/runtime.h>

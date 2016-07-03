@@ -156,6 +156,7 @@
         }];
     }
     [self.foo unobserve:OBSV(self.bar, name)];
+
     self.bar.name = @"Baaar";
     XCTAssertTrue(i == 0);
 }
@@ -195,6 +196,12 @@
     bar.name = @"Barrrr";
     [bar observe:OBSV(bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"new name: %@", newValue);
+    }];
+}
+
+- (void)testOwnership {
+    [self observe:OBSV(self.bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        NSLog(@"%@", self);
     }];
 }
 

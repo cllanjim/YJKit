@@ -8,7 +8,7 @@
 
 #import <objc/runtime.h>
 #import "UITextView+YJCategory.h"
-#import "NSObject+YJRuntimeEncapsulation.h"
+#import "YJRuntimeEncapsulation.h"
 #import "RGBColor.h"
 #import "_YJResignFirstResponderDefaultImp.h"
 

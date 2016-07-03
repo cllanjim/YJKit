@@ -9,7 +9,7 @@
 #import <objc/runtime.h>
 #import "UIImageView+YJGeometryExtension.h"
 #import "YJGeometryExtension.h"
-#import "NSObject+YJRuntimeEncapsulation.h"
+#import "YJRuntimeEncapsulation.h"
 
 @interface UIImageView ()
 @property (nonatomic) BOOL yj_contentModeEnabled;

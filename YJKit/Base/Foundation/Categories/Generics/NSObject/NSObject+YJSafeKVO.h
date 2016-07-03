@@ -7,15 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-// This is safer than using @{ key1 : target, key2 : keyPath }
-// when value of NSDictionary nils out in the future, it will crash.
-@interface YJKVOCombiner : NSObject
-+ (instancetype)target:(__kindof NSObject *)target keyPath:(NSString *)keyPath;
-@end
-
+#import "YJOBSVTuple.h"
 
 #ifndef keyPath
 #define keyPath(KEYPATH) \
@@ -23,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 #define OBSV(TARGET, KEYPATH) \
-    [YJKVOCombiner target:TARGET keyPath:@(((void)(NO && ((void)TARGET.KEYPATH, NO)), #KEYPATH))]
+    [YJOBSVTuple target:TARGET keyPath:@(((void)(NO && ((void)TARGET.KEYPATH, NO)), #KEYPATH))]
 
 /// Using OBSV macro.
 /// e.g. If foo wants to observe bar's name property change when a new name applys to bar, then use:
@@ -32,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// @endcode
 typedef id OBSV;
 
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  By using YJSafeKVO, the observers will be generated implicitly and it's safe for not removing observers explicitly because eventually observers

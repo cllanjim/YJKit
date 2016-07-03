@@ -7,7 +7,7 @@
 //
 
 #import "NSBundle+YJCategory.h"
-#import "NSObject+YJRuntimeEncapsulation.h"
+#import "YJRuntimeEncapsulation.h"
 #import "YJUIMacros.h"
 
 @implementation NSBundle (YJCategory)

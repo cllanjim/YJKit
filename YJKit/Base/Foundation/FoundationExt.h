@@ -9,7 +9,7 @@
 #if __has_include(<YJKit/FoundationExt.h>)
 
 #import <YJKit/NSObject+YJExtension.h>
-#import <YJKit/NSObject+YJRuntimeEncapsulation.h>
+#import <YJKit/YJRuntimeEncapsulation.h>
 #import <YJKit/NSObject+YJSafeKVO.h>
 
 #import <YJKit/NSValue+YJGeometryExtension.h>
@@ -30,7 +30,7 @@
 #else
 
 #import "NSObject+YJExtension.h"
-#import "NSObject+YJRuntimeEncapsulation.h"
+#import "YJRuntimeEncapsulation.h"
 #import "NSObject+YJSafeKVO.h"
 
 #import "NSValue+YJGeometryExtension.h"

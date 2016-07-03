@@ -9,7 +9,7 @@
 #ifndef _YJResignFirstResponderDefaultImp_h
 #define _YJResignFirstResponderDefaultImp_h
 
-#import "NSObject+YJRuntimeEncapsulation.h"
+#import "YJRuntimeEncapsulation.h"
 #import "NSObject+YJSafeKVO.h"
 #import "NSArray+YJCollection.h"
 
