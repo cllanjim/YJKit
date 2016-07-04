@@ -13,6 +13,7 @@
 #import "_YJKVOPorter.h"
 #import "_YJKVOManager.h"
 #import "_YJKVOTracker.h"
+#import "_YJKVODefines.h"
 
 #pragma mark - internal functions
 

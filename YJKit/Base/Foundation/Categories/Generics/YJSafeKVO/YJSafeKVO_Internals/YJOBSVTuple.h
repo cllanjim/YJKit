@@ -14,7 +14,7 @@
 
 + (instancetype)target:(__kindof NSObject *)target keyPath:(NSString *)keyPath;
 
-@property (nonatomic, readonly, strong) __kindof NSObject * target;
+@property (nonatomic, readonly, strong) __kindof NSObject *target;
 @property (nonatomic, readonly, strong) NSString *keyPath;
 
 @end

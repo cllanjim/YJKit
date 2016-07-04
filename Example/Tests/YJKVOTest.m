@@ -250,7 +250,7 @@
     NSLog(@"");
     
     foo1 = nil;
-    foo2 = nil;
+//    foo2 = nil;
 
     NSLog(@"");
 }
@@ -264,7 +264,6 @@
     [bar1 observe:OBSV(foo1, friend) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"%@ - %@", target, newValue);
     }];
-    foo1 = nil;
 }
 
 @end
