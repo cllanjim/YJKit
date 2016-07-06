@@ -8,7 +8,7 @@
 
 #import <objc/runtime.h>
 #import "NSObject+YJSafeKVO.h"
-#import "YJRuntimeEncapsulation.h"
+#import "NSObject+YJIMPInsertion.h"
 #import "NSObject+YJKVOExtension.h"
 #import "_YJKVOPorter.h"
 #import "_YJKVOSeniorPorter.h"
