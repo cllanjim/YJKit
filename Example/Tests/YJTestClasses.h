@@ -26,6 +26,7 @@
 + (instancetype)bar;
 
 @property (nonatomic, copy) NSString *name;
+@property (nonatomic) NSUInteger age;
 
 - (void)sayYoo;
 + (void)sayYoo;

@@ -23,8 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
  
  
  Foo *foo = [Foo new];
- [foo insertBlocksIntoMethodBySelector:@selector(hello) ... // it will change the default IMP of instance method -hello
- [Foo insertBlocksIntoMethodBySelector:@selector(hello) ... // it will change the default IMP of class method +hello
+ [foo performBlocksByInvokingSelector:@selector(hello) ... // it will change the default IMP of instance method -hello
+ [Foo performBlocksByInvokingSelector:@selector(hello) ... // it will change the default IMP of class method +hello
  
  
  // To summerize:
@@ -34,48 +34,38 @@ NS_ASSUME_NONNULL_BEGIN
  
  */
 
-/// @brief Insert blocks of code which will be executed before and after the default implementation of
-///        receiver's instance method by given selector.
+/// @brief Perform blocks before and after the instance method (given selector) gets called.
 ///
 /// @discussion If the class does not own the method by given selector originally, it will go up the
 ///             chain and check its super's.
 ///
 /// @param selector   The selector for receiver (which responds to) for locating target method. If the
-///                   selector is not responded by receiver, it will not crash but returns NO.
-/// @param identifier Specify an identifier will prevent insertion with same identifier in same class.
+///                   selector is not responded by receiver, it will not crash but does nothing.
 /// @param before     The block of code which will be executed before the method implementation.
 /// @param after      The block of code which will be executed after the method implementation.
 ///
-/// @return Whether insertion is success or not.
-///
-- (BOOL)insertBlocksIntoMethodBySelector:(SEL)selector
-                              identifier:(nullable NSString *)identifier
-                                  before:(nullable void(^)(id receiver))before
-                                   after:(nullable void(^)(id receiver))after;
+- (void)performBlocksByInvokingSelector:(SEL)selector
+                                 before:(nullable void(^)(id receiver))before
+                                  after:(nullable void(^)(id receiver))after;
 
 
-/// @brief Insert blocks of code which will be executed before and after the default implementation of
-///        receiver's class method by given selector.
+/// @brief Perform blocks before and after the class method (given selector) gets called.
 ///
 /// @discussion If the class does not own the method by given selector originally, it will go up the
 ///             chain and check its super's.
 ///
 /// @param selector   The selector for receiver (which responds to) for locating target method. If the
-///                   selector is not responded by receiver, it will not crash but returns NO.
-/// @param identifier Specify an identifier will prevent insertion with same identifier in same class.
+///                   selector is not responded by receiver, it will not crash but does nothing.
 /// @param before     The block of code which will be executed before the method implementation.
 /// @param after      The block of code which will be executed after the method implementation.
 ///
-/// @return Whether insertion is success or not.
++ (void)performBlocksByInvokingSelector:(SEL)selector
+                                 before:(nullable void(^)(id receiver))before
+                                  after:(nullable void(^)(id receiver))after;
+
+
+/// @brief Perform block before dealloc
 ///
-+ (BOOL)insertBlocksIntoMethodBySelector:(SEL)selector
-                              identifier:(nullable NSString *)identifier
-                                  before:(nullable void(^)(id receiver))before
-                                   after:(nullable void(^)(id receiver))after;
-
-
-/// @brief Convenience method for clean-up before dealloc
-/// @note  Can not perform different block for objects that have same class.
 - (void)performBlockBeforeDeallocating:(void(^)(id receiver))block;
 
 @end

@@ -59,29 +59,25 @@
     Foo *foo = [Foo new];
     Bar *bar = [Bar new];
     
-    [foo insertBlocksIntoMethodBySelector:@selector(sayHi)
-                                 identifier:nil
+    [foo performBlocksByInvokingSelector:@selector(sayHi)
                                      before:^(id  _Nonnull receiver) {
                                          NSLog(@"%@ -Before instance hello", receiver);
                                      } after:^(id  _Nonnull receiver) {
                                          NSLog(@"%@ -After instance hello", receiver);
                                      }];
-    [foo insertBlocksIntoMethodBySelector:@selector(sayHello)
-                                 identifier:nil
+    [foo performBlocksByInvokingSelector:@selector(sayHello)
                                      before:^(id  _Nonnull receiver) {
                                          NSLog(@"%@ -Before instance hello again", receiver);
                                      } after:^(id  _Nonnull receiver) {
                                          NSLog(@"%@ -After instance hello again", receiver);
                                      }];
-    [bar insertBlocksIntoMethodBySelector:@selector(sayYoo)
-                                 identifier:@"Say Yoo"
+    [bar performBlocksByInvokingSelector:@selector(sayYoo)
                                      before:^(id  _Nonnull receiver) {
                                          NSLog(@"%@ -Before instance yoo", receiver);
                                      } after:^(id  _Nonnull receiver) {
                                          NSLog(@"%@ -After instance yoo", receiver);
                                      }];
-    [bar insertBlocksIntoMethodBySelector:@selector(sayYoo)
-                                 identifier:@"Say Yoo"
+    [bar performBlocksByInvokingSelector:@selector(sayYoo)
                                      before:^(id  _Nonnull receiver) {
                                          NSLog(@"%@ -Before instance yoo again", receiver);
                                      } after:^(id  _Nonnull receiver) {
@@ -91,29 +87,25 @@
     [bar sayYoo];
     
     
-    [Foo insertBlocksIntoMethodBySelector:@selector(sayHello)
-                               identifier:nil
+    [Foo performBlocksByInvokingSelector:@selector(sayHello)
                                    before:^(id  _Nonnull receiver) {
                                        NSLog(@"%@ -Before class hello", receiver);
                                    } after:^(id  _Nonnull receiver) {
                                        NSLog(@"%@ -After class hello", receiver);
                                    }];
-    [Foo insertBlocksIntoMethodBySelector:@selector(sayHello)
-                               identifier:nil
+    [Foo performBlocksByInvokingSelector:@selector(sayHello)
                                    before:^(id  _Nonnull receiver) {
                                        NSLog(@"%@ -Before class hello again", receiver);
                                    } after:^(id  _Nonnull receiver) {
                                        NSLog(@"%@ -After class hello again", receiver);
                                    }];
-    [Bar insertBlocksIntoMethodBySelector:@selector(sayYoo)
-                               identifier:@"Say Yoo"
+    [Bar performBlocksByInvokingSelector:@selector(sayYoo)
                                    before:^(id  _Nonnull receiver) {
                                        NSLog(@"%@ -Before class yoo", receiver);
                                    } after:^(id  _Nonnull receiver) {
                                        NSLog(@"%@ -After class yoo", receiver);
                                    }];
-    [Bar insertBlocksIntoMethodBySelector:@selector(sayYoo)
-                               identifier:@"Say Yoo"
+    [Bar performBlocksByInvokingSelector:@selector(sayYoo)
                                    before:^(id  _Nonnull receiver) {
                                        NSLog(@"%@ -Before class yoo again", receiver);
                                    } after:^(id  _Nonnull receiver) {

@@ -8,22 +8,22 @@
 
 #import "_YJKVOPorter.h"
 
-@implementation _YJKVOPorter {
-    __weak id _observer; // the object for handling the value changes
-    YJKVOHandler _handler; // block for receiving value changes
-    NSOperationQueue *_queue; // the operation queue to add the block
-}
+@implementation _YJKVOPorter
 
 - (instancetype)initWithObserver:(__kindof NSObject *)observer
                            queue:(nullable NSOperationQueue *)queue
-                         handler:(YJKVOHandler)handler {
+                         handler:(nullable YJKVOHandler)handler {
     self = [super init];
     if (self) {
         _observer = observer;
         _queue = queue;
-        _handler = [handler copy];
+        _handler = handler ? [handler copy] : nil;
     }
     return self;
+}
+
+- (BOOL)isEqual:(id)object {
+    return [[NSString stringWithFormat:@"%p", self] isEqualToString:[NSString stringWithFormat:@"%p", object]];
 }
 
 - (__kindof NSObject *)observer {

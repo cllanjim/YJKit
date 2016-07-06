@@ -65,7 +65,7 @@ __attribute__((visibility("hidden")))
 
 @implementation NSObject (YJIMPInsertion)
 
-static BOOL _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
+static BOOL _yj_insertImpBlocksIntoMethod(id obj, SEL sel,
                                           YJMethodImpInsertionBlock before,
                                           YJMethodImpInsertionBlock after) {
     if (!sel || (!before && !after))
@@ -81,8 +81,8 @@ static BOOL _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
     if (!defaultImp) return NO;
     
     // keep insertion in records
-    NSString *internalID = [NSString stringWithFormat:@"(%@)%@", (isClass ? @"+" : @"-"), identifier];
-    if (identifier.length && ![[_YJIMPInsertionKeeper keeper] addIdentifier:internalID forClass:cls]) {
+    NSString *identifier = [NSString stringWithFormat:@"B<%p> A<%p>", before, after];
+    if (![[_YJIMPInsertionKeeper keeper] addIdentifier:identifier forClass:cls]) {
         return NO;
     }
     
@@ -96,17 +96,17 @@ static BOOL _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
     return YES;
 }
 
-- (BOOL)insertBlocksIntoMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
-    return _yj_insertImpBlocksIntoMethod(self, selector, identifier, before, after);
+- (void)performBlocksByInvokingSelector:(SEL)selector before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
+    _yj_insertImpBlocksIntoMethod(self, selector, before, after);
 }
 
-+ (BOOL)insertBlocksIntoMethodBySelector:(SEL)selector identifier:(nullable NSString *)identifier before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
-    return _yj_insertImpBlocksIntoMethod(self, selector, identifier, before, after);
++ (void)performBlocksByInvokingSelector:(SEL)selector before:(nullable void(^)(id))before after:(nullable void(^)(id))after {
+    _yj_insertImpBlocksIntoMethod(self, selector, before, after);
 }
 
 - (void)performBlockBeforeDeallocating:(void(^)(id))block {
     // Restriction for modifying -dealloc
-    if (![self isKindOfClass:[NSObject class]] || [self isMemberOfClass:[NSObject class]])
+    if (!block || ![self isKindOfClass:[NSObject class]] || [self isMemberOfClass:[NSObject class]])
         return;
     
     // Add dealloc method to the current class if it doesn't implement one.
@@ -118,11 +118,7 @@ static BOOL _yj_insertImpBlocksIntoMethod(id obj, SEL sel, NSString *identifier,
     __unused BOOL result = class_addMethod([self class], deallocSel, deallocIMP, "v@:");
     
     // Insert method implementation before executing original dealloc implementation.
-    [self insertBlocksIntoMethodBySelector:deallocSel
-                                identifier:NSStringFromClass([self class])
-                                    before:^(id  _Nonnull receiver) {
-                                        if (block) block(receiver);
-                                    } after:nil];
+    [self performBlocksByInvokingSelector:deallocSel before:block after:nil];
 }
 
 @end

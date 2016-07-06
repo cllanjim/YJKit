@@ -27,6 +27,7 @@
 }
 
 - (void)employPorter:(_YJKVOPorter *)porter forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options {
+    
     dispatch_semaphore_wait(_semaphore, DISPATCH_TIME_FOREVER);
     
     NSMutableArray *portersForKeyPath = _porters[keyPath];
@@ -34,8 +35,10 @@
         portersForKeyPath = [NSMutableArray new];
         _porters[keyPath] = portersForKeyPath;
     }
-    [portersForKeyPath addObject:porter];
-    [_target addObserver:porter forKeyPath:keyPath options:options context:NULL];
+    if (![portersForKeyPath containsObject:porter]) {
+        [portersForKeyPath addObject:porter];
+        [_target addObserver:porter forKeyPath:keyPath options:options context:NULL];
+    }
     
     dispatch_semaphore_signal(_semaphore);
 }

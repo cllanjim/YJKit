@@ -37,4 +37,8 @@
     NSLog(@"%@ deallocated.", self);
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@<%p> %@", self.class, self, self.name];
+}
+
 @end

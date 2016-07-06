@@ -15,7 +15,7 @@
 
 @implementation YJOBSVTuple
 
-+ (instancetype)target:(__kindof NSObject *)target keyPath:(NSString *)keyPath {
++ (instancetype)tupleWithTarget:(__kindof NSObject *)target keyPath:(NSString *)keyPath {
     YJOBSVTuple *tuple = [YJOBSVTuple new];
     tuple.target = target;
     tuple.keyPath = keyPath;

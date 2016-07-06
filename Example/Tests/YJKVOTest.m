@@ -58,7 +58,8 @@
         [bar sayYoo];
         i++;
     }];
-    XCTAssertTrue(i == 1);
+    self.bar.name = @"Barr";
+    XCTAssertTrue(i == 2);
 }
 
 - (void)testFullKVO {
@@ -250,7 +251,7 @@
     NSLog(@"");
     
     foo1 = nil;
-//    foo2 = nil;
+    foo2 = nil;
 
     NSLog(@"");
 }
@@ -264,6 +265,24 @@
     [bar1 observe:OBSV(foo1, friend) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"%@ - %@", target, newValue);
     }];
+}
+
+- (void)testGroupKVO {
+    Bar *bar1 = [Bar new];
+//    Bar *bar2 = [Bar new];
+    
+    [self.foo observes:@[ OBSV(bar1, name), OBSV(bar1, age) ] updates:^(id  _Nonnull receiver, NSArray * _Nonnull targets) {
+        Bar *bar1 = targets[0];
+//        Bar *bar2 = targets[1];
+//        NSLog(@"1: %@, 2: %@", bar1, bar2);
+        if ([bar1.name isEqualToString:@"Bar1"] && bar1.age == 29) {
+            XCTAssertTrue(1);
+        }
+    }];
+    
+    bar1.name = @"Bar1";
+    bar1.age = 29;//@"Bar2";
+    
 }
 
 @end

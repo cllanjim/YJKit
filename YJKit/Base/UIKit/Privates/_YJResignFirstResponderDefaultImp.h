@@ -86,14 +86,10 @@
 }  \
   \
 - (void)yj_insertImpFor##XXX##Delegate:(NSObject *)delegate {  \
-    SEL deallocSel = NSSelectorFromString(@"dealloc");  \
     __weak id weakSelf = self; \
-     /* Must not use same identifier for both textField and textView, otherwise one of them will get filtered out. */ \
-    [delegate insertBlocksIntoMethodBySelector:deallocSel  \
-                                    identifier:nil \
-                                        before:^(id  _Nonnull receiver){  \
-                                            [weakSelf setDelegate:nil];  \
-                                        } after:nil];  \
+    [delegate performBlockBeforeDeallocating:^(id receiver) {  \
+        [weakSelf setDelegate:nil];  \
+    }];  \
 }  \
   \
 - (void)yj_##XXX##RemoveFromSuperview {  \

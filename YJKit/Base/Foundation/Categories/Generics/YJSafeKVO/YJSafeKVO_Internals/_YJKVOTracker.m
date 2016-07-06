@@ -41,7 +41,9 @@
         porters = [NSHashTable weakObjectsHashTable];
         [keyPathsAndPorters setObject:porters forKey:keyPath];
     }
-    [porters addObject:porter];
+    if (![porters containsObject:porter]) {
+        [porters addObject:porter];
+    }
     
     dispatch_semaphore_signal(_semaphore);
 }
