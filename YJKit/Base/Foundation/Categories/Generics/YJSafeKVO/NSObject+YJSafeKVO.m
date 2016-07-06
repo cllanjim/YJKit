@@ -210,4 +210,8 @@ static BOOL _yj_validateOBSVTuple(id targetAndKeyPath, id *target, NSString **ke
     [self.yj_KVOTracker untrackRelatedPortersForKeyPath:keyPath target:target];
 }
 
+- (void)unobserveAll {
+    [self.yj_KVOTracker untrackAllRelatedPorters];
+}
+
 @end

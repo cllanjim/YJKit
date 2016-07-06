@@ -126,6 +126,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)unobserveTarget:(__kindof NSObject *)target keyPath:(NSString *)keyPath NS_SWIFT_NAME(unobserve(target:keyPath:));
 
 
+/* ------------------------------------------------------------------------------------------------------------ */
+//                                                  General APIs
+/* ------------------------------------------------------------------------------------------------------------ */
+
+/**
+ @brief Manually stop observing all keyPaths when you finish the job.
+ 
+ @param target      The object which receiver observed.
+ */
+- (void)unobserveAll;
+
 @end
 
 NS_ASSUME_NONNULL_END
