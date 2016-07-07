@@ -13,5 +13,6 @@
 
 typedef void(^YJKVOHandler)(id receiver, id target, id newValue, NSDictionary *change);
 typedef void(^YJKVOGroupHandler)(id receiver, NSArray *targets);
+typedef id(^YJKVOBindHandler)(id observer, id target, id newValue);
 
 #endif /* _YJKVODefines_h */

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class _YJKVOManager, _YJKVOPorter, _YJKVOTracker;
+@class _YJKVOManager, _YJKVOTracker;
 
 
 /* ------------------------- */
@@ -31,5 +31,17 @@
 
 /// Associated with a tracker for tracking porters
 @property (nonatomic, strong) _YJKVOTracker *yj_KVOTracker;
+
+@end
+
+
+/* ------------------------- */
+//        YJKVOBinding
+/* ------------------------- */
+
+@interface NSObject (YJKVOBinding)
+
+/// Associated with a key path for receiving binding changes
+@property (nonatomic, copy) NSString *yj_KVOBindingKeyPath;
 
 @end

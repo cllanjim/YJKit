@@ -53,7 +53,7 @@
 
 - (void)testSimpleKVO {
     __block int i = 0;
-    [self.foo observe:OBSV(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
+    [self.foo observe:PACK(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
         [foo sayHello];
         [bar sayYoo];
         i++;
@@ -64,7 +64,7 @@
 
 - (void)testFullKVO {
     __block int i = 0;
-    [self.foo observe:OBSV(self.bar, name) options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew queue:[NSOperationQueue mainQueue] changes:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, NSDictionary * _Nonnull change) {
+    [self.foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew queue:[NSOperationQueue mainQueue] changes:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, NSDictionary * _Nonnull change) {
         NSLog(@"%@", change);
         [foo sayHello];
         [bar sayYoo];
@@ -77,7 +77,7 @@
 - (void)testNilKeyPath {
     __block int i = 0;
     self.bar.name = nil;
-    [self.foo observe:OBSV(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
+    [self.foo observe:PACK(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
         NSLog(@"%@", newValue);
         i++;
     }];
@@ -88,7 +88,7 @@
 - (void)testKVOTargetDealloc {
     __block int i = 0;
     Bar *bar = [Bar new];
-    [self.foo observe:OBSV(bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
+    [self.foo observe:PACK(bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
         NSLog(@"%@", newValue);
         i++;
     }];
@@ -99,7 +99,7 @@
 - (void)testKVOSubscriberDealloc {
     __block int i = 0;
     Foo *foo = [Foo new];
-    [foo observe:OBSV(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
+    [foo observe:PACK(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
         NSLog(@"%@", newValue);
         i++;
     }];
@@ -111,7 +111,7 @@
     __block int i = 0;
     int count = 10;
     for (int j = 0; j < count; j++) {
-        [self.foo observe:OBSV(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
+        [self.foo observe:PACK(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
             NSLog(@"%@", newValue);
             i++;
         }];
@@ -124,7 +124,7 @@
     __block int i = 0;
     int count = 10;
     for (int j = 0; j < count; j++) {
-        [self.foo observe:OBSV(self.bar, name) options:NSKeyValueObservingOptionNew queue:[NSOperationQueue new] changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
+        [self.foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:[NSOperationQueue new] changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
             id newValue = change[NSKeyValueChangeNewKey];
             NSLog(@"%@ on %@", newValue, [NSThread currentThread]);
             i++;
@@ -146,17 +146,17 @@
     int count = 2;
     Foo *foo = [Foo new];
     for (int j = 0; j < count; j++) {
-        [self.foo observe:OBSV(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
+        [self.foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
             id newValue = change[NSKeyValueChangeNewKey];
             NSLog(@"CAN NOT PRINT: %@", newValue);
             i++;
         }];
-        [foo observe:OBSV(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
+        [foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
             id newValue = change[NSKeyValueChangeNewKey];
             NSLog(@"%@", newValue);
         }];
     }
-    [self.foo unobserve:OBSV(self.bar, name)];
+    [self.foo unobserve:PACK(self.bar, name)];
 
     self.bar.name = @"Baaar";
     XCTAssertTrue(i == 0);
@@ -166,7 +166,7 @@
     __block int i = 0;
     @autoreleasepool {
         Foo *foo = [Foo new];
-        [self.foo observe:OBSV(self.bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        [self.foo observe:PACK(self.bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
             [self.foo sayHello];
             [self.bar sayYoo];
             [foo sayHello];
@@ -201,7 +201,7 @@
     __block int i = 0;
     Bar *bar = [Bar new];
     bar.name = @"Barrrr";
-    [bar observe:OBSV(bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+    [bar observe:PACK(bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"new name: %@", newValue);
         i++;
     }];
@@ -210,7 +210,7 @@
 
 - (void)testOwnership {
     __block int i = 0;
-    [self observe:OBSV(self.bar, name) updates:^(id  _Nonnull self, id  _Nonnull target, id  _Nullable newValue) {
+    [self observe:PACK(self.bar, name) updates:^(id  _Nonnull self, id  _Nonnull target, id  _Nullable newValue) {
         i++;
         NSLog(@"%@", self);
     }];
@@ -224,27 +224,27 @@
     Bar *bar2 = [Bar new];
     Bar *bar3 = [Bar bar];
     
-    [foo1 observe:OBSV(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+    [foo1 observe:PACK(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"%@ - %@", target, newValue);
     }];
     
-    [foo1 observe:OBSV(bar2, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+    [foo1 observe:PACK(bar2, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"%@ - %@", target, newValue);
     }];
 
-    [foo1 observe:OBSV(bar3, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+    [foo1 observe:PACK(bar3, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"%@ - %@", target, newValue);
     }];
     
-    [foo2 observe:OBSV(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+    [foo2 observe:PACK(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"%@ - %@", target, newValue);
     }];
 
-    [foo2 observe:OBSV(bar2, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+    [foo2 observe:PACK(bar2, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"%@ - %@", target, newValue);
     }];
     
-    [foo2 observe:OBSV(bar3, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+    [foo2 observe:PACK(bar3, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"%@ - %@", target, newValue);
     }];
     
@@ -259,10 +259,10 @@
 - (void)testObserveEachOther {
     Foo *foo1 = [Foo new];
     Bar *bar1 = [Bar new];
-    [foo1 observe:OBSV(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+    [foo1 observe:PACK(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"%@ - %@", target, newValue);
     }];
-    [bar1 observe:OBSV(foo1, friend) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+    [bar1 observe:PACK(foo1, friend) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         NSLog(@"%@ - %@", target, newValue);
     }];
 }
@@ -271,7 +271,7 @@
     Bar *bar1 = [Bar new];
 //    Bar *bar2 = [Bar new];
     
-    [self.foo observes:@[ OBSV(bar1, name), OBSV(bar1, age) ] updates:^(id  _Nonnull receiver, NSArray * _Nonnull targets) {
+    [self.foo observes:@[ PACK(bar1, name), PACK(bar1, age) ] updates:^(id  _Nonnull receiver, NSArray * _Nonnull targets) {
         Bar *bar1 = targets[0];
 //        Bar *bar2 = targets[1];
 //        NSLog(@"1: %@, 2: %@", bar1, bar2);
@@ -282,7 +282,19 @@
     
     bar1.name = @"Bar1";
     bar1.age = 29;//@"Bar2";
+}
+
+- (void)testBinding {
+    [PACK(self.foo, sleep) bind:PACK(self.bar, name) convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, NSString *newValue) {
+        return @(newValue.length < 10 ? NO : YES);
+    }];
+    self.bar.name = @"BINDING";
+    NSLog(@"sleep: %@, %@", self.foo.sleep ? @"YES" : @"NO", @(self.foo.sleep));
+    XCTAssertTrue(self.foo.sleep == NO);
     
+    self.bar.name = @"BINDING_BINDING";
+    NSLog(@"sleep: %@, %@", self.foo.sleep ? @"YES" : @"NO", @(self.foo.sleep));
+    XCTAssertTrue(self.foo.sleep == YES);
 }
 
 @end

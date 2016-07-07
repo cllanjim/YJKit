@@ -43,3 +43,20 @@
 }
 
 @end
+
+
+/* ------------------------- */
+//        YJKVOBinding
+/* ------------------------- */
+
+@implementation NSObject (YJKVOBinding)
+
+- (void)setYj_KVOBindingKeyPath:(NSString *)yj_KVOBindingKeyPath {
+    objc_setAssociatedObject(self, @selector(yj_KVOBindingKeyPath), yj_KVOBindingKeyPath, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (NSString *)yj_KVOBindingKeyPath {
+    return objc_getAssociatedObject(self, _cmd);
+}
+
+@end

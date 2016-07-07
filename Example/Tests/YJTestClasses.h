@@ -10,9 +10,11 @@
 
 @class Bar;
 
-@interface Foo <YJKVOReceiverType> : NSObject
+@interface Foo : NSObject
 
+@property (nonatomic, copy) NSString *name;
 @property (nonatomic, strong) Bar *friend;
+@property (nonatomic) BOOL sleep;
 
 - (void)sayHello;
 + (void)sayHello;
