@@ -285,12 +285,12 @@
 }
 
 - (void)testBinding {
-    [PACK(self.foo, sleep) bind:PACK(self.bar, name) convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, NSString *newValue) {
+    [[[PACK(self.foo, sleep) bind:PACK(self.bar, name)]
+     convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, NSString *newValue) {
         return @(newValue.length < 10 ? NO : YES);
-    }];
-    
-    [PACK(self.foo, awake) bind:PACK(self.bar, name) convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, NSString *newValue) {
-        return @(newValue.length < 10 ? NO : YES);
+    }]
+     after:^(id  _Nonnull observer, id  _Nonnull target) {
+         NSLog(@"after.");
     }];
     
     self.bar.name = @"BINDING";
@@ -304,9 +304,16 @@
 
 - (void)testBinding2 {
     Clown *clown = [Clown new];
+    clown.name = @"Clown";
     [PACK(self.foo, friend.name) bind:PACK(clown, name)];
     clown.name = @"ClownClownClown";
     XCTAssertTrue([self.foo.friend.name isEqualToString:clown.name]);
+}
+
+- (void)testBinding3 {
+    Clown *clown = [Clown new];
+    clown.name = @"Clown";
+    [PACK(self.foo, sleep) bind:PACK(clown, name)];
 }
 
 - (void)testUnbinding {

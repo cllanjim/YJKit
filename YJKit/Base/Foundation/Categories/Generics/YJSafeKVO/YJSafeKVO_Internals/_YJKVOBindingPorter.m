@@ -12,32 +12,29 @@
 #import "_YJKVOKeyPathManager.h"
 #import <objc/message.h>
 
-@implementation _YJKVOBindingPorter {
-    YJKVOReturnValueHandler _bindingHandler;
-}
+@implementation _YJKVOBindingPorter
 
 - (instancetype)initWithObserver:(__kindof NSObject *)observer
-                           queue:(nullable NSOperationQueue *)queue
-                     bindingHandler:(YJKVOReturnValueHandler)bindingHandler {
-    self = [super initWithObserver:observer queue:queue handler:nil];
-    if (self) {
-        _bindingHandler = [bindingHandler copy];
-    }
-    return self;
+                           queue:(nullable NSOperationQueue *)queue {
+    return [super initWithObserver:observer queue:queue handler:nil];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     
+    __block id initialCall = objc_getAssociatedObject(self, _cmd);
+    if (!initialCall) initialCall = @YES;
+    
     __kindof NSObject *observer = self->_observer;
-    YJKVOReturnValueHandler bindingHandler = self->_bindingHandler;
-
+    YJKVOReturnValueHandler convertHandler = self.convertHandler;
+    YJKVOObjectsHandler afterHandler = self.afterHandler;
+    
     void(^kvoCallbackBlock)(void) = ^{
         id newValue = change[NSKeyValueChangeNewKey];
         if (newValue == [NSNull null]) newValue = nil;
         
         id convertedValue = newValue;
-        if (bindingHandler) {
-            convertedValue = bindingHandler(observer, object, newValue);
+        if (convertHandler) {
+            convertedValue = convertHandler(observer, object, newValue);
         }
         
         _YJKVOKeyPathManager *keyPathManager = observer.yj_KVOKeyPathManager;
@@ -58,8 +55,19 @@
                     ((void (*)(id obj, SEL, id value)) objc_msgSend)(obj, sel, convertedValue);
                 }
                 // set value through keyPath to make result correctly for primitive value (e.g. BOOL, ...)
-                [observer setValue:convertedValue forKeyPath:observerKeyPath];
+                // here using a lousy protection to avoid setNilValueForKey: crash from NSKeyValueObservingOptionInitial callback.
+                if (!([initialCall isEqualToNumber:@YES] && !convertedValue)) {
+                    [observer setValue:convertedValue forKeyPath:observerKeyPath];
+                }
+                
+                if (afterHandler) afterHandler(observer, object);
             }
+        }
+        
+        if ([initialCall isEqualToNumber:@YES]) {
+            initialCall = @NO;
+            // no retain cycle for capturing self after block is released.
+            objc_setAssociatedObject(self, _cmd, initialCall, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         }
     };
     

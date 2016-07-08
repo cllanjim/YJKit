@@ -15,8 +15,8 @@
                             NSKeyValueObservingOptions options, NSOperationQueue *queue, YJKVOChangeHandler handler);
 
 void _yj_presetKVOBindingKeyPath(__kindof NSObject *observer,  NSString *keyPath);
- void _yj_registerKVO_binding(__kindof NSObject *observer, __kindof NSObject *target, NSString *keyPath,
-                                  NSKeyValueObservingOptions options, NSOperationQueue *queue, YJKVOReturnValueHandler bindingHandler);
+ id _yj_registerKVO_binding(__kindof NSObject *observer, __kindof NSObject *target, NSString *keyPath,
+                                  NSKeyValueObservingOptions options, NSOperationQueue *queue);
 
  void _yj_registerKVO_grouping(__kindof NSObject *observer,
                                      NSArray <__kindof NSObject *> *targets,

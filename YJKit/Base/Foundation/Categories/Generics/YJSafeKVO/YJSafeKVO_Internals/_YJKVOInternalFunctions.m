@@ -18,13 +18,13 @@
 #import "_YJKVODefines.h"
 #import "YJKVOPackTuple.h"
 
-#pragma mark - Register
+#pragma mark - Handle Porter
 
-void _yj_handlePorter(__kindof _YJKVOPorter *porter,
-                             __kindof NSObject *observer,
-                             __kindof NSObject *target,
-                             NSString *keyPath,
-                             NSKeyValueObservingOptions options) {
+void _yj_KVOManageAndTrackPorter(__kindof _YJKVOPorter *porter,
+                                 __kindof NSObject *observer,
+                                 __kindof NSObject *target,
+                                 NSString *keyPath,
+                                 NSKeyValueObservingOptions options) {
     
     // manage porter
     _YJKVOPorterManager *kvoManager = target.yj_KVOPorterManager;
@@ -51,23 +51,25 @@ void _yj_handlePorter(__kindof _YJKVOPorter *porter,
     }];
 }
 
+#pragma mark - Register
+
 void _yj_registerKVO(__kindof NSObject *observer, __kindof NSObject *target, NSString *keyPath,
                             NSKeyValueObservingOptions options, NSOperationQueue *queue, YJKVOChangeHandler handler) {
     
     // generate a porter
     _YJKVOPorter *porter = [[_YJKVOPorter alloc] initWithObserver:observer queue:queue handler:handler];
-    _yj_handlePorter(porter, observer, target, keyPath, options);
+    _yj_KVOManageAndTrackPorter(porter, observer, target, keyPath, options);
 }
 
 void _yj_presetKVOBindingKeyPath(__kindof NSObject *observer,  NSString *keyPath) {
     observer.yj_KVOTemporaryKeyPath = keyPath;
 }
 
-void _yj_registerKVO_binding(__kindof NSObject *observer, __kindof NSObject *target, NSString *keyPath,
-                                  NSKeyValueObservingOptions options, NSOperationQueue *queue, YJKVOReturnValueHandler bindingHandler) {
+id _yj_registerKVO_binding(__kindof NSObject *observer, __kindof NSObject *target, NSString *keyPath,
+                                  NSKeyValueObservingOptions options, NSOperationQueue *queue) {
     // handle observer's key path binding
     if (!observer.yj_KVOTemporaryKeyPath)
-        return;
+        return nil;
         
     _YJKVOKeyPathManager *keyPathManager = observer.yj_KVOKeyPathManager;
     if (!keyPathManager) {
@@ -78,8 +80,9 @@ void _yj_registerKVO_binding(__kindof NSObject *observer, __kindof NSObject *tar
     observer.yj_KVOTemporaryKeyPath = nil;
     
     // generate a porter
-    _YJKVOBindingPorter *porter = [[_YJKVOBindingPorter alloc] initWithObserver:observer queue:queue bindingHandler:bindingHandler];
-    _yj_handlePorter(porter, observer, target, keyPath, options);
+    _YJKVOBindingPorter *porter = [[_YJKVOBindingPorter alloc] initWithObserver:observer queue:queue];
+    _yj_KVOManageAndTrackPorter(porter, observer, target, keyPath, options);
+    return porter;
 }
 
 void _yj_registerKVO_grouping(__kindof NSObject *observer,
@@ -99,7 +102,7 @@ void _yj_registerKVO_grouping(__kindof NSObject *observer,
     for (int i = 0; i < targets.count; i++) {
         __kindof NSObject *target = targets[i];
         NSString *keyPath = keyPaths[i];
-        _yj_handlePorter(porter, observer, target, keyPath, options);
+        _yj_KVOManageAndTrackPorter(porter, observer, target, keyPath, options);
     }
 }
 

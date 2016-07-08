@@ -8,10 +8,12 @@
 
 #import "YJKVOPackTuple.h"
 #import "_YJKVOInternalFunctions.h"
+#import "_YJKVOBindingPorter.h"
 
 @interface YJKVOPackTuple ()
 @property (nonatomic, strong) __kindof NSObject *object;
 @property (nonatomic, strong) NSString *keyPath;
+@property (nonatomic, weak) _YJKVOBindingPorter *bindingPorter;
 @end
 
 @implementation YJKVOPackTuple
@@ -26,18 +28,13 @@
     return tuple;
 }
 
-- (void)bind:(PACK)targetAndKeyPath {
+- (id)bind:(PACK)targetAndKeyPath {
     __kindof NSObject *target; NSString *keyPath;
     if (_yj_validatePackTuple(targetAndKeyPath, &target, &keyPath)) {
-        _yj_registerKVO_binding(self.object, target, keyPath, (NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew), nil, nil);
+        id porter = _yj_registerKVO_binding(self.object, target, keyPath, (NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew), nil);
+        [targetAndKeyPath setBindingPorter:porter];
     }
-}
-
-- (void)bind:(PACK)targetAndKeyPath convert:(id(^)(id observer, id target, id newValue))convert {
-    __kindof NSObject *target; NSString *keyPath;
-    if (_yj_validatePackTuple(targetAndKeyPath, &target, &keyPath)) {
-        _yj_registerKVO_binding(self.object, target, keyPath, (NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew), nil, convert);
-    }
+    return targetAndKeyPath;
 }
 
 - (void)unbind:(PACK)targetAndKeyPath {
@@ -45,6 +42,16 @@
     if (_yj_validatePackTuple(targetAndKeyPath, &target, &keyPath)) {
         _yj_unregisterKVO_binding(self.object, target, keyPath);
     }
+}
+
+- (id)convert:(id(^)(id observer, id target, id newValue))convert {
+    self.bindingPorter.convertHandler = convert;
+    return self;
+}
+
+- (id)after:(void(^)(id observer, id target))after {
+    self.bindingPorter.afterHandler = after;
+    return self;
 }
 
 @end

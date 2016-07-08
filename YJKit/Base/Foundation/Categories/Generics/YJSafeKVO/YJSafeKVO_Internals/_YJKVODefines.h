@@ -14,6 +14,7 @@
 typedef void(^YJKVOChangeHandler)(id receiver, id target, id newValue, NSDictionary *change);
 typedef void(^YJKVOTargetsHandler)(id receiver, NSArray *targets);
 typedef void(^YJKVOValueHandler)(id observer, id target, id newValue);
+typedef void(^YJKVOObjectsHandler)(id observer, id target);
 
 typedef id(^YJKVOReturnValueHandler)(id observer, id target, id newValue);
 

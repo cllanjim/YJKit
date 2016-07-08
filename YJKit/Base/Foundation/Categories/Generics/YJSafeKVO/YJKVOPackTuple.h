@@ -30,6 +30,11 @@
 typedef YJKVOPackTuple * PACK;
 
 
+/// Once you get BIND by returning from -bind: , it is available for nesting / chaining.
+/// e.g. [[[PACK(foo, mood) bind:PACK(bar, feedback)] convert:...] after:...]
+typedef YJKVOPackTuple * BIND;
+
+
 NS_ASSUME_NONNULL_BEGIN
 
 /// The class for wrapping observed target and it's key path
@@ -45,16 +50,9 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  @brief Bind the object and its key path for receiving value changes.
  @param targetAndKeyPath    The YJKVOPackTuple object for wrapping object and its key path, using PACK(target, keyPath).
+ @return It returns BIND that can be nested with additional calls.
  */
-- (void)bind:(PACK)targetAndKeyPath;
-
-
-/**
- @brief Bind the object and its key path for receiving value changes.
- @param targetAndKeyPath    The YJKVOPackTuple object for wrapping object and its key path, using PACK(target, keyPath).
- @param convert             The block for converting the newValue to other type of object.
- */
-- (void)bind:(PACK)targetAndKeyPath convert:(id(^)(id observer, id target, id _Nullable newValue))convert;
+- (BIND)bind:(PACK)targetAndKeyPath;
 
 
 /**
@@ -62,6 +60,20 @@ NS_ASSUME_NONNULL_BEGIN
  @param targetAndKeyPath    The YJKVOPackTuple object for wrapping object and its key path, using PACK(target, keyPath).
  */
 - (void)unbind:(PACK)targetAndKeyPath;
+
+
+/**
+ @brief Convert the newValue to other kind of object as new returned value.
+ @param The convert block for value convertion.
+ */
+- (BIND)convert:(nullable id(^)(id observer, id target, id _Nullable newValue))convert;
+
+
+/**
+ @brief Get called after each binding finished.
+ @param The after block for additional callback.
+ */
+- (BIND)after:(void(^)(id observer, id target))after;
 
 @end
 
