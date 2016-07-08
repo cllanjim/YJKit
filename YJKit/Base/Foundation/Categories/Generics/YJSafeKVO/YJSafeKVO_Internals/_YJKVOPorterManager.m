@@ -1,15 +1,15 @@
 //
-//  _YJKVOManager.m
+//  _YJKVOPorterManager.m
 //  YJKit
 //
 //  Created by huang-kun on 16/7/3.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
 
-#import "_YJKVOManager.h"
+#import "_YJKVOPorterManager.h"
 #import "_YJKVOPorter.h"
 
-@implementation _YJKVOManager {
+@implementation _YJKVOPorterManager {
     __unsafe_unretained id _target;
     dispatch_semaphore_t _semaphore;
     NSMutableDictionary <NSString *, NSMutableArray <_YJKVOPorter *> *> *_porters;

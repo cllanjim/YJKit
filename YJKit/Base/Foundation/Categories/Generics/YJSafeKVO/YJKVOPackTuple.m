@@ -7,7 +7,6 @@
 //
 
 #import "YJKVOPackTuple.h"
-#import "NSObject+YJKVOExtension.h"
 #import "_YJKVOInternalFunctions.h"
 
 @interface YJKVOPackTuple ()
@@ -18,7 +17,9 @@
 @implementation YJKVOPackTuple
 
 + (instancetype)tupleWithObject:(__kindof NSObject *)object keyPath:(NSString *)keyPath {
-    object.yj_KVOBindingKeyPath = keyPath;
+    // preset binding key path
+    _yj_presetKVOBindingKeyPath(object, keyPath);
+    // create tuple box
     YJKVOPackTuple *tuple = [YJKVOPackTuple new];
     tuple.object = object;
     tuple.keyPath = keyPath;
@@ -36,6 +37,13 @@
     __kindof NSObject *target; NSString *keyPath;
     if (_yj_validatePackTuple(targetAndKeyPath, &target, &keyPath)) {
         _yj_registerKVO_binding(self.object, target, keyPath, (NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew), nil, convert);
+    }
+}
+
+- (void)unbind:(PACK)targetAndKeyPath {
+    __kindof NSObject *target; NSString *keyPath;
+    if (_yj_validatePackTuple(targetAndKeyPath, &target, &keyPath)) {
+        _yj_unregisterKVO_binding(self.object, target, keyPath);
     }
 }
 

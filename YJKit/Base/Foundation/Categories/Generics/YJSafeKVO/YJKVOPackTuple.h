@@ -56,6 +56,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)bind:(PACK)targetAndKeyPath convert:(id(^)(id observer, id target, id _Nullable newValue))convert;
 
+
+/**
+ @brief Cancel receiving value changes from binded object with its key path.
+ @param targetAndKeyPath    The YJKVOPackTuple object for wrapping object and its key path, using PACK(target, keyPath).
+ */
+- (void)unbind:(PACK)targetAndKeyPath;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -288,6 +288,11 @@
     [PACK(self.foo, sleep) bind:PACK(self.bar, name) convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, NSString *newValue) {
         return @(newValue.length < 10 ? NO : YES);
     }];
+    
+    [PACK(self.foo, awake) bind:PACK(self.bar, name) convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, NSString *newValue) {
+        return @(newValue.length < 10 ? NO : YES);
+    }];
+    
     self.bar.name = @"BINDING";
     NSLog(@"sleep: %@, %@", self.foo.sleep ? @"YES" : @"NO", @(self.foo.sleep));
     XCTAssertTrue(self.foo.sleep == NO);
@@ -295,6 +300,31 @@
     self.bar.name = @"BINDING_BINDING";
     NSLog(@"sleep: %@, %@", self.foo.sleep ? @"YES" : @"NO", @(self.foo.sleep));
     XCTAssertTrue(self.foo.sleep == YES);
+}
+
+- (void)testBinding2 {
+    Clown *clown = [Clown new];
+    [PACK(self.foo, friend.name) bind:PACK(clown, name)];
+    clown.name = @"ClownClownClown";
+    XCTAssertTrue([self.foo.friend.name isEqualToString:clown.name]);
+}
+
+- (void)testUnbinding {
+    Clown *clown = [Clown new];
+    
+    [PACK(self.foo, friend.name) bind:PACK(clown, name)];
+    self.foo.friend.name = @"Bar";
+
+    [PACK(self.foo, friend.name) unbind:PACK(clown, name)];
+    clown.name = @"ClownClownClown";
+    
+    XCTAssertTrue([self.foo.friend.name isEqualToString:@"Bar"]);
+}
+
+- (void)testDeadBinding {
+//    [PACK(self.bar, name) bind:PACK(self.foo, name)];
+//    [PACK(self.foo, name) bind:PACK(self.bar, name)];
+//    self.foo.name = @"Fooo";
 }
 
 @end

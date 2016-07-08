@@ -18,7 +18,7 @@ __attribute__((visibility("hidden")))
 /// The designated initializer
 - (instancetype)initWithObserver:(__kindof NSObject *)observer
                            queue:(nullable NSOperationQueue *)queue
-                     bindHandler:(YJKVOBindHandler)bindHandler;
+                     bindingHandler:(YJKVOReturnValueHandler)bindingHandler;
 
 @end
 

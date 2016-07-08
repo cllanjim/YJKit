@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3204386D1CEEF3E9006806EC /* YJArraySequence.m in Sources */ = {isa = PBXBuildFile; fileRef = 3204386C1CEEF3E9006806EC /* YJArraySequence.m */; };
 		320438721CEF14EC006806EC /* YJGeneralTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 320438711CEF14EC006806EC /* YJGeneralTest.m */; };
+		320448ED1D2F458600B11390 /* _YJKVOKeyPathManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 320448EC1D2F458600B11390 /* _YJKVOKeyPathManager.m */; };
 		3204F0C01CACA98D006282DF /* Octocat.png in Resources */ = {isa = PBXBuildFile; fileRef = 3204F0BF1CACA98D006282DF /* Octocat.png */; };
 		3204F0D41CACBF1C006282DF /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3204F0D31CACBF1C006282DF /* LaunchScreen.xib */; };
 		32058DCB1CDDC4FC006AE929 /* YJMaskViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 32058DCA1CDDC4FC006AE929 /* YJMaskViewController.xib */; };
@@ -69,9 +70,9 @@
 		32AC86EB1D2933DB00DCE1F8 /* NSObject+YJClassObjectChecking.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86EA1D2933DB00DCE1F8 /* NSObject+YJClassObjectChecking.m */; };
 		32AC86EE1D2934DF00DCE1F8 /* NSObject+YJSelectorChecking.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86ED1D2934DF00DCE1F8 /* NSObject+YJSelectorChecking.m */; };
 		32AC86F11D2935F300DCE1F8 /* NSObject+YJMethodSwizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86F01D2935F300DCE1F8 /* NSObject+YJMethodSwizzling.m */; };
-		32AC86FF1D29389500DCE1F8 /* _YJKVOManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86F61D29389500DCE1F8 /* _YJKVOManager.m */; };
+		32AC86FF1D29389500DCE1F8 /* _YJKVOPorterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86F61D29389500DCE1F8 /* _YJKVOPorterManager.m */; };
 		32AC87001D29389500DCE1F8 /* _YJKVOPorter.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86F81D29389500DCE1F8 /* _YJKVOPorter.m */; };
-		32AC87011D29389500DCE1F8 /* _YJKVOTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86FA1D29389500DCE1F8 /* _YJKVOTracker.m */; };
+		32AC87011D29389500DCE1F8 /* _YJKVOPorterTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86FA1D29389500DCE1F8 /* _YJKVOPorterTracker.m */; };
 		32AC87021D29389500DCE1F8 /* NSObject+YJKVOExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86FC1D29389500DCE1F8 /* NSObject+YJKVOExtension.m */; };
 		32B55D011D162BF300A578AD /* YJRuntimeTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 32B55D001D162BF300A578AD /* YJRuntimeTest.m */; };
 		32B8C1651CED731400E2639B /* YJMaskContentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 32B8C1631CED731400E2639B /* YJMaskContentViewController.xib */; };
@@ -123,6 +124,8 @@
 /* Begin PBXFileReference section */
 		3204386C1CEEF3E9006806EC /* YJArraySequence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJArraySequence.m; sourceTree = "<group>"; };
 		320438711CEF14EC006806EC /* YJGeneralTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJGeneralTest.m; sourceTree = "<group>"; };
+		320448EB1D2F458600B11390 /* _YJKVOKeyPathManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YJKVOKeyPathManager.h; sourceTree = "<group>"; };
+		320448EC1D2F458600B11390 /* _YJKVOKeyPathManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YJKVOKeyPathManager.m; sourceTree = "<group>"; };
 		3204F0BF1CACA98D006282DF /* Octocat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Octocat.png; sourceTree = "<group>"; };
 		3204F0D31CACBF1C006282DF /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		32058DCA1CDDC4FC006AE929 /* YJMaskViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = YJMaskViewController.xib; sourceTree = "<group>"; };
@@ -258,12 +261,12 @@
 		32AC86EF1D2935F300DCE1F8 /* NSObject+YJMethodSwizzling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+YJMethodSwizzling.h"; sourceTree = "<group>"; };
 		32AC86F01D2935F300DCE1F8 /* NSObject+YJMethodSwizzling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+YJMethodSwizzling.m"; sourceTree = "<group>"; };
 		32AC86F41D29389500DCE1F8 /* _YJKVODefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YJKVODefines.h; sourceTree = "<group>"; };
-		32AC86F51D29389500DCE1F8 /* _YJKVOManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YJKVOManager.h; sourceTree = "<group>"; };
-		32AC86F61D29389500DCE1F8 /* _YJKVOManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YJKVOManager.m; sourceTree = "<group>"; };
+		32AC86F51D29389500DCE1F8 /* _YJKVOPorterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YJKVOPorterManager.h; sourceTree = "<group>"; };
+		32AC86F61D29389500DCE1F8 /* _YJKVOPorterManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YJKVOPorterManager.m; sourceTree = "<group>"; };
 		32AC86F71D29389500DCE1F8 /* _YJKVOPorter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YJKVOPorter.h; sourceTree = "<group>"; };
 		32AC86F81D29389500DCE1F8 /* _YJKVOPorter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YJKVOPorter.m; sourceTree = "<group>"; };
-		32AC86F91D29389500DCE1F8 /* _YJKVOTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YJKVOTracker.h; sourceTree = "<group>"; };
-		32AC86FA1D29389500DCE1F8 /* _YJKVOTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YJKVOTracker.m; sourceTree = "<group>"; };
+		32AC86F91D29389500DCE1F8 /* _YJKVOPorterTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YJKVOPorterTracker.h; sourceTree = "<group>"; };
+		32AC86FA1D29389500DCE1F8 /* _YJKVOPorterTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YJKVOPorterTracker.m; sourceTree = "<group>"; };
 		32AC86FB1D29389500DCE1F8 /* NSObject+YJKVOExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+YJKVOExtension.h"; sourceTree = "<group>"; };
 		32AC86FC1D29389500DCE1F8 /* NSObject+YJKVOExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+YJKVOExtension.m"; sourceTree = "<group>"; };
 		32B55D001D162BF300A578AD /* YJRuntimeTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJRuntimeTest.m; sourceTree = "<group>"; };
@@ -667,18 +670,20 @@
 			isa = PBXGroup;
 			children = (
 				32AC86F41D29389500DCE1F8 /* _YJKVODefines.h */,
-				32AC86F51D29389500DCE1F8 /* _YJKVOManager.h */,
-				32AC86F61D29389500DCE1F8 /* _YJKVOManager.m */,
+				32AC86F51D29389500DCE1F8 /* _YJKVOPorterManager.h */,
+				32AC86F61D29389500DCE1F8 /* _YJKVOPorterManager.m */,
 				32AC86F71D29389500DCE1F8 /* _YJKVOPorter.h */,
 				32AC86F81D29389500DCE1F8 /* _YJKVOPorter.m */,
 				320688A71D2B8FA800B85E95 /* _YJKVOGroupingPorter.h */,
 				320688A81D2B8FA800B85E95 /* _YJKVOGroupingPorter.m */,
 				32FF16F71D2E53D60037A5D2 /* _YJKVOBindingPorter.h */,
 				32FF16F81D2E53D60037A5D2 /* _YJKVOBindingPorter.m */,
-				32AC86F91D29389500DCE1F8 /* _YJKVOTracker.h */,
-				32AC86FA1D29389500DCE1F8 /* _YJKVOTracker.m */,
+				32AC86F91D29389500DCE1F8 /* _YJKVOPorterTracker.h */,
+				32AC86FA1D29389500DCE1F8 /* _YJKVOPorterTracker.m */,
 				32AC86FB1D29389500DCE1F8 /* NSObject+YJKVOExtension.h */,
 				32AC86FC1D29389500DCE1F8 /* NSObject+YJKVOExtension.m */,
+				320448EB1D2F458600B11390 /* _YJKVOKeyPathManager.h */,
+				320448EC1D2F458600B11390 /* _YJKVOKeyPathManager.m */,
 				32FF16FD1D2E623A0037A5D2 /* _YJKVOInternalFunctions.h */,
 				32FF16FE1D2E623A0037A5D2 /* _YJKVOInternalFunctions.m */,
 			);
@@ -933,6 +938,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				320448ED1D2F458600B11390 /* _YJKVOKeyPathManager.m in Sources */,
 				326389141CF2B3390026BED8 /* YJMaskedView.m in Sources */,
 				3263890A1CF2B3390026BED8 /* UIScreen+YJCategory.m in Sources */,
 				3263891D1CF2B3390026BED8 /* YJMemoryCache.m in Sources */,
@@ -941,7 +947,7 @@
 				32C1EB681D01831A00E595EF /* YJTargetDemoViewController.m in Sources */,
 				326389021CF2B3390026BED8 /* UIAlertView+YJBlockBased.m in Sources */,
 				32C1EB601D017E6000E595EF /* YJHeaderSettingDemoViewController.m in Sources */,
-				32AC86FF1D29389500DCE1F8 /* _YJKVOManager.m in Sources */,
+				32AC86FF1D29389500DCE1F8 /* _YJKVOPorterManager.m in Sources */,
 				32C1EB6B1D01890200E595EF /* YJCustomCellSettingDemoViewController.m in Sources */,
 				326389131CF2B3390026BED8 /* YJMaskedImageView.m in Sources */,
 				32AC86E51D2932AB00DCE1F8 /* NSObject+YJAssociatedIdentifier.m in Sources */,
@@ -985,7 +991,7 @@
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				326F34931CF5459F00B2FF75 /* UITextView+YJCategory.m in Sources */,
 				326389121CF2B3390026BED8 /* YJCircularImageView.m in Sources */,
-				32AC87011D29389500DCE1F8 /* _YJKVOTracker.m in Sources */,
+				32AC87011D29389500DCE1F8 /* _YJKVOPorterTracker.m in Sources */,
 				326389051CF2B3390026BED8 /* UIControl+YJBlockBased.m in Sources */,
 				326389101CF2B3390026BED8 /* CAShapeLayer+YJLayerBasedMasking.m in Sources */,
 				3263890B1CF2B3390026BED8 /* UIView+YJCategory.m in Sources */,

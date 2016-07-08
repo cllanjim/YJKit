@@ -8,39 +8,58 @@
 
 #import "_YJKVOBindingPorter.h"
 #import "NSObject+YJKVOExtension.h"
+#import "NSArray+YJSequence.h"
+#import "_YJKVOKeyPathManager.h"
+#import <objc/message.h>
 
 @implementation _YJKVOBindingPorter {
-    YJKVOBindHandler _bindHandler;
+    YJKVOReturnValueHandler _bindingHandler;
 }
 
 - (instancetype)initWithObserver:(__kindof NSObject *)observer
                            queue:(nullable NSOperationQueue *)queue
-                     bindHandler:(YJKVOBindHandler)bindHandler {
+                     bindingHandler:(YJKVOReturnValueHandler)bindingHandler {
     self = [super initWithObserver:observer queue:queue handler:nil];
     if (self) {
-        _bindHandler = [bindHandler copy];
+        _bindingHandler = [bindingHandler copy];
     }
     return self;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     
-    id observer = self->_observer;
-    YJKVOBindHandler bindHandler = self->_bindHandler;
+    __kindof NSObject *observer = self->_observer;
+    YJKVOReturnValueHandler bindingHandler = self->_bindingHandler;
 
     void(^kvoCallbackBlock)(void) = ^{
         id newValue = change[NSKeyValueChangeNewKey];
         if (newValue == [NSNull null]) newValue = nil;
         
-        NSString *keyPath = [observer yj_KVOBindingKeyPath];
         id convertedValue = newValue;
-        
-        if (bindHandler) {
-            convertedValue = bindHandler(observer, object, newValue);
+        if (bindingHandler) {
+            convertedValue = bindingHandler(observer, object, newValue);
         }
         
-        if (observer && keyPath) {
-            [observer setValue:convertedValue forKeyPath:keyPath];
+        _YJKVOKeyPathManager *keyPathManager = observer.yj_KVOKeyPathManager;
+        NSArray <NSString *> *observerKeyPaths = [keyPathManager keyPathsFromObserverForBindingTarget:object withKeyPath:keyPath];
+        
+        if (observer && observerKeyPaths.count) {
+            for (NSString *observerKeyPath in observerKeyPaths) {
+                // get observer's setter
+                NSArray *components = [observerKeyPath componentsSeparatedByString:@"."];
+                NSString *last = components.lastObject;
+                NSString *prefixedKeyPath = [[components droppingLast] componentsJoinedByString:@"."];
+                id obj = prefixedKeyPath.length ? [observer valueForKeyPath:prefixedKeyPath] : observer;
+                
+                NSString *setterStr = [NSString stringWithFormat:@"set%@:", last.capitalizedString];
+                SEL sel = NSSelectorFromString(setterStr);
+                if ([obj respondsToSelector:sel]) {
+                    // call setter to trigger the KVO if needed (e.g. observer may be observed by other objects)
+                    ((void (*)(id obj, SEL, id value)) objc_msgSend)(obj, sel, convertedValue);
+                }
+                // set value through keyPath to make result correctly for primitive value (e.g. BOOL, ...)
+                [observer setValue:convertedValue forKeyPath:observerKeyPath];
+            }
         }
     };
     

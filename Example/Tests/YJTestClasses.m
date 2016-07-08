@@ -42,3 +42,9 @@
 }
 
 @end
+
+
+@implementation Clown
+
+@end
+

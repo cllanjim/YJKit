@@ -19,7 +19,7 @@ __attribute__((visibility("hidden")))
 - (instancetype)initWithObserver:(__kindof NSObject *)observer
                          targets:(NSArray <__kindof NSObject *> *)targets
                            queue:(nullable NSOperationQueue *)queue
-                    groupHandler:(YJKVOGroupHandler)groupHandler;
+                    targetsHandler:(YJKVOTargetsHandler)targetsHandler;
 
 @end
 

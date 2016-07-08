@@ -9,22 +9,31 @@
 #import <objc/runtime.h>
 #import "_YJKVOInternalFunctions.h"
 #import "NSObject+YJSafeKVO.h"
-#import "NSObject+YJKVOExtension.h"
-#import "_YJKVOTracker.h"
 
 #pragma mark - YJSafeKVO implementations
+
+YJKVOValueHandler (^yj_convertedKVOValueHandler)(YJKVOChangeHandler) = ^YJKVOValueHandler(YJKVOChangeHandler changeHandler) {
+    void(^valueHandler)(id,id,id) = ^(id receiver, id target, id _Nullable newValue) {
+        if (changeHandler) changeHandler(receiver, target, newValue, nil);
+    };
+    return valueHandler;
+};
+
+YJKVOChangeHandler (^yj_convertedKVOChangeHandler)(YJKVOValueHandler) = ^YJKVOChangeHandler(YJKVOValueHandler valueHander) {
+    void(^changeHandler)(id,id,id,NSDictionary *) = ^(id receiver, id target, id newValue, NSDictionary *change){
+        if (valueHander) valueHander(receiver, target, newValue);
+    };
+    return changeHandler;
+};
+
 
 @implementation NSObject (YJSafeKVO)
 
 - (void)observe:(PACK)targetAndKeyPath updates:(void(^)(id receiver, id target, id _Nullable newValue))updates {
     __kindof NSObject *target; NSString *keyPath;
     if (_yj_validatePackTuple(targetAndKeyPath, &target, &keyPath)) {
-        
-        void(^handler)(id,id,id,NSDictionary *) = ^(id receiver, id target, id newValue, NSDictionary *change){
-            if (updates) updates(receiver, target, newValue);
-        };
-        
-        _yj_registerKVO(self, target, keyPath, (NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew), nil, handler);
+        YJKVOChangeHandler changeHandler = yj_convertedKVOChangeHandler(updates);
+        _yj_registerKVO(self, target, keyPath, (NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew), nil, changeHandler);
     }
 }
 
@@ -63,19 +72,15 @@
 - (void)unobserve:(PACK)targetAndKeyPath {
     __kindof NSObject *target; NSString *keyPath;
     if (_yj_validatePackTuple(targetAndKeyPath, &target, &keyPath)) {
-        [self.yj_KVOTracker untrackRelatedPortersForKeyPath:keyPath target:target];
+        _yj_unregisterKVO(self, target, keyPath);
     }
 }
 
 - (void)observeTarget:(__kindof NSObject *)target
               keyPath:(NSString *)keyPath
               updates:(void(^)(id receiver, id target, id _Nullable newValue))updates {
-    
-    void(^handler)(id,id,id,NSDictionary *) = ^(id receiver, id target, id newValue, NSDictionary *change){
-        if (updates) updates(receiver, target, newValue);
-    };
-    
-    _yj_registerKVO(self, target, keyPath, (NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew), nil, handler);
+    YJKVOChangeHandler changeHandler = yj_convertedKVOChangeHandler(updates);
+    _yj_registerKVO(self, target, keyPath, (NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew), nil, changeHandler);
 }
 
 - (void)observeTarget:(__kindof NSObject *)target
@@ -87,16 +92,15 @@
     void(^handler)(id,id,id,NSDictionary *) = ^(id receiver, id target, id newValue, NSDictionary *change){
         if (changes) changes(receiver, target, change);
     };
-    
     _yj_registerKVO(self, target, keyPath, options, queue, handler);
 }
 
 - (void)unobserveTarget:(__kindof NSObject *)target keyPath:(NSString *)keyPath {
-    [self.yj_KVOTracker untrackRelatedPortersForKeyPath:keyPath target:target];
+    _yj_unregisterKVO(self, target, keyPath);
 }
 
 - (void)unobserveAll {
-    [self.yj_KVOTracker untrackAllRelatedPorters];
+    _yj_unregisterKVO(self, nil, nil);
 }
 
 @end

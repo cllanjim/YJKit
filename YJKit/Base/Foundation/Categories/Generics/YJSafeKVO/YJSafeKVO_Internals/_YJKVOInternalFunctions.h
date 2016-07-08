@@ -11,18 +11,21 @@
 
 @class _YJKVOPorter;
 
-
  void _yj_registerKVO(__kindof NSObject *observer, __kindof NSObject *target, NSString *keyPath,
-                            NSKeyValueObservingOptions options, NSOperationQueue *queue, YJKVOHandler handler);
+                            NSKeyValueObservingOptions options, NSOperationQueue *queue, YJKVOChangeHandler handler);
 
+void _yj_presetKVOBindingKeyPath(__kindof NSObject *observer,  NSString *keyPath);
  void _yj_registerKVO_binding(__kindof NSObject *observer, __kindof NSObject *target, NSString *keyPath,
-                                  NSKeyValueObservingOptions options, NSOperationQueue *queue, YJKVOBindHandler bindHandler);
+                                  NSKeyValueObservingOptions options, NSOperationQueue *queue, YJKVOReturnValueHandler bindingHandler);
 
  void _yj_registerKVO_grouping(__kindof NSObject *observer,
                                      NSArray <__kindof NSObject *> *targets,
                                      NSArray <NSString *> *keyPaths,
                                      NSKeyValueObservingOptions options,
                                      NSOperationQueue *queue,
-                                     YJKVOGroupHandler groupHandler);
+                                     YJKVOTargetsHandler targetsHandler);
 
  BOOL _yj_validatePackTuple(id targetAndKeyPath, id *target, NSString **keyPath);
+
+void _yj_unregisterKVO(__kindof NSObject *observer, __kindof NSObject *target, NSString *keyPath);
+void _yj_unregisterKVO_binding(__kindof NSObject *observer, __kindof NSObject *target, NSString *keyPath);

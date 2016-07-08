@@ -15,6 +15,7 @@
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, strong) Bar *friend;
 @property (nonatomic) BOOL sleep;
+@property (nonatomic) BOOL awake;
 
 - (void)sayHello;
 + (void)sayHello;
@@ -35,3 +36,9 @@
 
 @end
 
+
+@interface Clown : NSObject
+
+@property (nonatomic, copy) NSString *name;
+
+@end

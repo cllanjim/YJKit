@@ -10,16 +10,16 @@
 
 @implementation _YJKVOGroupingPorter {
     NSHashTable *_targets;
-    YJKVOGroupHandler _groupHandler;
+    YJKVOTargetsHandler _targetsHandler;
 }
 
 - (instancetype)initWithObserver:(__kindof NSObject *)observer
                          targets:(NSArray <__kindof NSObject *> *)targets
                            queue:(nullable NSOperationQueue *)queue
-                    groupHandler:(YJKVOGroupHandler)groupHandler {
+                    targetsHandler:(YJKVOTargetsHandler)targetsHandler {
     self = [super initWithObserver:observer queue:queue handler:nil];
     if (self) {
-        _groupHandler = groupHandler ? [groupHandler copy] : nil;
+        _targetsHandler = targetsHandler ? [targetsHandler copy] : nil;
         _targets = [NSHashTable weakObjectsHashTable];
         for (id target in targets) {
             [_targets addObject:target];
@@ -32,12 +32,12 @@
     
     id observer = self->_observer;
     NSArray *targets = [self->_targets allObjects];
-    YJKVOGroupHandler groupHandler = self->_groupHandler;
+    YJKVOTargetsHandler targetsHandler = self->_targetsHandler;
     
     void(^kvoCallbackBlock)(void) = ^{
         id newValue = change[NSKeyValueChangeNewKey];
         if (newValue == [NSNull null]) newValue = nil;
-        if (groupHandler) groupHandler(observer, targets);
+        if (targetsHandler) targetsHandler(observer, targets);
     };
     
     if (self->_queue) {
