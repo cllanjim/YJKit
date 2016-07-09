@@ -8,44 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
-@class _YJKVOPorterManager, _YJKVOPorterTracker, _YJKVOKeyPathManager;
+@class _YJKVOPorterManager, _YJKVOPorterTracker, _YJKVOBindingManager;
 
 
-/* ------------------------- */
-//         YJKVOTarget
-/* ------------------------- */
-
-@interface NSObject (YJKVOTarget)
+@interface NSObject (YJKVOExtension)
 
 /// Associated with a porter manager for managing porters
 @property (nonatomic, strong) _YJKVOPorterManager *yj_KVOPorterManager;
 
-@end
-
-
-/* ------------------------- */
-//       YJKVOObserver
-/* ------------------------- */
-
-@interface NSObject (YJKVOObserver)
-
 /// Associated with a tracker for tracking porters
-@property (nonatomic, strong) _YJKVOPorterTracker *yj_KVOTracker;
-
-@end
-
-
-/* ------------------------- */
-//        YJKVOBinding
-/* ------------------------- */
-
-@interface NSObject (YJKVOBinding)
+@property (nonatomic, strong) _YJKVOPorterTracker *yj_KVOPorterTracker;
 
 /// Associated with a key path manager for organizing key paths
-@property (nonatomic, strong) _YJKVOKeyPathManager *yj_KVOKeyPathManager;
-
-/// For keeping the key path temporarily and use it later
-/// It should be disposable and get released after using it.
-@property (nonatomic, strong) NSString *yj_KVOTemporaryKeyPath;
+@property (nonatomic, strong) _YJKVOBindingManager *yj_KVOBindingManager;
 
 @end

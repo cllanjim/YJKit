@@ -10,13 +10,9 @@
 #import "NSObject+YJKVOExtension.h"
 #import "_YJKVOPorterManager.h"
 #import "_YJKVOPorterTracker.h"
-#import "_YJKVOKeyPathManager.h"
+#import "_YJKVOBindingManager.h"
 
-/* ------------------------- */
-//         YJKVOTarget
-/* ------------------------- */
-
-@implementation NSObject (YJKVOTarget)
+@implementation NSObject (YJKVOExtension)
 
 - (void)setYj_KVOPorterManager:(_YJKVOPorterManager *)yj_KVOPorterManager {
     objc_setAssociatedObject(self, @selector(yj_KVOPorterManager), yj_KVOPorterManager, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -26,45 +22,19 @@
     return objc_getAssociatedObject(self, _cmd);
 }
 
-@end
-
-
-/* ------------------------- */
-//       YJKVOObserver
-/* ------------------------- */
-
-@implementation NSObject (YJKVOObserver)
-
-- (void)setYj_KVOTracker:(_YJKVOPorterTracker *)yj_KVOTracker {
-    objc_setAssociatedObject(self, @selector(yj_KVOTracker), yj_KVOTracker, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setYj_KVOPorterTracker:(_YJKVOPorterTracker *)yj_KVOPorterTracker {
+    objc_setAssociatedObject(self, @selector(yj_KVOPorterTracker), yj_KVOPorterTracker, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (_YJKVOPorterTracker *)yj_KVOTracker {
+- (_YJKVOPorterTracker *)yj_KVOPorterTracker {
     return objc_getAssociatedObject(self, _cmd);
 }
 
-@end
-
-
-/* ------------------------- */
-//        YJKVOBinding
-/* ------------------------- */
-
-@implementation NSObject (YJKVOBinding)
-
-- (void)setYj_KVOKeyPathManager:(_YJKVOKeyPathManager *)yj_KVOKeyPathManager {
-    objc_setAssociatedObject(self, @selector(yj_KVOKeyPathManager), yj_KVOKeyPathManager, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setYj_KVOBindingManager:(_YJKVOBindingManager *)yj_KVOBindingManager {
+    objc_setAssociatedObject(self, @selector(yj_KVOBindingManager), yj_KVOBindingManager, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (_YJKVOKeyPathManager *)yj_KVOKeyPathManager {
-    return objc_getAssociatedObject(self, _cmd);
-}
-
-- (void)setYj_KVOTemporaryKeyPath:(NSString *)yj_KVOTemporaryKeyPath {
-    objc_setAssociatedObject(self, @selector(yj_KVOTemporaryKeyPath), yj_KVOTemporaryKeyPath, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (NSString *)yj_KVOTemporaryKeyPath {
+- (_YJKVOBindingManager *)yj_KVOBindingManager {
     return objc_getAssociatedObject(self, _cmd);
 }
 

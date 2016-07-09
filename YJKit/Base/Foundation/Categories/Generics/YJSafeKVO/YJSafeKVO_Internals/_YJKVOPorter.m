@@ -26,10 +26,6 @@
     return [[NSString stringWithFormat:@"%p", self] isEqualToString:[NSString stringWithFormat:@"%p", object]];
 }
 
-- (__kindof NSObject *)observer {
-    return _observer;
-}
-
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     
     id observer = self->_observer;
@@ -48,10 +44,10 @@
     }
 }
 
-- (void)dealloc {
 #if DEBUG_YJ_SAFE_KVO
+- (void)dealloc {
     NSLog(@"%@ deallocated.", self);
-#endif
 }
+#endif
 
 @end

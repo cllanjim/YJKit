@@ -30,7 +30,7 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     
-    id observer = self->_observer;
+    id observer = self.observer;
     NSArray *targets = [self->_targets allObjects];
     YJKVOTargetsHandler targetsHandler = self->_targetsHandler;
     
@@ -40,8 +40,8 @@
         if (targetsHandler) targetsHandler(observer, targets);
     };
     
-    if (self->_queue) {
-        [self->_queue addOperationWithBlock:kvoCallbackBlock];
+    if (self.queue) {
+        [self.queue addOperationWithBlock:kvoCallbackBlock];
     } else {
         kvoCallbackBlock();
     }

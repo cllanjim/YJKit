@@ -64,7 +64,7 @@
 
 - (void)testFullKVO {
     __block int i = 0;
-    [self.foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew queue:[NSOperationQueue mainQueue] changes:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, NSDictionary * _Nonnull change) {
+    [self.foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew queue:[NSOperationQueue mainQueue] changes:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id newValue, NSDictionary * _Nonnull change) {
         NSLog(@"%@", change);
         [foo sayHello];
         [bar sayYoo];
@@ -124,8 +124,7 @@
     __block int i = 0;
     int count = 10;
     for (int j = 0; j < count; j++) {
-        [self.foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:[NSOperationQueue new] changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
-            id newValue = change[NSKeyValueChangeNewKey];
+        [self.foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:[NSOperationQueue new] changes:^(id  _Nonnull receiver, id  _Nonnull target, id newValue, NSDictionary * _Nonnull change) {
             NSLog(@"%@ on %@", newValue, [NSThread currentThread]);
             i++;
             NSLog(@"i = %@", @(i));
@@ -146,13 +145,11 @@
     int count = 2;
     Foo *foo = [Foo new];
     for (int j = 0; j < count; j++) {
-        [self.foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
-            id newValue = change[NSKeyValueChangeNewKey];
+        [self.foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, id newValue, NSDictionary * _Nonnull change) {
             NSLog(@"CAN NOT PRINT: %@", newValue);
             i++;
         }];
-        [foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, NSDictionary * _Nonnull change) {
-            id newValue = change[NSKeyValueChangeNewKey];
+        [foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, id newValue, NSDictionary * _Nonnull change) {
             NSLog(@"%@", newValue);
         }];
     }
@@ -306,32 +303,47 @@
     Clown *clown = [Clown new];
     clown.name = @"Clown";
     [PACK(self.foo, friend.name) bind:PACK(clown, name)];
+    
     clown.name = @"ClownClownClown";
-    XCTAssertTrue([self.foo.friend.name isEqualToString:clown.name]);
+    clown.name = @"ClownClownClown";
+    XCTAssertTrue([self.foo.friend.name isEqualToString:@"ClownClownClown"]);
 }
 
 - (void)testBinding3 {
     Clown *clown = [Clown new];
     clown.name = @"Clown";
-    [PACK(self.foo, sleep) bind:PACK(clown, name)];
-}
-
-- (void)testUnbinding {
-    Clown *clown = [Clown new];
     
-    [PACK(self.foo, friend.name) bind:PACK(clown, name)];
-    self.foo.friend.name = @"Bar";
+    [PACK(self.foo, name) bind:PACK(clown, name)];
+    [PACK(self.bar, name) bind:PACK(clown, name)];
+    
+    self.foo.sleep = NO;
+    self.foo.awake = NO;
+    
+    [[PACK(self.foo, sleep) bind:PACK(clown, name)] convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, id  _Nullable newValue) {
+        return [newValue length] > 10 ? @YES : @NO;
+    }];
+    [[PACK(self.foo, awake) bind:PACK(clown, name)] taken:^BOOL(id  _Nonnull observer, id  _Nonnull target, id  _Nullable newValue) {
+        return NO;
+    }];
 
-    [PACK(self.foo, friend.name) unbind:PACK(clown, name)];
     clown.name = @"ClownClownClown";
     
-    XCTAssertTrue([self.foo.friend.name isEqualToString:@"Bar"]);
+    XCTAssertTrue(self.foo.sleep == YES);
+    XCTAssertTrue(self.foo.awake == NO);
+    XCTAssertTrue([self.foo.name isEqualToString:@"ClownClownClown"]);
+    XCTAssertTrue([self.bar.name isEqualToString:@"ClownClownClown"]);
 }
 
 - (void)testDeadBinding {
 //    [PACK(self.bar, name) bind:PACK(self.foo, name)];
 //    [PACK(self.foo, name) bind:PACK(self.bar, name)];
 //    self.foo.name = @"Fooo";
+}
+
+- (void)testPipe {
+    self.bar.name = @"Barrrr";
+    [PACK(self.foo, name) pipe:PACK(self.bar, name)];
+    XCTAssertTrue([self.foo.name isEqualToString:@"Barrrr"]);
 }
 
 @end

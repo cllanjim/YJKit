@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)observe:(PACK)targetAndKeyPath
         options:(NSKeyValueObservingOptions)options
           queue:(nullable NSOperationQueue *)queue
-        changes:(void(^)(id receiver, id target, NSDictionary *change))changes
+        changes:(void(^)(id receiver, id target, id _Nullable newValue, NSDictionary *change))changes
             NS_SWIFT_UNAVAILABLE("Use observe(target:keyPath:options:queue:changes:) instead.");
 
 
@@ -97,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
               keyPath:(NSString *)keyPath
               options:(NSKeyValueObservingOptions)options
                 queue:(nullable NSOperationQueue *)queue
-              changes:(void(^)(id receiver, id target, NSDictionary *change))changes
+              changes:(void(^)(id receiver, id target, id _Nullable newValue, NSDictionary *change))changes
                 NS_SWIFT_NAME(observe(target:keyPath:options:queue:changes:));
 
 

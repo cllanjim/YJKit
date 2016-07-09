@@ -48,7 +48,7 @@
     dispatch_semaphore_signal(_semaphore);
 }
 
-static void _yj_enumerateKeysAndObjectsOfMapTable(NSMapTable *mapTable, void(^handler)(id /*key*/, id /*obj*/, BOOL */*stop*/)) {
+static void _yj_kvo_enumerateKeysAndObjectsOfMapTable(NSMapTable *mapTable, void(^handler)(id /*key*/, id /*obj*/, BOOL */*stop*/)) {
     id key = nil; BOOL stop = NO;
     NSEnumerator *keyEnumerator = [mapTable keyEnumerator];
     while (key = [keyEnumerator nextObject]) {
@@ -59,7 +59,7 @@ static void _yj_enumerateKeysAndObjectsOfMapTable(NSMapTable *mapTable, void(^ha
 }
 
 - (void)untrackRelatedPortersForKeyPath:(NSString *)keyPath target:(__kindof NSObject *)target {
-    _yj_enumerateKeysAndObjectsOfMapTable(self->_relatedPorters, ^(__kindof NSObject *relatedTarget, NSMapTable *keyPathsAndPorters, BOOL *stop){
+    _yj_kvo_enumerateKeysAndObjectsOfMapTable(self->_relatedPorters, ^(__kindof NSObject *relatedTarget, NSMapTable *keyPathsAndPorters, BOOL *stop){
         if (relatedTarget == target) {
             [target.yj_KVOPorterManager unemployPortersForKeyPath:keyPath];
             *stop = YES;
@@ -69,8 +69,8 @@ static void _yj_enumerateKeysAndObjectsOfMapTable(NSMapTable *mapTable, void(^ha
 
 - (void)untrackAllRelatedPorters {
     NSMapTable *relatedPorters = self->_relatedPorters;
-    _yj_enumerateKeysAndObjectsOfMapTable(relatedPorters, ^(__kindof NSObject *target, NSMapTable *keyPathsAndPorters, BOOL *stop){
-        _yj_enumerateKeysAndObjectsOfMapTable(keyPathsAndPorters, ^(NSString *keyPath, NSHashTable *porters, BOOL *stop){
+    _yj_kvo_enumerateKeysAndObjectsOfMapTable(relatedPorters, ^(__kindof NSObject *target, NSMapTable *keyPathsAndPorters, BOOL *stop){
+        _yj_kvo_enumerateKeysAndObjectsOfMapTable(keyPathsAndPorters, ^(NSString *keyPath, NSHashTable *porters, BOOL *stop){
             [target.yj_KVOPorterManager unemployPorters:[porters allObjects] forKeyPath:keyPath];
         });
     });

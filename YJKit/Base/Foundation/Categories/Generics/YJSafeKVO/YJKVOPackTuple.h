@@ -30,11 +30,6 @@
 typedef YJKVOPackTuple * PACK;
 
 
-/// Once you get BIND by returning from -bind: , it is available for nesting / chaining.
-/// e.g. [[[PACK(foo, mood) bind:PACK(bar, feedback)] convert:...] after:...]
-typedef YJKVOPackTuple * BIND;
-
-
 NS_ASSUME_NONNULL_BEGIN
 
 /// The class for wrapping observed target and it's key path
@@ -45,10 +40,33 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly, strong) __kindof NSObject *object;
 @property (nonatomic, readonly, strong) NSString *keyPath;
+@property (nonatomic, readonly) BOOL isValid;
+
+@end
+
+
+
+/// Once you get BIND by returning from -bind: , it is available for nesting / chaining.
+/// e.g. [[[PACK(foo, mood) bind:PACK(bar, feedback)] convert:...] after:...]
+typedef YJKVOPackTuple * BIND;
+
+
+/// Binding Extension
+
+@interface YJKVOPackTuple (YJKVOBinding)
 
 
 /**
- @brief Bind the object and its key path for receiving value changes.
+ @brief Pipe observer with target for receiving value changes. This will receive value immediately.
+ @warning Using this for single direction. If [A pipe:B] then [B pipe:A], you will get infinite loop.
+ @param targetAndKeyPath    The YJKVOPackTuple object for wrapping object and its key path, using PACK(target, keyPath).
+ */
+- (void)pipe:(PACK)targetAndKeyPath;
+
+
+/**
+ @brief Bind observer with target for receiving value changes.
+ @warning Using this for single direction. If [A bind:B] then [B bind:A], you will get infinite loop.
  @param targetAndKeyPath    The YJKVOPackTuple object for wrapping object and its key path, using PACK(target, keyPath).
  @return It returns BIND that can be nested with additional calls.
  */
@@ -56,10 +74,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- @brief Cancel receiving value changes from binded object with its key path.
- @param targetAndKeyPath    The YJKVOPackTuple object for wrapping object and its key path, using PACK(target, keyPath).
+ @brief If the new changes should be taken (meaning accepted by observer).
+ @param The taken block for deciding if new changes should be applied to observer.
  */
-- (void)unbind:(PACK)targetAndKeyPath;
+- (BIND)taken:(BOOL(^)(id observer, id target, id _Nullable newValue))taken;
 
 
 /**

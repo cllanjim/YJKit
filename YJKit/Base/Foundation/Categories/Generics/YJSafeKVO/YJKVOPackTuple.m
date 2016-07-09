@@ -7,8 +7,11 @@
 //
 
 #import "YJKVOPackTuple.h"
-#import "_YJKVOInternalFunctions.h"
+#import "NSObject+YJKVOExtension.h"
+#import "_YJKVOExecutiveOfficer.h"
 #import "_YJKVOBindingPorter.h"
+#import "_YJKVOBindingManager.h"
+#import "_YJKVOIdentifierGenerator.h"
 
 @interface YJKVOPackTuple ()
 @property (nonatomic, strong) __kindof NSObject *object;
@@ -19,29 +22,68 @@
 @implementation YJKVOPackTuple
 
 + (instancetype)tupleWithObject:(__kindof NSObject *)object keyPath:(NSString *)keyPath {
-    // preset binding key path
-    _yj_presetKVOBindingKeyPath(object, keyPath);
-    // create tuple box
     YJKVOPackTuple *tuple = [YJKVOPackTuple new];
     tuple.object = object;
     tuple.keyPath = keyPath;
     return tuple;
 }
 
+- (BOOL)isValid {
+    if (![self isKindOfClass:[YJKVOPackTuple class]]) return NO;
+    NSAssert(self.object != nil, @"YJSafeKVO - Target can not be nil for Key value observing.");
+    NSAssert(self.keyPath.length > 0, @"YJSafeKVO - KeyPath can not be empty for Key value observing.");
+    return self.object && self.keyPath.length;
+}
+
+@end
+
+
+@implementation YJKVOPackTuple (YJKVOBinding)
+
+- (void)pipe:(PACK)targetAndKeyPath {
+    [self _bind:targetAndKeyPath options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew];
+}
+
 - (id)bind:(PACK)targetAndKeyPath {
-    __kindof NSObject *target; NSString *keyPath;
-    if (_yj_validatePackTuple(targetAndKeyPath, &target, &keyPath)) {
-        id porter = _yj_registerKVO_binding(self.object, target, keyPath, (NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew), nil);
-        [targetAndKeyPath setBindingPorter:porter];
-    }
+    [self _bind:targetAndKeyPath options:NSKeyValueObservingOptionNew];
     return targetAndKeyPath;
 }
 
-- (void)unbind:(PACK)targetAndKeyPath {
-    __kindof NSObject *target; NSString *keyPath;
-    if (_yj_validatePackTuple(targetAndKeyPath, &target, &keyPath)) {
-        _yj_unregisterKVO_binding(self.object, target, keyPath);
+- (void)_bind:(PACK)targetAndKeyPath options:(NSKeyValueObservingOptions)options {
+    if (targetAndKeyPath.isValid) {
+        __kindof NSObject *observer = self.object;
+        NSString *observerKeyPath = self.keyPath;
+        
+        // generate binding id
+        NSString *identifier = [[_YJKVOIdentifierGenerator sharedGenerator] bindingIdentifierForObserver:observer
+                                                                                         observerKeyPath:observerKeyPath
+                                                                                                  target:targetAndKeyPath.object
+                                                                                           targetKeyPath:targetAndKeyPath.keyPath];
+        // keep binding id
+        _YJKVOBindingManager *bindingManager = observer.yj_KVOBindingManager;
+        if (!bindingManager) {
+            bindingManager = [[_YJKVOBindingManager alloc] initWithObserver:observer];
+            observer.yj_KVOBindingManager = bindingManager;
+        }
+        [bindingManager addBindingIdentifer:identifier];
+        
+        // generate binding porter
+        _YJKVOBindingPorter *porter = [[_YJKVOBindingPorter alloc] initWithObserver:observer
+                                                                    observerKeyPath:observerKeyPath];
+        [targetAndKeyPath setBindingPorter:porter];
+        
+        // register binding porter
+        [[_YJKVOExecutiveOfficer officer] registerPorter:porter
+                                             forObserver:observer
+                                                  target:targetAndKeyPath.object
+                                           targetKeyPath:targetAndKeyPath.keyPath
+                                                 options:options];
     }
+}
+
+- (id)taken:(BOOL(^)(id observer, id target, id newValue))taken {
+    self.bindingPorter.takenHandler = taken;
+    return self;
 }
 
 - (id)convert:(id(^)(id observer, id target, id newValue))convert {

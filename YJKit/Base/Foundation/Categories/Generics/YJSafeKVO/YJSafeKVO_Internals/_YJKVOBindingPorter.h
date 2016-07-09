@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef BOOL(^YJKVOValueTakenHandler)(id observer, id target, id _Nullable newValue);
+
 /// The class for deliver the value changes.
 
 __attribute__((visibility("hidden")))
@@ -17,10 +19,10 @@ __attribute__((visibility("hidden")))
 
 /// The designated initializer
 - (instancetype)initWithObserver:(__kindof NSObject *)observer
-                           queue:(nullable NSOperationQueue *)queue;
+                 observerKeyPath:(NSString *)observerKeyPath;
 
 @property (nonatomic, copy) YJKVOReturnValueHandler convertHandler;
-
+@property (nonatomic, copy) YJKVOValueTakenHandler takenHandler;
 @property (nonatomic, copy) YJKVOObjectsHandler afterHandler;
 
 @end
