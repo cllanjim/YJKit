@@ -21,12 +21,12 @@
 #define iOS_Version [UIDevice systemVersion]
 #endif
 
-#ifndef DeviceIsPhone
-#define DeviceIsPhone [UIDevice isPhone]
+#ifndef isPhone
+#define isPhone [UIDevice isPhone]
 #endif
 
-#ifndef DeviceIsPad
-#define DeviceIsPad [UIDevice isPad]
+#ifndef isPad
+#define isPad [UIDevice isPad]
 #endif
 
 // Deprecates

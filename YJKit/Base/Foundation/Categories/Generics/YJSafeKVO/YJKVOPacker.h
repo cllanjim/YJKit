@@ -22,11 +22,8 @@
     [YJKVOPackTuple tupleWithObject:OBJECT keyPath:KEYPATH_OBJECTIFY(OBJECT, KEYPATH)]
 
 
-/// Using PACK macro.
-/// e.g. If foo wants to observe bar's name property change when a new name applys to bar, then use:
-/// @code
-/// [foo observe:PACK(bar, name) ...]
-/// @endcode
+/// PACK(OBJECT, KEYPATH) is a macro to wrap object and its key path to a YJKVOPackTuple.
+/// e.g. PACK(foo, name) or PACK(foo, friend.name)
 typedef YJKVOPackTuple * PACK;
 
 
@@ -45,53 +42,55 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
-
-/// Once you get BIND by returning from -bind: , it is available for nesting / chaining.
-/// e.g. [[[PACK(foo, mood) bind:PACK(bar, feedback)] convert:...] after:...]
-typedef YJKVOPackTuple * BIND;
-
-
 /// Binding Extension
 
 @interface YJKVOPackTuple (YJKVOBinding)
 
 
 /**
- @brief Pipe observer with target for receiving value changes. This will receive value immediately.
- @warning Using this for single direction. If [A pipe:B] then [B pipe:A], you will get infinite loop.
- @param targetAndKeyPath    The YJKVOPackTuple object for wrapping object and its key path, using PACK(target, keyPath).
+ @brief Bind observer with target for receiving value changes. This will receive value immediately.
+ @warning Using this for single direction. If [A bind:B] then [B bind:A], you will get infinite loop.
+ @param targetAndKeyPath    The target and its key path to observe. Using PACK(target, keyPath) to wrap them.
  */
-- (void)pipe:(PACK)targetAndKeyPath;
+- (void)bind:(PACK)targetAndKeyPath;
 
 
 /**
- @brief Bind observer with target for receiving value changes.
- @warning Using this for single direction. If [A bind:B] then [B bind:A], you will get infinite loop.
- @param targetAndKeyPath    The YJKVOPackTuple object for wrapping object and its key path, using PACK(target, keyPath).
+ @brief Making a pipe between observer and target for receiving value changes.
+ @discussion Calling [[A piped:B] ready] will get same results as [A bind:B]
+ @warning Using this for single direction. If [A piped:B] then [B piped:A], you will get infinite loop.
+ @param targetAndKeyPath    The target and its key path to observe. Using PACK(target, keyPath) to wrap them.
  @return It returns BIND that can be nested with additional calls.
  */
-- (BIND)bind:(PACK)targetAndKeyPath;
+- (PACK)piped:(PACK)targetAndKeyPath;
+
+
+/**
+ @brief Set value from target's keyPath immediately.
+ @discussion e.g. You can call [[[[A piped:B] convert:..] after:..] ready]
+ */
+- (void)ready;
 
 
 /**
  @brief If the new changes should be taken (meaning accepted by observer).
  @param The taken block for deciding if new changes should be applied to observer.
  */
-- (BIND)taken:(BOOL(^)(id observer, id target, id _Nullable newValue))taken;
+- (PACK)taken:(BOOL(^)(id observer, id target, id _Nullable newValue))taken;
 
 
 /**
  @brief Convert the newValue to other kind of object as new returned value.
  @param The convert block for value convertion.
  */
-- (BIND)convert:(nullable id(^)(id observer, id target, id _Nullable newValue))convert;
+- (PACK)convert:(nullable id(^)(id observer, id target, id _Nullable newValue))convert;
 
 
 /**
- @brief Get called after each binding finished.
+ @brief Get called after each pipe finished.
  @param The after block for additional callback.
  */
-- (BIND)after:(void(^)(id observer, id target))after;
+- (PACK)after:(void(^)(id observer, id target))after;
 
 @end
 

@@ -1,35 +1,35 @@
 //
-//  YJKVOPackTuple.m
+//  YJKVOPacker.m
 //  YJKit
 //
 //  Created by huang-kun on 16/7/3.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
 
-#import "YJKVOPackTuple.h"
+#import "YJKVOPacker.h"
 #import "NSObject+YJKVOExtension.h"
 #import "_YJKVOExecutiveOfficer.h"
 #import "_YJKVOBindingPorter.h"
-#import "_YJKVOBindingManager.h"
+#import "_YJKVOPipeIDKeeper.h"
 #import "_YJKVOIdentifierGenerator.h"
 
-@interface YJKVOPackTuple ()
+@interface YJKVOPacker ()
 @property (nonatomic, strong) __kindof NSObject *object;
 @property (nonatomic, strong) NSString *keyPath;
 @property (nonatomic, weak) _YJKVOBindingPorter *bindingPorter;
 @end
 
-@implementation YJKVOPackTuple
+@implementation YJKVOPacker
 
 + (instancetype)tupleWithObject:(__kindof NSObject *)object keyPath:(NSString *)keyPath {
-    YJKVOPackTuple *tuple = [YJKVOPackTuple new];
+    YJKVOPacker *tuple = [YJKVOPacker new];
     tuple.object = object;
     tuple.keyPath = keyPath;
     return tuple;
 }
 
 - (BOOL)isValid {
-    if (![self isKindOfClass:[YJKVOPackTuple class]]) return NO;
+    if (![self isKindOfClass:[YJKVOPacker class]]) return NO;
     NSAssert(self.object != nil, @"YJSafeKVO - Target can not be nil for Key value observing.");
     NSAssert(self.keyPath.length > 0, @"YJSafeKVO - KeyPath can not be empty for Key value observing.");
     return self.object && self.keyPath.length;
@@ -38,41 +38,45 @@
 @end
 
 
-@implementation YJKVOPackTuple (YJKVOBinding)
+@implementation YJKVOPacker (YJKVOBinding)
 
-- (void)pipe:(PACK)targetAndKeyPath {
-    [self _bind:targetAndKeyPath options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew];
+- (void)bind:(PACK)targetAndKeyPath {
+    [self _pipedFrom:targetAndKeyPath options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew];
 }
 
-- (id)bind:(PACK)targetAndKeyPath {
-    [self _bind:targetAndKeyPath options:NSKeyValueObservingOptionNew];
+- (id)piped:(PACK)targetAndKeyPath {
+    [self _pipedFrom:targetAndKeyPath options:NSKeyValueObservingOptionNew];
     return targetAndKeyPath;
 }
 
-- (void)_bind:(PACK)targetAndKeyPath options:(NSKeyValueObservingOptions)options {
+- (void)ready {
+    [self.object setValue:[self.object valueForKeyPath:self.keyPath] forKeyPath:self.keyPath];
+}
+
+- (void)_pipedFrom:(PACK)targetAndKeyPath options:(NSKeyValueObservingOptions)options {
     if (targetAndKeyPath.isValid) {
         __kindof NSObject *observer = self.object;
         NSString *observerKeyPath = self.keyPath;
         
-        // generate binding id
-        NSString *identifier = [[_YJKVOIdentifierGenerator sharedGenerator] bindingIdentifierForObserver:observer
-                                                                                         observerKeyPath:observerKeyPath
-                                                                                                  target:targetAndKeyPath.object
-                                                                                           targetKeyPath:targetAndKeyPath.keyPath];
-        // keep binding id
-        _YJKVOBindingManager *bindingManager = observer.yj_KVOBindingManager;
-        if (!bindingManager) {
-            bindingManager = [[_YJKVOBindingManager alloc] initWithObserver:observer];
-            observer.yj_KVOBindingManager = bindingManager;
+        // generate pipe id
+        NSString *identifier = [[_YJKVOIdentifierGenerator sharedGenerator] pipeIdentifierForObserver:observer
+                                                                                      observerKeyPath:observerKeyPath
+                                                                                               target:targetAndKeyPath.object
+                                                                                        targetKeyPath:targetAndKeyPath.keyPath];
+        // keep pipe id
+        _YJKVOPipeIDKeeper *pipeIDKeeper = observer.yj_KVOPipeIDKeeper;
+        if (!pipeIDKeeper) {
+            pipeIDKeeper = [[_YJKVOPipeIDKeeper alloc] initWithObserver:observer];
+            observer.yj_KVOPipeIDKeeper = pipeIDKeeper;
         }
-        [bindingManager addBindingIdentifer:identifier];
+        [pipeIDKeeper addPipeIdentifier:identifier];
         
-        // generate binding porter
+        // generate pipe porter
         _YJKVOBindingPorter *porter = [[_YJKVOBindingPorter alloc] initWithObserver:observer
                                                                     observerKeyPath:observerKeyPath];
         [targetAndKeyPath setBindingPorter:porter];
         
-        // register binding porter
+        // register pipe porter
         [[_YJKVOExecutiveOfficer officer] registerPorter:porter
                                              forObserver:observer
                                                   target:targetAndKeyPath.object
