@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @class Bar;
 
@@ -16,6 +17,7 @@
 @property (nonatomic, strong) Bar *friend;
 @property (nonatomic) BOOL sleep;
 @property (nonatomic) BOOL awake;
+@property (nonatomic) CGRect frame;
 
 - (void)sayHello;
 + (void)sayHello;
@@ -30,6 +32,7 @@
 
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic) NSUInteger age;
+@property (nonatomic) CGRect frame;
 
 - (void)sayYoo;
 + (void)sayYoo;
@@ -40,5 +43,6 @@
 @interface Clown : NSObject
 
 @property (nonatomic, copy) NSString *name;
+@property (nonatomic) CGSize size;
 
 @end

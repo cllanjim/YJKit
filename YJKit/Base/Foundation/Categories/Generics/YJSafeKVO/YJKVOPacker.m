@@ -10,6 +10,7 @@
 #import "NSObject+YJKVOExtension.h"
 #import "_YJKVOExecutiveOfficer.h"
 #import "_YJKVOBindingPorter.h"
+#import "_YJKVOGroupingPorter.h"
 #import "_YJKVOPipeIDKeeper.h"
 #import "_YJKVOIdentifierGenerator.h"
 
@@ -21,11 +22,16 @@
 
 @implementation YJKVOPacker
 
-+ (instancetype)tupleWithObject:(__kindof NSObject *)object keyPath:(NSString *)keyPath {
-    YJKVOPacker *tuple = [YJKVOPacker new];
-    tuple.object = object;
-    tuple.keyPath = keyPath;
-    return tuple;
++ (instancetype)packerWithObject:(__kindof NSObject *)object
+                         keyPath:(NSString *)keyPath
+                         vString:(nullable NSString *)vString {
+    
+    object.yj_KVOPackerString = vString;
+    
+    YJKVOPacker *packer = [YJKVOPacker new];
+    packer.object = object;
+    packer.keyPath = keyPath;
+    return packer;
 }
 
 - (BOOL)isValid {
@@ -40,7 +46,7 @@
 
 @implementation YJKVOPacker (YJKVOBinding)
 
-- (void)bind:(PACK)targetAndKeyPath {
+- (void)bound:(PACK)targetAndKeyPath {
     [self _pipedFrom:targetAndKeyPath options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew];
 }
 
@@ -100,4 +106,39 @@
     return self;
 }
 
+- (void)flooded:(NSArray <PACK> *)targetsAndKeyPaths converge:(id(^)(id observer, NSArray *targets))converge {
+    
+    NSMutableArray *targets = [NSMutableArray arrayWithCapacity:targetsAndKeyPaths.count];
+    for (PACK targetAndKeyPath in targetsAndKeyPaths) {
+        if (targetAndKeyPath.isValid) {
+            [targets addObject:targetAndKeyPath.object];
+        }
+    }
+    
+    for (PACK targetAndKeyPath in targetsAndKeyPaths) {
+        if (targetAndKeyPath.isValid) {
+            
+            _YJKVOGroupingPorter *porter = [_YJKVOGroupingPorter porterForObserver:self.object
+                                                                   observerKeyPath:self.keyPath
+                                                                           targets:[targets copy]
+                                                                           handler:converge];
+            [[_YJKVOExecutiveOfficer officer] registerPorter:porter
+                                                 forObserver:self.object
+                                                      target:targetAndKeyPath.object
+                                               targetKeyPath:targetAndKeyPath.keyPath
+                                                     options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew)];
+        }
+    }
+}
+
 @end
+
+// unpack
+id yj_kvo_unpack(NSArray *targets, NSString *kvoPackerString) {
+    for (__kindof NSObject *target in targets) {
+        if ([target.yj_KVOPackerString isEqualToString:kvoPackerString]) {
+            return target;
+        }
+    }
+    return nil;
+}

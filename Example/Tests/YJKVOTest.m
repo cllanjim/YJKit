@@ -266,23 +266,24 @@
 
 - (void)testGroupKVO {
     Bar *bar1 = [Bar new];
-//    Bar *bar2 = [Bar new];
+    Bar *bar2 = [Bar new];
     
-    [self.foo observes:@[ PACK(bar1, name), PACK(bar1, age) ] updates:^(id  _Nonnull receiver, NSArray * _Nonnull targets) {
-        Bar *bar1 = targets[0];
-//        Bar *bar2 = targets[1];
-//        NSLog(@"1: %@, 2: %@", bar1, bar2);
-        if ([bar1.name isEqualToString:@"Bar1"] && bar1.age == 29) {
+    [self.foo observeGroup:@[ PACK(bar1, name), PACK(bar2, age) ] updates:^(id  _Nonnull receiver, NSArray * _Nonnull targets) {
+        
+        UNPACK(Bar, bar1)
+        UNPACK(Bar, bar2)
+        
+        if ([bar1.name isEqualToString:@"Bar1"] && bar2.age == 29) {
             XCTAssertTrue(1);
         }
     }];
     
     bar1.name = @"Bar1";
-    bar1.age = 29;//@"Bar2";
+    bar2.age = 29;
 }
 
 - (void)testBinding {
-    [[[PACK(self.foo, sleep) bind:PACK(self.bar, name)]
+    [[[PACK(self.foo, sleep) piped:PACK(self.bar, name)]
      convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, NSString *newValue) {
         return @(newValue.length < 10 ? NO : YES);
     }]
@@ -302,27 +303,27 @@
 - (void)testBinding2 {
     Clown *clown = [Clown new];
     clown.name = @"Clown";
-    [PACK(self.foo, friend.name) bind:PACK(clown, name)];
+    [PACK(self.foo, friend.name) piped:PACK(clown, name)];
     
     clown.name = @"ClownClownClown";
     clown.name = @"ClownClownClown";
-    XCTAssertTrue([self.foo.friend.name isEqualToString:@"ClownClownClown"]);
+    XCTAssertTrue([self.bar.name isEqualToString:@"ClownClownClown"]);
 }
 
 - (void)testBinding3 {
     Clown *clown = [Clown new];
     clown.name = @"Clown";
     
-    [PACK(self.foo, name) bind:PACK(clown, name)];
-    [PACK(self.bar, name) bind:PACK(clown, name)];
+    [PACK(self.foo, name) piped:PACK(clown, name)];
+    [PACK(self.bar, name) piped:PACK(clown, name)];
     
     self.foo.sleep = NO;
     self.foo.awake = NO;
     
-    [[PACK(self.foo, sleep) bind:PACK(clown, name)] convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, id  _Nullable newValue) {
+    [[PACK(self.foo, sleep) piped:PACK(clown, name)] convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, id  _Nullable newValue) {
         return [newValue length] > 10 ? @YES : @NO;
     }];
-    [[PACK(self.foo, awake) bind:PACK(clown, name)] taken:^BOOL(id  _Nonnull observer, id  _Nonnull target, id  _Nullable newValue) {
+    [[PACK(self.foo, awake) piped:PACK(clown, name)] taken:^BOOL(id  _Nonnull observer, id  _Nonnull target, id  _Nullable newValue) {
         return NO;
     }];
 
@@ -335,15 +336,114 @@
 }
 
 - (void)testDeadBinding {
-//    [PACK(self.bar, name) bind:PACK(self.foo, name)];
-//    [PACK(self.foo, name) bind:PACK(self.bar, name)];
+//    [PACK(self.bar, name) piped:PACK(self.foo, name)];
+//    [PACK(self.foo, name) piped:PACK(self.bar, name)];
 //    self.foo.name = @"Fooo";
 }
 
 - (void)testPipe {
     self.bar.name = @"Barrrr";
-    [PACK(self.foo, name) pipe:PACK(self.bar, name)];
+    [PACK(self.foo, name) bound:PACK(self.bar, name)];
     XCTAssertTrue([self.foo.name isEqualToString:@"Barrrr"]);
+}
+
+- (void)testReady {
+    Foo *foo = [Foo new];
+    Bar *bar = [Bar new];
+    foo.friend = bar;
+    bar.name = @"Bar";
+    [[PACK(foo, name) piped:PACK(foo, friend.name)] ready];
+    XCTAssertTrue([foo.name isEqualToString:@"Bar"]);
+}
+
+- (void)testChain {
+    Foo *foo = [Foo new];
+    Bar *bar = [Bar new];
+    Clown *clown = [Clown new];
+    
+    foo.name = @"Fo";
+    [PACK(bar, name) bound:PACK(foo, name)];
+    foo.name = @"Foo";
+    [PACK(clown, name) bound:PACK(bar, name)];
+    foo.name = @"Fooo";
+    XCTAssertTrue([clown.name isEqualToString:@"Fooo"]);
+}
+
+- (void)testConvert {
+    Bar *bar = [Bar new];
+    Clown *clown = [Clown new];
+    bar.frame = (CGRect){ 1,2,3,4 };
+    [[[PACK(clown, size) piped:PACK(bar, frame)] convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, id  _Nullable newValue) {
+        CGRect frame = [newValue CGRectValue];
+        return [NSValue valueWithCGSize:frame.size];
+    }] ready];
+    XCTAssertTrue(clown.size.width == 3 && clown.size.height == 4);
+}
+
+- (void)testBindPrimitives {
+    Foo *foo = [Foo new];
+    Bar *bar = [Bar new];
+    bar.frame = (CGRect){ 1,2,3,4 };
+    [PACK(foo, frame) bound:PACK(bar, frame)];
+    XCTAssertTrue(CGRectEqualToRect(foo.frame, (CGRect){ 1,2,3,4 }));
+}
+
+- (void)testFlood {
+    Foo *foo = [Foo new];
+    Bar *bar = [Bar new];
+    Clown *clown = [Clown new];
+    
+    foo.name = @"Foo";
+    bar.name = @"Bar";
+    
+    [PACK(clown, name) flooded:@[ PACK(foo, name), PACK(bar, name) ] converge:^id(id  _Nonnull observer, NSArray * _Nonnull targets) {
+        UNPACK(Foo, foo)  UNPACK(Bar, bar)
+        return [foo.name stringByAppendingString:bar.name];
+    }];
+    
+    NSLog(@"clown.name = %@", clown.name);
+    XCTAssertTrue([clown.name isEqualToString:@"FooBar"]);
+}
+
+- (void)testFlood2 {
+    Foo *foo = [Foo new];
+    Bar *bar1 = [Bar new];
+    Bar *bar2 = [Bar new];
+    Clown *clown = [Clown new];
+    
+    bar2.name = @"Bar2";
+    
+    [PACK(clown, size) flooded:@[ PACK(foo, sleep),
+                                  PACK(foo, awake),
+                                  PACK(bar1, frame),
+                                  PACK(bar1, name),
+                                  PACK(bar2, name)
+                                  ]
+                      converge:^id _Nonnull(id  _Nonnull observer, NSArray * _Nonnull targets) {
+        
+        UNPACK(Foo, foo)
+        UNPACK(Bar, bar1)
+        UNPACK(Bar, bar2)
+        
+        BOOL c1 = foo.sleep;
+        BOOL c2 = foo.awake;
+        BOOL c3 = bar1.name.length;
+        BOOL c4 = bar1.frame.size.height;
+        BOOL c5 = bar2.name.length > 5;
+        
+        CGSize size = c1 && c2 && c3 && c4 && c5 ? bar1.frame.size : (CGSize){ 1, 2 };
+        return [NSValue valueWithCGSize:size];
+    }];
+    
+    XCTAssertTrue(CGSizeEqualToSize(clown.size, (CGSize){ 1,2 }));
+    
+    foo.sleep = YES;
+    foo.awake = YES;
+    bar1.name = @"Bar";
+    bar1.frame = (CGRect){ 1,2,3,4 };
+    bar2.name = @"Barrrrr";
+    
+    XCTAssertTrue(CGSizeEqualToSize(clown.size, (CGSize){ 3,4 }));
 }
 
 @end
