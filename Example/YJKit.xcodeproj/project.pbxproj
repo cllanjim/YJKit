@@ -75,7 +75,6 @@
 		32AC87011D29389500DCE1F8 /* _YJKVOPorterTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86FA1D29389500DCE1F8 /* _YJKVOPorterTracker.m */; };
 		32AC87021D29389500DCE1F8 /* NSObject+YJKVOExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86FC1D29389500DCE1F8 /* NSObject+YJKVOExtension.m */; };
 		32B55D011D162BF300A578AD /* YJRuntimeTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 32B55D001D162BF300A578AD /* YJRuntimeTest.m */; };
-		32B8C1651CED731400E2639B /* YJMaskContentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 32B8C1631CED731400E2639B /* YJMaskContentViewController.xib */; };
 		32B8C1911CEE109700E2639B /* YJStringSequence.m in Sources */ = {isa = PBXBuildFile; fileRef = 32B8C1901CEE109700E2639B /* YJStringSequence.m */; };
 		32B8C1931CEE110F00E2639B /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32B8C1921CEE110F00E2639B /* Tests.m */; };
 		32BEDD871D13B6A900127545 /* NSObject+YJExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 32BEDD861D13B6A900127545 /* NSObject+YJExtension.m */; };
@@ -271,7 +270,6 @@
 		32AC86FB1D29389500DCE1F8 /* NSObject+YJKVOExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+YJKVOExtension.h"; sourceTree = "<group>"; };
 		32AC86FC1D29389500DCE1F8 /* NSObject+YJKVOExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+YJKVOExtension.m"; sourceTree = "<group>"; };
 		32B55D001D162BF300A578AD /* YJRuntimeTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJRuntimeTest.m; sourceTree = "<group>"; };
-		32B8C1631CED731400E2639B /* YJMaskContentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = YJMaskContentViewController.xib; sourceTree = "<group>"; };
 		32B8C1901CEE109700E2639B /* YJStringSequence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJStringSequence.m; sourceTree = "<group>"; };
 		32B8C1921CEE110F00E2639B /* Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		32BEDD851D13B6A900127545 /* NSObject+YJExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+YJExtension.h"; sourceTree = "<group>"; };
@@ -772,7 +770,6 @@
 				324AB09E1CD1C6EE00A9DCF0 /* YJMaskViewController.h */,
 				324AB09F1CD1C6EE00A9DCF0 /* YJMaskViewController.m */,
 				32058DCA1CDDC4FC006AE929 /* YJMaskViewController.xib */,
-				32B8C1631CED731400E2639B /* YJMaskContentViewController.xib */,
 				3238B26C1CE1FDF50018D1F0 /* YJMaskTableViewController.h */,
 				3238B26D1CE1FDF50018D1F0 /* YJMaskTableViewController.m */,
 				32C1EB501D016FD000E595EF /* YJGroupTableViewDemo */,
@@ -919,7 +916,6 @@
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
 				32C1EB701D01899000E595EF /* YJCustomDemoCell.xib in Resources */,
 				320A97EF1CA9493800485B9A /* AFTCameraUI.bundle in Resources */,
-				32B8C1651CED731400E2639B /* YJMaskContentViewController.xib in Resources */,
 				32C1EB5D1D017C8D00E595EF /* YJSettingIcons.bundle in Resources */,
 				324AB0A81CD1EE8C00A9DCF0 /* Puppy.jpg in Resources */,
 				32C1EB651D017EEC00E595EF /* YJHeaderDemoCell.xib in Resources */,

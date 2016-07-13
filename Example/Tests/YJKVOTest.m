@@ -446,4 +446,10 @@
     XCTAssertTrue(CGSizeEqualToSize(clown.size, (CGSize){ 3,4 }));
 }
 
+- (void)testPipe2 {
+    Foo *foo = [Foo new];
+    Bar *bar = [Bar new];
+
+}
+
 @end

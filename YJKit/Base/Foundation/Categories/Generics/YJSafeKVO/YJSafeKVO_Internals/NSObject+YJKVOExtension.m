@@ -7,12 +7,7 @@
 //
 
 #import <objc/runtime.h>
-#import <objc/message.h>
 #import "NSObject+YJKVOExtension.h"
-#import "NSArray+YJSequence.h"
-#import "_YJKVOPorterManager.h"
-#import "_YJKVOPorterTracker.h"
-#import "_YJKVOPipeIDKeeper.h"
 
 @implementation NSObject (YJKVOExtension)
 
@@ -40,11 +35,11 @@
     return objc_getAssociatedObject(self, _cmd);
 }
 
-- (void)setYj_KVOPackerString:(NSString *)yj_KVOPackerString {
-    objc_setAssociatedObject(self, @selector(yj_KVOPackerString), yj_KVOPackerString, OBJC_ASSOCIATION_COPY_NONATOMIC);
+- (void)setYj_KVOVariableName:(NSString *)yj_KVOVariableName {
+    objc_setAssociatedObject(self, @selector(yj_KVOVariableName), yj_KVOVariableName, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
-- (NSString *)yj_KVOPackerString {
+- (NSString *)yj_KVOVariableName {
     return objc_getAssociatedObject(self, _cmd);
 }
 
