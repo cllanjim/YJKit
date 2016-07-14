@@ -17,6 +17,10 @@
     NSLog(@"%@ deallocated.", self);
 }
 
+- (BOOL)isEqual:(id)object {
+    return self.sleep == [object sleep];
+}
+
 @end
 
 
@@ -41,10 +45,18 @@
     return [NSString stringWithFormat:@"%@<%p> %@", self.class, self, self.name];
 }
 
+- (BOOL)isEqual:(id)object {
+    return self.age == [object age];
+}
+
 @end
 
 
 @implementation Clown
+
+- (BOOL)isEqual:(id)object {
+    return CGSizeEqualToSize(self.size, [object size]);
+}
 
 @end
 

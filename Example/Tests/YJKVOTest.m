@@ -396,8 +396,13 @@
     foo.name = @"Foo";
     bar.name = @"Bar";
     
-    [PACK(clown, name) flooded:@[ PACK(foo, name), PACK(bar, name) ] converge:^id(id  _Nonnull observer, NSArray * _Nonnull targets) {
-        UNPACK(Foo, foo)  UNPACK(Bar, bar)
+    [PACK(clown, name) flooded:@[ PACK(foo, name),
+                                  PACK(bar, name) ]
+                      converge:^id(id  _Nonnull observer, NSArray * _Nonnull targets) {
+                          
+        UNPACK(Foo, foo)
+        UNPACK(Bar, bar)
+                          
         return [foo.name stringByAppendingString:bar.name];
     }];
     
@@ -446,10 +451,24 @@
     XCTAssertTrue(CGSizeEqualToSize(clown.size, (CGSize){ 3,4 }));
 }
 
-- (void)testPipe2 {
+- (void)testEquality {
     Foo *foo = [Foo new];
-    Bar *bar = [Bar new];
-
+    Bar *bar1 = [Bar new];
+    Bar *bar2 = [Bar new];
+    Clown *clown = [Clown new];
+    
+    [self observe:PACK(foo, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        
+    }];
+    [self observe:PACK(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        
+    }];
+    [self observe:PACK(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        
+    }];
+    [self observe:PACK(clown, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        
+    }];
 }
 
 @end
