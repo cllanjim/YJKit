@@ -23,24 +23,26 @@
 
 - (nullable IMP)applyIdentityComparisonForObject:(__kindof NSString *)object {
     
-    Method equalityMtd = nil;
-    IMP originalEqualityIMP = nil;
+    SEL equalitySEL = @selector(isEqual:);
+    Method equalityMtd = class_getInstanceMethod([object class], equalitySEL);
+    const char *equalityType = method_getTypeEncoding(equalityMtd);
     
+    IMP objectEqualityIMP = nil;
     IMP tempEqualityIMP = imp_implementationWithBlock(^BOOL(__unsafe_unretained id obj1, __unsafe_unretained id obj2){
         return obj1 == obj2;
     });
     
     // add pointer comparison version of -isEqual:
-    __unused BOOL added = class_addMethod([object class], @selector(isEqual:), tempEqualityIMP, "c@:@");
+    __unused BOOL added = class_addMethod([object class], equalitySEL, tempEqualityIMP, equalityType);
     
     if (!added) {
         // if -isEqual: is implemented, then switch its IMP to pointer comparison IMP
-        equalityMtd = class_getInstanceMethod([object class], @selector(isEqual:));
-        originalEqualityIMP = method_getImplementation(equalityMtd);
+        equalityMtd = class_getInstanceMethod([object class], equalitySEL);
+        objectEqualityIMP = method_getImplementation(equalityMtd);
         method_setImplementation(equalityMtd, tempEqualityIMP);
     }
     
-    return originalEqualityIMP;
+    return objectEqualityIMP;
 }
 
 - (void)applyEqualityComparisonForObject:(__kindof NSString *)object implementation:(nullable IMP)equalityIMP {
