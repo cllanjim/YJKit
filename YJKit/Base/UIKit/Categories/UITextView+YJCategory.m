@@ -109,7 +109,7 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
 - (NSAttributedString *)_attributedPlaceholder:(NSString *)placeholder {
     NSDictionary *attributes = @{ NSForegroundColorAttributeName : self.placeholderColor,
                                   NSFontAttributeName : (self.font ?: [UIFont preferredFontForTextStyle:UIFontTextStyleBody]) };
-    return [[NSAttributedString alloc] initWithString:placeholder attributes:attributes];
+    return [[NSAttributedString alloc] initWithString:(placeholder ?: @"") attributes:attributes];
 }
 
 - (void)setYj_originalTextColor:(RGBColor)yj_originalTextColor {

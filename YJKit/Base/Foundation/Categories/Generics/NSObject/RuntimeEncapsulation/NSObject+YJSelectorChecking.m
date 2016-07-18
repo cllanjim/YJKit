@@ -10,8 +10,6 @@
 #import "NSObject+YJSelectorChecking.h"
 #import "NSObject+YJClassObjectChecking.h"
 
-@implementation NSObject (YJSelectorChecking)
-
 Class (^YJProperClassForObject)(id, bool) = ^Class(id obj, bool searchingDispatchTableForClassObject/* not for meta class */) {
     Class cls;
     if (yj_object_isClass(obj)) {
@@ -44,6 +42,8 @@ static void _yj_enumerateMethodList(id obj, bool searchingDispatchTableForClassO
     }
     free(methods);
 }
+
+@implementation NSObject (YJSelectorChecking)
 
 /* ------------------------------------------------------------------------------------ */
 

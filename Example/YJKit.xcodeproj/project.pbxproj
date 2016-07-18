@@ -65,6 +65,7 @@
 		326F34CD1CF5C20F00B2FF75 /* NSTimer+YJBlockBased.m in Sources */ = {isa = PBXBuildFile; fileRef = 326F34BB1CF5C20F00B2FF75 /* NSTimer+YJBlockBased.m */; };
 		326F34D01CF5C2BD00B2FF75 /* NSValue+YJGeometryExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 326F34CF1CF5C2BD00B2FF75 /* NSValue+YJGeometryExtension.m */; };
 		326F34D61CF5F70300B2FF75 /* UITextField+YJCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 326F34D51CF5F70300B2FF75 /* UITextField+YJCategory.m */; };
+		32A2F4F11D3CCE07000D0529 /* NSObject+YJDelegateWeakChecking.m in Sources */ = {isa = PBXBuildFile; fileRef = 32A2F4F01D3CCE07000D0529 /* NSObject+YJDelegateWeakChecking.m */; };
 		32AC86DF1D2930DE00DCE1F8 /* NSObject+YJIMPInsertion.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86DE1D2930DE00DCE1F8 /* NSObject+YJIMPInsertion.m */; };
 		32AC86E51D2932AB00DCE1F8 /* NSObject+YJAssociatedIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86E41D2932AB00DCE1F8 /* NSObject+YJAssociatedIdentifier.m */; };
 		32AC86E81D29336C00DCE1F8 /* NSObject+YJTaggedPointerChecking.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AC86E71D29336C00DCE1F8 /* NSObject+YJTaggedPointerChecking.m */; };
@@ -250,6 +251,8 @@
 		326F34CF1CF5C2BD00B2FF75 /* NSValue+YJGeometryExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+YJGeometryExtension.m"; sourceTree = "<group>"; };
 		326F34D41CF5F70300B2FF75 /* UITextField+YJCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITextField+YJCategory.h"; sourceTree = "<group>"; };
 		326F34D51CF5F70300B2FF75 /* UITextField+YJCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITextField+YJCategory.m"; sourceTree = "<group>"; };
+		32A2F4EF1D3CCE07000D0529 /* NSObject+YJDelegateWeakChecking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+YJDelegateWeakChecking.h"; sourceTree = "<group>"; };
+		32A2F4F01D3CCE07000D0529 /* NSObject+YJDelegateWeakChecking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+YJDelegateWeakChecking.m"; sourceTree = "<group>"; };
 		32AC86DD1D2930DE00DCE1F8 /* NSObject+YJIMPInsertion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+YJIMPInsertion.h"; sourceTree = "<group>"; };
 		32AC86DE1D2930DE00DCE1F8 /* NSObject+YJIMPInsertion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+YJIMPInsertion.m"; sourceTree = "<group>"; };
 		32AC86E01D2930EC00DCE1F8 /* YJRuntimeEncapsulation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJRuntimeEncapsulation.h; sourceTree = "<group>"; };
@@ -653,6 +656,8 @@
 				32AC86E41D2932AB00DCE1F8 /* NSObject+YJAssociatedIdentifier.m */,
 				32AC86DD1D2930DE00DCE1F8 /* NSObject+YJIMPInsertion.h */,
 				32AC86DE1D2930DE00DCE1F8 /* NSObject+YJIMPInsertion.m */,
+				32A2F4EF1D3CCE07000D0529 /* NSObject+YJDelegateWeakChecking.h */,
+				32A2F4F01D3CCE07000D0529 /* NSObject+YJDelegateWeakChecking.m */,
 			);
 			path = RuntimeEncapsulation;
 			sourceTree = "<group>";
@@ -886,6 +891,9 @@
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "huang-kun";
 				TargetAttributes = {
+					6003F589195388D20070C39A = {
+						DevelopmentTeam = CD76TM5QAC;
+					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
 					};
@@ -988,6 +996,7 @@
 				326389061CF2B3390026BED8 /* UIDevice+YJCategory.m in Sources */,
 				3263890C1CF2B3390026BED8 /* _YJAlertDelegate.m in Sources */,
 				32AC86EB1D2933DB00DCE1F8 /* NSObject+YJClassObjectChecking.m in Sources */,
+				32A2F4F11D3CCE07000D0529 /* NSObject+YJDelegateWeakChecking.m in Sources */,
 				6003F5A7195388D20070C39A /* YJViewController.m in Sources */,
 				326389011CF2B3390026BED8 /* UIActionSheet+YJBlockBased.m in Sources */,
 				3263890F1CF2B3390026BED8 /* YJContentIndents.m in Sources */,
@@ -1147,12 +1156,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "YJKit/YJKit-Prefix.pch";
 				INFOPLIST_FILE = "YJKit/YJKit-Info.plist";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1162,12 +1174,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "YJKit/YJKit-Prefix.pch";
 				INFOPLIST_FILE = "YJKit/YJKit-Info.plist";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

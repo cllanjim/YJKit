@@ -7,6 +7,7 @@
 //
 
 #import "YJTableViewController.h"
+#import "UITextView+YJCategory.h"
 
 @interface YJTableViewController ()
 
@@ -18,6 +19,10 @@
     [super viewWillAppear:animated];
     self.title = @"GroupTable";
     [self.navigationController setNavigationBarHidden:NO animated:animated];
+    
+    UITextView *v = [[UITextView alloc] initWithFrame:(CGRect){0,0,50,50}];
+    v.backgroundColor = [UIColor redColor];
+    [self.view addSubview:v];
 }
 
 #pragma mark - Table view

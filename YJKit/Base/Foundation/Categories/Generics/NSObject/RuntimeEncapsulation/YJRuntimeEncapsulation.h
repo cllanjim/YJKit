@@ -12,3 +12,4 @@
 #import "NSObject+YJMethodSwizzling.h"
 #import "NSObject+YJAssociatedIdentifier.h"
 #import "NSObject+YJIMPInsertion.h"
+#import "NSObject+YJDelegateWeakChecking.h"

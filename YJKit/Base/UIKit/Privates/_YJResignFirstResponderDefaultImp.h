@@ -12,11 +12,11 @@
 #import "YJRuntimeEncapsulation.h"
 #import "NSObject+YJSafeKVO.h"
 #import "NSArray+YJCollection.h"
+#import "NSObject+YJDelegateWeakChecking.h"
 
 #ifndef YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING
 #define YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING(XXX) \
     [self swizzleInstanceMethodsBySelector:@selector(layoutSubviews) andSelector:@selector(yj_##XXX##LayoutSubviews)]; \
-    [self swizzleInstanceMethodsBySelector:@selector(willMoveToSuperview:) andSelector:@selector(yj_##XXX##WillMoveToSuperview:)]; \
     [self swizzleInstanceMethodsBySelector:@selector(removeFromSuperview) andSelector:@selector(yj_##XXX##RemoveFromSuperview)];
 
 #endif
@@ -67,33 +67,8 @@
     }  \
 }  \
   \
-- (void)yj_##XXX##WillMoveToSuperview:(UIView *)superview {  \
-    [self yj_##XXX##WillMoveToSuperview:superview];  \
-      \
-    if (!superview) return; \
-    /* In iOS 7.0.4. To access textView/textField.delegate when delegate is deallocated, */  \
-    /* the delegate property will not being set to nil and exc_bad_access crash. */  \
-    /* So we need to modify its delegate's -dealloc method. */  \
-    if (self.delegate) {  \
-        [self yj_insertImpFor##XXX##Delegate:self.delegate];  \
-    } else {  \
-        [self observeTarget:self keyPath:@"delegate" updates:^(id self, id target, id _Nullable newValue) {  \
-            if (newValue) {  \
-                [self yj_insertImpFor##XXX##Delegate:newValue];  \
-            }  \
-        }];  \
-    }  \
-}  \
-  \
-- (void)yj_insertImpFor##XXX##Delegate:(NSObject *)delegate {  \
-    __weak id weakSelf = self; \
-    [delegate performBlockBeforeDeallocating:^(id receiver) {  \
-        [weakSelf setDelegate:nil];  \
-    }];  \
-}  \
-  \
 - (void)yj_##XXX##RemoveFromSuperview {  \
-    if (self.autoResignFirstResponder) {  \
+    if (self.autoResignFirstResponder && self.hasWeakDelegateProperty) {  \
         [self yj_removeResignFirstResponderTapAction];  \
     }  \
     [self yj_##XXX##RemoveFromSuperview];  \

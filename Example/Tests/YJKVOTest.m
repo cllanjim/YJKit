@@ -454,7 +454,6 @@
 - (void)testEquality {
     Foo *foo = [Foo new];
     Bar *bar1 = [Bar new];
-    Bar *bar2 = [Bar new];
     Clown *clown = [Clown new];
     
     [self observe:PACK(foo, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {

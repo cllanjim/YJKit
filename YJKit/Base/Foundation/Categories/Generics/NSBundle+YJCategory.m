@@ -63,7 +63,7 @@ static NSString *_yj_pathForScaledResouce(id object, NSString *name, NSString *e
     BOOL objectIsClass = yj_object_isClass(object);
     if (objectIsClass && !dir.length) return nil;
     if (!name.length) return [object pathForResource:name ofType:ext inDirectory:dir];
-    if (iOS_Version >= 8.0) {
+    if (iOS_version >= 8.0) {
         if ([name containsString:@"."]) return [object pathForResource:name ofType:nil inDirectory:dir];
         if ([name containsString:@"@"]) return [object pathForResource:name ofType:ext inDirectory:dir];
     }
