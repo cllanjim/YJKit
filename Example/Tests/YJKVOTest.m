@@ -9,6 +9,8 @@
 #import <XCTest/XCTest.h>
 #import "YJTestClasses.h"
 #import "NSObject+YJSafeKVO.h"
+#import "NSObject+YJKVOExtension.h"
+#import "_YJKVOPorterTracker.h"
 
 @interface YJKVOTest : XCTestCase
 @property (nonatomic, strong) Foo *foo;
@@ -451,7 +453,7 @@
     XCTAssertTrue(CGSizeEqualToSize(clown.size, (CGSize){ 3,4 }));
 }
 
-- (void)testEquality {
+- (void)testEqualityCrashPreventionAndUntrack {
     Foo *foo = [Foo new];
     Bar *bar1 = [Bar new];
     Clown *clown = [Clown new];
@@ -468,6 +470,10 @@
     [self observe:PACK(clown, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
         
     }];
+    
+    [self.yj_KVOPorterTracker untrackAllRelatedPorters];
+    NSUInteger count = [[self.yj_KVOPorterTracker valueForKey:@"_relatedPorters"] count];
+    XCTAssertTrue(count == 0);
 }
 
 @end
