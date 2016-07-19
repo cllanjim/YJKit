@@ -11,7 +11,7 @@
 
 typedef void(^YJPropertyListEnumerationBlock)(objc_property_t property, const char *name, bool *stop);
 
-__unused static void _yj_enumeratePropertyList(id obj, YJPropertyListEnumerationBlock block) {
+static void _yj_enumeratePropertyList(id obj, YJPropertyListEnumerationBlock block) {
     bool stop = false;
     unsigned int count = 0;
     
@@ -26,24 +26,36 @@ __unused static void _yj_enumeratePropertyList(id obj, YJPropertyListEnumeration
     free(properties);
 }
 
-static BOOL _yj_hasWeakProperty(id obj, const char *propertyName) {
-    objc_property_t property = class_getProperty([obj class], propertyName);
-    if (!property) return NO;
+static BOOL _yj_hasWeakDefaultProperty(id obj, const char *propertyName) {
     
-    const char *attrs = property_getAttributes(property);
-    const char *result = strchr(attrs, 'W');
+    // This is not working correctly by using class_getProperty(), because
+    // YJKit re-defined some system properties and declared them weak.
     
-    return (result != NULL) ? YES : NO;
+    __block BOOL weakable = NO;
+    _yj_enumeratePropertyList(obj, ^(objc_property_t property, const char *name, bool *stop) {
+        if (strcmp(propertyName, name) == 0) {
+            const char *attrs = property_getAttributes(property);
+            const char *classInfo = strchr(attrs, '<');
+            const char *weakInfo = strchr(attrs, 'W');
+            
+            if (weakInfo != NULL && !(classInfo[1] == 'Y' && classInfo[2] == 'J')) {
+                weakable = YES;
+                *stop = YES;
+            }
+        }
+    });
+    
+    return weakable;
 }
 
 @implementation NSObject (YJDelegateWeakChecking)
 
-- (BOOL)hasWeakDelegateProperty {
-    return _yj_hasWeakProperty(self, "delegate");
+- (BOOL)isWeakDelegateByDefault {
+    return _yj_hasWeakDefaultProperty(self, "delegate");
 }
 
-- (BOOL)hasWeakDataSourceProperty {
-    return _yj_hasWeakProperty(self, "dataSource");
+- (BOOL)isWeakDataSourceByDefault {
+    return _yj_hasWeakDefaultProperty(self, "dataSource");
 }
 
 @end

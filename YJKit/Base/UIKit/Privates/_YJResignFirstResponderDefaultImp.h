@@ -68,7 +68,7 @@
 }  \
   \
 - (void)yj_##XXX##RemoveFromSuperview {  \
-    if (self.autoResignFirstResponder && self.hasWeakDelegateProperty) {  \
+    if (self.autoResignFirstResponder && self.isWeakDelegateByDefault) {  \
         [self yj_removeResignFirstResponderTapAction];  \
     }  \
     [self yj_##XXX##RemoveFromSuperview];  \
