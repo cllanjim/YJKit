@@ -10,16 +10,28 @@
 
 @implementation _YJKVOPorter
 
-- (instancetype)initWithObserver:(__kindof NSObject *)observer
-                           queue:(nullable NSOperationQueue *)queue
-                         handler:(nullable YJKVOChangeHandler)handler {
+- (instancetype)initWithTarget:(__kindof NSObject *)target subscriber:(__kindof NSObject *)subscriber targetKeyPath:(NSString *)targetKeyPath {
     self = [super init];
     if (self) {
-        _observer = observer;
-        _queue = queue;
-        _handler = handler ? [handler copy] : nil;
+        _target = target;
+        _subscriber = subscriber;
+        _targetKeyPath = [targetKeyPath copy];
+        _observingOptions = NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew;
     }
     return self;
+}
+
+- (instancetype)init {
+    [NSException raise:NSGenericException format:@"Do not call init directly for %@.", self.class];
+    return [self initWithTarget:(id)[NSNull null] subscriber:(id)[NSNull null] targetKeyPath:(id)[NSNull null]];
+}
+
+- (void)signUp {
+    [self.target addObserver:self forKeyPath:self.targetKeyPath options:self.observingOptions context:NULL];
+}
+
+- (void)resign {
+    [self.target removeObserver:self forKeyPath:self.targetKeyPath context:NULL];
 }
 
 - (BOOL)isEqual:(id)object {
@@ -28,23 +40,22 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     
-    id observer = self->_observer;
-    YJKVOChangeHandler handler = self->_handler;
-    
     void(^kvoCallbackBlock)(void) = ^{
         id newValue = change[NSKeyValueChangeNewKey];
         if (newValue == [NSNull null]) newValue = nil;
-        if (handler) handler(observer, object, newValue, change);
+        if (self.changeHandler) {
+            self.changeHandler(self.subscriber, object, newValue, change);
+        }
     };
     
-    if (self->_queue) {
-        [self->_queue addOperationWithBlock:kvoCallbackBlock];
+    if (self.queue) {
+        [self.queue addOperationWithBlock:kvoCallbackBlock];
     } else {
         kvoCallbackBlock();
     }
 }
 
-#if DEBUG_YJ_SAFE_KVO
+#if YJ_KVO_DEBUG
 - (void)dealloc {
     NSLog(@"%@ deallocated.", self);
 }

@@ -10,7 +10,8 @@
 #import "YJTestClasses.h"
 #import "NSObject+YJSafeKVO.h"
 #import "NSObject+YJKVOExtension.h"
-#import "_YJKVOPorterTracker.h"
+#import "_YJKVOSubscriberManager.h"
+#import "_YJKVOPorterManager.h"
 
 @interface YJKVOTest : XCTestCase
 @property (nonatomic, strong) Foo *foo;
@@ -286,10 +287,10 @@
 
 - (void)testBinding {
     [[[PACK(self.foo, sleep) piped:PACK(self.bar, name)]
-     convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, NSString *newValue) {
+     convert:^id _Nonnull(id  _Nonnull subscriber, id  _Nonnull target, NSString *newValue) {
         return @(newValue.length < 10 ? NO : YES);
     }]
-     after:^(id  _Nonnull observer, id  _Nonnull target) {
+     after:^(id  _Nonnull subscriber, id  _Nonnull target) {
          NSLog(@"after.");
     }];
     
@@ -322,10 +323,10 @@
     self.foo.sleep = NO;
     self.foo.awake = NO;
     
-    [[PACK(self.foo, sleep) piped:PACK(clown, name)] convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, id  _Nullable newValue) {
+    [[PACK(self.foo, sleep) piped:PACK(clown, name)] convert:^id _Nonnull(id  _Nonnull subscriber, id  _Nonnull target, id  _Nullable newValue) {
         return [newValue length] > 10 ? @YES : @NO;
     }];
-    [[PACK(self.foo, awake) piped:PACK(clown, name)] taken:^BOOL(id  _Nonnull observer, id  _Nonnull target, id  _Nullable newValue) {
+    [[PACK(self.foo, awake) piped:PACK(clown, name)] taken:^BOOL(id  _Nonnull subscriber, id  _Nonnull target, id  _Nullable newValue) {
         return NO;
     }];
 
@@ -375,7 +376,7 @@
     Bar *bar = [Bar new];
     Clown *clown = [Clown new];
     bar.frame = (CGRect){ 1,2,3,4 };
-    [[[PACK(clown, size) piped:PACK(bar, frame)] convert:^id _Nonnull(id  _Nonnull observer, id  _Nonnull target, id  _Nullable newValue) {
+    [[[PACK(clown, size) piped:PACK(bar, frame)] convert:^id _Nonnull(id  _Nonnull subscriber, id  _Nonnull target, id  _Nullable newValue) {
         CGRect frame = [newValue CGRectValue];
         return [NSValue valueWithCGSize:frame.size];
     }] ready];
@@ -400,7 +401,7 @@
     
     [PACK(clown, name) flooded:@[ PACK(foo, name),
                                   PACK(bar, name) ]
-                      converge:^id(id  _Nonnull observer, NSArray * _Nonnull targets) {
+                      converge:^id(id  _Nonnull subscriber, NSArray * _Nonnull targets) {
                           
         UNPACK(Foo, foo)
         UNPACK(Bar, bar)
@@ -426,7 +427,7 @@
                                   PACK(bar1, name),
                                   PACK(bar2, name)
                                   ]
-                      converge:^id _Nonnull(id  _Nonnull observer, NSArray * _Nonnull targets) {
+                      converge:^id _Nonnull(id  _Nonnull subscriber, NSArray * _Nonnull targets) {
         
         UNPACK(Foo, foo)
         UNPACK(Bar, bar1)
@@ -471,9 +472,17 @@
         
     }];
     
-    [self.yj_KVOPorterTracker untrackAllRelatedPorters];
-    NSUInteger count = [[self.yj_KVOPorterTracker valueForKey:@"_relatedPorters"] count];
-    XCTAssertTrue(count == 0);
+    [self unobserveAll];
+    
+    NSUInteger count1 = [[foo.yj_KVOSubscriberManager valueForKey:@"_subscribers"] count];
+    XCTAssertTrue(count1 == 0);
+    NSUInteger count2 = [[bar1.yj_KVOSubscriberManager valueForKey:@"_subscribers"] count];
+    XCTAssertTrue(count2 == 0);
+    NSUInteger count3 = [[clown.yj_KVOSubscriberManager valueForKey:@"_subscribers"] count];
+    XCTAssertTrue(count3 == 0);
+    
+    NSUInteger count4 = [[self.yj_KVOPorterManager valueForKey:@"_porters"] count];
+    XCTAssertTrue(count4 == 0);
 }
 
 @end

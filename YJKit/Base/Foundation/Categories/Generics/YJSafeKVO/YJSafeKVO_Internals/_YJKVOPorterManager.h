@@ -13,25 +13,28 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// The class for managing the KVO porters.
-/// This class will be attached to target.
+/// This class will be attached to subscriber.
 
 __attribute__((visibility("hidden")))
 @interface _YJKVOPorterManager : NSObject
 
-/// initialize a manager instance by knowing it's caller.
-- (instancetype)initWithObservedTarget:(id)owner;
+/// Add porter
+- (void)addPorter:(_YJKVOPorter *)porter;
 
-/// add porter to the internal collection, and also register KVO internally.
-- (void)employPorter:(_YJKVOPorter *)porter forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options;
+/// Remove porter
+- (void)removePorter:(_YJKVOPorter *)porter;
 
-/// remove all porters from internal collection for specific key path.
-- (void)unemployPortersForKeyPath:(NSString *)keyPath;
+/// Remove porters
+- (void)removePorters:(NSArray <_YJKVOPorter *> *)porters;
 
-/// remove given porters from internal collection for specific key path.
-- (void)unemployPorters:(NSArray <_YJKVOPorter *> *)porters forKeyPath:(NSString *)keyPath;
+/// Remove all porters
+- (void)removeAllPorters;
 
-/// remove all porters from internal collection for every key path.
-- (void)unemployAllPorters;
+/// Enumerate each porter
+- (void)enumeratePortersUsingBlock:(void (^)(_YJKVOPorter *porter, BOOL *stop))block;
+
+/// Number of porters
+- (NSUInteger)numberOfPorters;
 
 @end
 

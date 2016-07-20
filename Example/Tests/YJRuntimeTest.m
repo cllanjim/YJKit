@@ -115,4 +115,21 @@
     [Bar sayYoo];
 }
 
+- (void)testSafeEquality {
+    Foo *foo = [Foo new];
+    [foo performSafeEqualityChecking];
+    
+    NSMutableArray *arr = @[].mutableCopy;
+    id ptr = nil;
+    
+    for (int i = 0; i < 10; i++) {
+        Class cls = (i % 2 == 0) ? Foo.self : Bar.self;
+        id obj = [cls new];
+        [arr addObject:obj];
+        if (i == 5) ptr = obj;
+    }
+    
+    [arr removeObject:ptr];
+}
+
 @end
