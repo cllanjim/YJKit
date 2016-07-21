@@ -79,13 +79,27 @@
 
 - (void)testNilKeyPath {
     __block int i = 0;
-    self.bar.name = nil;
+    __block NSString *nilValue = nil;
     [self.foo observe:PACK(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
-        NSLog(@"%@", newValue);
+        nilValue = newValue;
         i++;
     }];
-    self.bar.name = @"Bar";
     XCTAssertTrue(i == 2);
+    XCTAssertTrue(nilValue == nil);
+}
+
+- (void)testPublicReadonlyProperty {
+    __block NSString *value = nil;
+    
+    Bar *bar = [Bar new];
+    Foo *foo = [Foo new];
+    
+    [bar observe:PACK(foo, privateName) updates:^(Bar *bar, Foo *foo, NSString *privateName) {
+        value = privateName;
+    }];
+    
+    [foo addPrivateName];
+    XCTAssertTrue([value isEqualToString:foo.privateName]);
 }
 
 - (void)testKVOTargetDealloc {

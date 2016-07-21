@@ -8,6 +8,10 @@
 
 #import "YJTestClasses.h"
 
+@interface Foo ()
+@property (nonatomic, copy) NSString *privateName;
+@end
+
 @implementation Foo
 
 - (void)sayHello { NSLog(@"instance hello"); }
@@ -15,6 +19,10 @@
 + (void)sayHi { NSLog(@"class hi"); }
 - (void)dealloc {
     NSLog(@"%@ deallocated.", self);
+}
+
+- (void)addPrivateName {
+    self.privateName = @"PrivateFoo";
 }
 
 + (instancetype)foo {
@@ -78,6 +86,12 @@
     id vName = [self valueForKey:@"yj_KVOVariableName"];
     id addr = [NSString stringWithFormat:@"%p", self];
     return [NSString stringWithFormat:@"%@<%@>", self.class, (vName ? [NSString stringWithFormat:@"%@_%@", vName, addr] : addr)];
+}
+
+- (void)block:(void(^)(id obj1, __kindof NSObject *obj2, id _Nullable obj3, __kindof NSObject * _Nullable obj4))block {
+    if (block) {
+        block(@"1", @"2", @"3", @"4");
+    }
 }
 
 @end

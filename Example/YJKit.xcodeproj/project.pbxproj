@@ -110,6 +110,7 @@
 		6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
+		7212B6F91D40927B007C4BFB /* YJKVOTest_Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7212B6F81D40927B007C4BFB /* YJKVOTest_Swift.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -328,6 +329,8 @@
 		6003F5B7195388D20070C39A /* Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Tests-Info.plist"; sourceTree = "<group>"; };
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
+		7212B6F71D40927B007C4BFB /* YJKit_Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "YJKit_Tests-Bridging-Header.h"; sourceTree = "<group>"; };
+		7212B6F81D40927B007C4BFB /* YJKVOTest_Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YJKVOTest_Swift.swift; sourceTree = "<group>"; };
 		A4E3619C885051E572C0483E /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		D6627507F47E9F7BBE78AB52 /* YJKit.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = YJKit.podspec; path = ../YJKit.podspec; sourceTree = "<group>"; };
 		E90B7132355AB3B4DF313D99 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -812,8 +815,10 @@
 				320438711CEF14EC006806EC /* YJGeneralTest.m */,
 				32B55D001D162BF300A578AD /* YJRuntimeTest.m */,
 				32CEA1731D275F4300FBF82C /* YJKVOTest.m */,
+				7212B6F81D40927B007C4BFB /* YJKVOTest_Swift.swift */,
 				32CEA1771D275FA100FBF82C /* YJTestClasses.h */,
 				32CEA1751D275F8200FBF82C /* YJTestClasses.m */,
+				7212B6F71D40927B007C4BFB /* YJKit_Tests-Bridging-Header.h */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -883,6 +888,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = YJ;
+				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "huang-kun";
 				TargetAttributes = {
@@ -1039,6 +1045,7 @@
 				32CEA1741D275F4300FBF82C /* YJKVOTest.m in Sources */,
 				32B8C1911CEE109700E2639B /* YJStringSequence.m in Sources */,
 				3204386D1CEEF3E9006806EC /* YJArraySequence.m in Sources */,
+				7212B6F91D40927B007C4BFB /* YJKVOTest_Swift.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1185,6 +1192,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -1197,8 +1205,11 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "Tests/Tests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/YJKit_Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YJKit_Example.app/YJKit_Example";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -1208,6 +1219,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -1216,8 +1228,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Tests/Tests-Prefix.pch";
 				INFOPLIST_FILE = "Tests/Tests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/YJKit_Tests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YJKit_Example.app/YJKit_Example";
 				WRAPPER_EXTENSION = xctest;
 			};
