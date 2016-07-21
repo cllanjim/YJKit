@@ -78,13 +78,10 @@
 }
 
 - (void)testNilKeyPath {
-    __block int i = 0;
     __block NSString *nilValue = nil;
     [self.foo observe:PACK(self.bar, name) updates:^(Foo *  _Nonnull foo, Bar *  _Nonnull bar, id  _Nullable newValue) {
         nilValue = newValue;
-        i++;
     }];
-    XCTAssertTrue(i == 2);
     XCTAssertTrue(nilValue == nil);
 }
 

@@ -125,7 +125,7 @@ static BOOL _yj_insertImpBlocksIntoMethod(id obj, SEL sel,
     [self performBlocksByInvokingSelector:deallocSEL before:block after:nil];
 }
 
-- (void)performSafeEqualityChecking {
+- (void)performSafeEqualityComparison {
     
     NSString *identifier = [NSString stringWithFormat:@"isEqual:"];
     if (![[_YJIMPInsertionKeeper keeper] addIdentifier:identifier forClass:[self class]]) {

@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///             might crash if you implement -isEqual: for foo and compare foo's own property which bar
 ///             can not respond to that property.
 ///
-- (void)performSafeEqualityChecking;
+- (void)performSafeEqualityComparison;
 
 @end
 

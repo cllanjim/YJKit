@@ -117,7 +117,7 @@
 
 - (void)testSafeEquality {
     Foo *foo = [Foo new];
-    [foo performSafeEqualityChecking];
+    [foo performSafeEqualityComparison];
     
     NSMutableArray *arr = @[].mutableCopy;
     id ptr = nil;

@@ -32,8 +32,8 @@
     [porter signUp];
     
     // implement safe -isEqual:
-    [target performSafeEqualityChecking];
-    [subscriber performSafeEqualityChecking];
+    [target performSafeEqualityComparison];
+    [subscriber performSafeEqualityComparison];
     
     // manage subscriber
     _YJKVOSubscriberManager *subscriberManager = target.yj_KVOSubscriberManager;
@@ -78,7 +78,8 @@
                 forTargetKeyPath:(NSString *)targetKeyPath {
     
     @autoreleasepool {
-        __weak id weakTarget = target;
+        // the target might be in the middle of deallocating, so don't using __weak here.
+        __unsafe_unretained id targetPtr = target;
         
         _YJKVOSubscriberManager *subscriberManager = target.yj_KVOSubscriberManager;
         NSMutableArray *subscribers = [[NSMutableArray alloc] initWithCapacity:subscriberManager.numberOfSubscribers];
@@ -87,7 +88,7 @@
             _YJKVOPorterManager *porterManager = subscriber.yj_KVOPorterManager;
             NSMutableArray *porters = [[NSMutableArray alloc] initWithCapacity:porterManager.numberOfPorters];
             [porterManager enumeratePortersUsingBlock:^(_YJKVOPorter * _Nonnull porter, BOOL * _Nonnull stop) {
-                if (porter.target == weakTarget && [porter.targetKeyPath isEqualToString:targetKeyPath]) {
+                if (porter.target == targetPtr && [porter.targetKeyPath isEqualToString:targetKeyPath]) {
                     [porter resign];
                     [porters addObject:porter];
                 }
