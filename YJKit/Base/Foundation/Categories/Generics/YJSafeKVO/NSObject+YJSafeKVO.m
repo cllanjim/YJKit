@@ -102,7 +102,7 @@ YJKVOChangeHandler (^yj_convertedKVOChangeHandler)(YJKVOValueHandler) = ^YJKVOCh
 }
 
 - (void)unobserveTarget:(__kindof NSObject *)target keyPath:(NSString *)keyPath {
-    [[_YJKVOExecutiveOfficer officer] dismissSubscriber:self fromTarget:target targetKeyPath:keyPath];
+    [[_YJKVOExecutiveOfficer officer] dismissPortersFromTarget:target andSubscriber:self forTargetKeyPath:keyPath];
 }
 
 - (void)unobserveAll {

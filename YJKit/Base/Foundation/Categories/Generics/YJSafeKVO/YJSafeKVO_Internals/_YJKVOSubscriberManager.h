@@ -16,6 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 __attribute__((visibility("hidden")))
 @interface _YJKVOSubscriberManager : NSObject
 
+/// designated initializer
+- (instancetype)initWithTarget:(__kindof NSObject *)target NS_DESIGNATED_INITIALIZER;
+
 /// Add subscriber
 - (void)addSubscriber:(__kindof NSObject *)subscriber;
 

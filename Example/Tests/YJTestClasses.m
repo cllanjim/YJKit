@@ -17,8 +17,18 @@
     NSLog(@"%@ deallocated.", self);
 }
 
++ (instancetype)foo {
+    return [Foo new];
+}
+
 - (BOOL)isEqual:(id)object {
     return self.sleep == [object sleep];
+}
+
+- (NSString *)description {
+    id vName = [self valueForKey:@"yj_KVOVariableName"];
+    id addr = [NSString stringWithFormat:@"%p", self];
+    return [NSString stringWithFormat:@"%@<%@>", self.class, (vName ? [NSString stringWithFormat:@"%@_%@", vName, addr] : addr)];
 }
 
 @end
@@ -26,13 +36,17 @@
 
 @implementation Bar
 
-+ (instancetype)bar {
++ (instancetype)sharedBar {
     static Bar *bar;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         bar = [Bar new];
     });
     return bar;
+}
+
++ (instancetype)bar {
+    return [Bar bar];
 }
 
 - (void)sayYoo { NSLog(@"instance yoo"); }
@@ -42,7 +56,9 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@<%p> %@", self.class, self, self.name];
+    id vName = [self valueForKey:@"yj_KVOVariableName"];
+    id addr = [NSString stringWithFormat:@"%p", self];
+    return [NSString stringWithFormat:@"%@<%@>", self.class, (vName ? [NSString stringWithFormat:@"%@_%@", vName, addr] : addr)];
 }
 
 - (BOOL)isEqual:(id)object {
@@ -56,6 +72,12 @@
 
 - (BOOL)isEqual:(id)object {
     return CGSizeEqualToSize(self.size, [object size]);
+}
+
+- (NSString *)description {
+    id vName = [self valueForKey:@"yj_KVOVariableName"];
+    id addr = [NSString stringWithFormat:@"%p", self];
+    return [NSString stringWithFormat:@"%@<%@>", self.class, (vName ? [NSString stringWithFormat:@"%@_%@", vName, addr] : addr)];
 }
 
 @end

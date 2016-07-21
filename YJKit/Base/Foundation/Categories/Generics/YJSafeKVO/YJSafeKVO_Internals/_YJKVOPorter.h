@@ -40,7 +40,7 @@ __attribute__((visibility("hidden")))
 @property (nonatomic) NSKeyValueObservingOptions observingOptions;
 
 /// The operation queue for adding change handler.
-@property (nonatomic, strong) NSOperationQueue *queue;
+@property (nullable, nonatomic, strong) NSOperationQueue *queue;
 
 /// The default handler for handling the value changes.
 @property (nullable, nonatomic, copy) YJKVOChangeHandler changeHandler;

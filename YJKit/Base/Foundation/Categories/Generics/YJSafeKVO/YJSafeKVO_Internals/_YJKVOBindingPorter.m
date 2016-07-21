@@ -62,11 +62,4 @@
     }
 }
 
-#if YJ_KVO_DEBUG
-- (void)dealloc {
-    NSLog(@"%@ deallocated.", self);
-}
-#endif
-
-
 @end

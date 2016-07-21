@@ -55,6 +55,10 @@
     }
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %p> (target <%@: %p>, subscriber <%@: %p>, targetKeyPath: %@)", self.class, self, self.target.class, self.target, self.subscriber.class, self.subscriber, self.targetKeyPath];
+}
+
 #if YJ_KVO_DEBUG
 - (void)dealloc {
     NSLog(@"%@ deallocated.", self);

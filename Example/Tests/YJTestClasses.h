@@ -19,6 +19,8 @@
 @property (nonatomic) BOOL awake;
 @property (nonatomic) CGRect frame;
 
++ (instancetype)foo;
+
 - (void)sayHello;
 + (void)sayHello;
 + (void)sayHi;
@@ -28,6 +30,7 @@
 
 @interface Bar : NSObject
 
++ (instancetype)sharedBar;
 + (instancetype)bar;
 
 @property (nonatomic, copy) NSString *name;

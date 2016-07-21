@@ -19,18 +19,18 @@ __attribute__((visibility("hidden")))
 /// singleton object
 + (instancetype)officer;
 
-/// register KVO and organize internal objects into KVO chain.
+/// register KVO and organize all related objects into KVO chain.
 - (void)organizeTarget:(__kindof NSObject *)target
             subscriber:(__kindof NSObject *)subscriber
                 porter:(__kindof _YJKVOPorter *)porter;
 
-/// dismiss target from KVO chain.
+/// dismiss specified target from KVO chain.
 - (void)dismissTarget:(__kindof NSObject *)target;
 
-/// dismiss specified internal objects from KVO chain.
-- (void)dismissSubscriber:(__kindof NSObject *)subscriber
-               fromTarget:(__kindof NSObject *)target
-            targetKeyPath:(NSString *)targetKeyPath;
+/// dismiss related porters from KVO chain.
+- (void)dismissPortersFromTarget:(__kindof NSObject *)target
+                   andSubscriber:(__kindof NSObject *)subscriber
+                forTargetKeyPath:(NSString *)targetKeyPath;
 
 /// dismiss specified subscriber from KVO chain.
 - (void)dismissSubscriber:(__kindof NSObject *)subscriber;

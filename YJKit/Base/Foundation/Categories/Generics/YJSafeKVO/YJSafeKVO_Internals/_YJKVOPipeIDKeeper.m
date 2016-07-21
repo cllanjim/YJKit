@@ -7,9 +7,10 @@
 //
 
 #import "_YJKVOPipeIDKeeper.h"
+#import "_YJKVODefines.h"
 
 @implementation _YJKVOPipeIDKeeper {
-    __unsafe_unretained id _subscriber;
+    __unsafe_unretained __kindof NSObject *_subscriber;
     NSMutableArray <NSString *> *_pipeIdentifiers;
     dispatch_semaphore_t _semaphore;
 }
@@ -38,5 +39,15 @@
 - (BOOL)containsPipeIdentifier:(NSString *)pipeIdentifier {
     return [_pipeIdentifiers containsObject:pipeIdentifier];
 }
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %p> (subscriber <%@: %p>)", self.class, self, _subscriber.class, _subscriber];
+}
+
+#if YJ_KVO_DEBUG
+- (void)dealloc {
+    NSLog(@"%@ deallocated.", self);
+}
+#endif
 
 @end

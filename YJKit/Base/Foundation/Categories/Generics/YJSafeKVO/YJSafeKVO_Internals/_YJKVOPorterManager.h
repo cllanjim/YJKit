@@ -18,6 +18,9 @@ NS_ASSUME_NONNULL_BEGIN
 __attribute__((visibility("hidden")))
 @interface _YJKVOPorterManager : NSObject
 
+/// designated initializer
+- (instancetype)initWithSubscriber:(__kindof NSObject *)subscriber NS_DESIGNATED_INITIALIZER;
+
 /// Add porter
 - (void)addPorter:(_YJKVOPorter *)porter;
 

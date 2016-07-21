@@ -7,21 +7,27 @@
 //
 
 #import "_YJKVOPorterManager.h"
-#import "_YJKVOPorter.h"
 #import "_YJKVODefines.h"
 
 @implementation _YJKVOPorterManager {
+    __unsafe_unretained __kindof NSObject *_subscriber;
     NSMutableArray *_porters;
     dispatch_semaphore_t _semaphore;
 }
 
-- (instancetype)init {
+- (instancetype)initWithSubscriber:(__kindof NSObject *)subscriber {
     self = [super init];
     if (self) {
+        _subscriber = subscriber;
         _porters = [[NSMutableArray alloc] initWithCapacity:50];
         _semaphore = dispatch_semaphore_create(1);
     }
     return self;
+}
+
+- (instancetype)init {
+    [NSException raise:NSGenericException format:@"Do not call init directly for %@.", self.class];
+    return [self initWithSubscriber:(id)[NSNull null]];
 }
 
 - (void)addPorter:(_YJKVOPorter *)porter {
@@ -59,6 +65,10 @@
 
 - (NSUInteger)numberOfPorters {
     return _porters.count;
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %p> (subscriber <%@: %p>)", self.class, self, _subscriber.class, _subscriber];
 }
 
 #if YJ_KVO_DEBUG

@@ -145,76 +145,76 @@
 
 - (void)testUnobserving {
     __block int i = 0;
+    __block int m = 0;
+    __block int n = 0;
+    
     int count = 2;
     Foo *foo = [Foo new];
     for (int j = 0; j < count; j++) {
         [self.foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, id newValue, NSDictionary * _Nonnull change) {
-            NSLog(@"CAN NOT PRINT: %@", newValue);
             i++;
         }];
         [foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, id newValue, NSDictionary * _Nonnull change) {
-            NSLog(@"%@", newValue);
+            n++;
+        }];
+        [self.foo observe:PACK(self.bar, age) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue, NSDictionary * _Nonnull change) {
+            m++;
         }];
     }
+    
     [self.foo unobserve:PACK(self.bar, name)];
-
+    [foo unobserveAll];
+    
     self.bar.name = @"Baaar";
+    self.bar.age = 10;
+    
     XCTAssertTrue(i == 0);
+    XCTAssertTrue(m == 2);
+    XCTAssertTrue(n == 0);
 }
 
 - (void)testRetainCycleBreaks {
-    __block int i = 0;
-    @autoreleasepool {
-        Foo *foo = [Foo new];
-        [self.foo observe:PACK(self.bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
-            [self.foo sayHello];
-            [self.bar sayYoo];
-            [foo sayHello];
-            i++;
-        }];
-        self.bar = nil;
-        self.foo = nil;
-    }
-    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
-    XCTAssertTrue(i == 1);
-}
-
-- (void)testKVOCallbacks {
-    __block int i = 0;
-    @autoreleasepool {
-        __block Foo *foo = [Foo new];
-        __block Bar *bar = [Bar new];
-        for (int j = 0; j < 3; j++) {
-            [foo observeTarget:bar keyPath:@"name" updates:^(Foo *  _Nonnull foo_, Bar *  _Nonnull bar_, id  _Nullable newValue) {
-                [foo_ sayHello];
-                [bar_ sayYoo];
-                i++;
-                foo = nil;
-                bar = nil;
-            }];
-        }
-    }
-    XCTAssertTrue(i == 1);
+    Foo *foo = [Foo new];
+    Bar *bar = [Bar new];
+    
+    __weak id weakFoo = foo;
+    __weak id weakBar = bar;
+    
+    bar.name = @"Bar";
+    [foo observeTarget:bar keyPath:@"name" updates:^(Foo *foo, Bar *bar, id  _Nullable newValue) {
+        foo.name = newValue;
+        NSLog(@"Hello %@", bar);
+    }];
+    foo = nil;
+    bar = nil;
+    
+    XCTAssertTrue(weakFoo == nil);
+    XCTAssertTrue(weakBar == nil);
 }
 
 - (void)testKVOSelf {
-    __block int i = 0;
+    Foo *foo = [Foo new];
     Bar *bar = [Bar new];
+    
+    __weak id weakFoo = foo;
+    __weak id weakBar = bar;
+    
     bar.name = @"Barrrr";
-    [bar observe:PACK(bar, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
-        NSLog(@"new name: %@", newValue);
-        i++;
+    
+    @autoreleasepool {
+        [foo observe:PACK(foo, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+            NSLog(@"foo's name: %@", newValue);
+        }];
+        foo = nil;
+    }
+    
+    [bar observeTarget:bar keyPath:@"name" updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        NSLog(@"bar's name: %@", newValue);
     }];
-    XCTAssertTrue(i == 1);
-}
-
-- (void)testOwnership {
-    __block int i = 0;
-    [self observe:PACK(self.bar, name) updates:^(id  _Nonnull self, id  _Nonnull target, id  _Nullable newValue) {
-        i++;
-        NSLog(@"%@", self);
-    }];
-    XCTAssertTrue(i == 1);
+    bar = nil;
+    
+    XCTAssertTrue(weakFoo == nil);
+    XCTAssertTrue(weakBar == nil);
 }
 
 - (void)testMultipleObservedTargets {
@@ -222,54 +222,89 @@
     Foo *foo2 = [Foo new];
     Bar *bar1 = [Bar new];
     Bar *bar2 = [Bar new];
-    Bar *bar3 = [Bar bar];
+    Bar *bar3 = [Bar sharedBar];
     
-    [foo1 observe:PACK(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
-        NSLog(@"%@ - %@", target, newValue);
-    }];
+    __weak id weakFoo1 = foo1;
+    __weak id weakFoo2 = foo2;
+    __weak id weakBar1 = bar1;
+    __weak id weakBar2 = bar2;
     
-    [foo1 observe:PACK(bar2, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
-        NSLog(@"%@ - %@", target, newValue);
-    }];
-
-    [foo1 observe:PACK(bar3, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
-        NSLog(@"%@ - %@", target, newValue);
-    }];
-    
-    [foo2 observe:PACK(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
-        NSLog(@"%@ - %@", target, newValue);
-    }];
-
-    [foo2 observe:PACK(bar2, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
-        NSLog(@"%@ - %@", target, newValue);
-    }];
-    
-    [foo2 observe:PACK(bar3, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
-        NSLog(@"%@ - %@", target, newValue);
-    }];
+    @autoreleasepool {
+        [foo1 observe:PACK(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+            NSLog(@"%@ - %@", target, newValue);
+        }];
+        
+        [foo1 observe:PACK(bar2, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+            NSLog(@"%@ - %@", target, newValue);
+        }];
+        
+        [foo1 observe:PACK(bar3, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+            NSLog(@"%@ - %@", target, newValue);
+        }];
+        
+        [foo2 observe:PACK(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+            NSLog(@"%@ - %@", target, newValue);
+        }];
+        
+        [foo2 observe:PACK(bar2, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+            NSLog(@"%@ - %@", target, newValue);
+        }];
+        
+        [foo2 observe:PACK(bar3, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+            NSLog(@"%@ - %@", target, newValue);
+        }];
+    }
     
     NSLog(@"");
     
     foo1 = nil;
+    XCTAssertTrue(weakFoo1 == nil);
+    XCTAssertTrue(weakFoo2 != nil);
+    XCTAssertTrue(weakBar1 != nil);
+    
+    bar2 = nil;
+    XCTAssertTrue(weakBar2 == nil);
+    XCTAssertTrue(weakFoo2 != nil);
+    
     foo2 = nil;
+    NSLog(@"");
 
+    XCTAssertTrue(weakFoo2 == nil);
+
+    bar1 = nil;
+    XCTAssertTrue(weakBar1 == nil);
+    
     NSLog(@"");
 }
 
 - (void)testObserveEachOther {
     Foo *foo1 = [Foo new];
     Bar *bar1 = [Bar new];
-    [foo1 observe:PACK(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
-        NSLog(@"%@ - %@", target, newValue);
-    }];
-    [bar1 observe:PACK(foo1, friend) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
-        NSLog(@"%@ - %@", target, newValue);
-    }];
+    
+    __weak id weakFoo1 = foo1;
+    __weak id weakBar1 = bar1;
+    
+    @autoreleasepool {
+        [foo1 observe:PACK(bar1, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+            NSLog(@"%@ - %@", target, newValue);
+        }];
+        [bar1 observe:PACK(foo1, friend) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+            NSLog(@"%@ - %@", target, newValue);
+        }];
+    }
+    
+    foo1 = nil;
+    bar1 = nil;
+    
+    XCTAssertTrue(weakFoo1 == nil);
+    XCTAssertTrue(weakBar1 == nil);
 }
 
 - (void)testGroupKVO {
     Bar *bar1 = [Bar new];
     Bar *bar2 = [Bar new];
+    
+    __block BOOL result = NO;
     
     [self.foo observeGroup:@[ PACK(bar1, name), PACK(bar2, age) ] updates:^(id  _Nonnull receiver, NSArray * _Nonnull targets) {
         
@@ -277,12 +312,15 @@
         UNPACK(Bar, bar2)
         
         if ([bar1.name isEqualToString:@"Bar1"] && bar2.age == 29) {
-            XCTAssertTrue(1);
+            result = YES;
         }
     }];
     
     bar1.name = @"Bar1";
     bar2.age = 29;
+    
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
+    XCTAssertTrue(result == YES);
 }
 
 - (void)testBinding {
@@ -306,11 +344,19 @@
 - (void)testBinding2 {
     Clown *clown = [Clown new];
     clown.name = @"Clown";
-    [PACK(self.foo, friend.name) piped:PACK(clown, name)];
+    
+    __weak id weakClown = clown;
+    
+    @autoreleasepool {
+        [PACK(self.foo, friend.name) piped:PACK(clown, name)];
+    }
     
     clown.name = @"ClownClownClown";
     clown.name = @"ClownClownClown";
     XCTAssertTrue([self.bar.name isEqualToString:@"ClownClownClown"]);
+    
+    clown = nil;
+    XCTAssertTrue(weakClown == nil);
 }
 
 - (void)testBinding3 {
@@ -451,6 +497,7 @@
     bar1.frame = (CGRect){ 1,2,3,4 };
     bar2.name = @"Barrrrr";
     
+    NSLog(@"flood test - clown.size = %@", NSStringFromCGSize(clown.size));
     XCTAssertTrue(CGSizeEqualToSize(clown.size, (CGSize){ 3,4 }));
 }
 

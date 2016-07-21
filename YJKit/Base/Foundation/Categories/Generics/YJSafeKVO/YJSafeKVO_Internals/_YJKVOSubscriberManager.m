@@ -7,19 +7,27 @@
 //
 
 #import "_YJKVOSubscriberManager.h"
+#import "_YJKVODefines.h"
 
 @implementation _YJKVOSubscriberManager {
+    __unsafe_unretained __kindof NSObject *_target;
     NSHashTable <__kindof NSObject *> *_subscribers;
     dispatch_semaphore_t _semaphore;
 }
 
-- (instancetype)init {
+- (instancetype)initWithTarget:(__kindof NSObject *)target {
     self = [super init];
     if (self) {
+        _target = target;
         _subscribers = [NSHashTable weakObjectsHashTable];
         _semaphore = dispatch_semaphore_create(1);
     }
     return self;
+}
+
+- (instancetype)init {
+    [NSException raise:NSGenericException format:@"Do not call init directly for %@.", self.class];
+    return [self initWithTarget:(id)[NSNull null]];
 }
 
 - (void)addSubscriber:(__kindof NSObject *)subscriber {    
@@ -60,5 +68,15 @@
 - (NSUInteger)numberOfSubscribers {
     return _subscribers.count;
 }
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %p> (target <%@: %p>)", self.class, self, _target.class, _target];
+}
+
+#if YJ_KVO_DEBUG
+- (void)dealloc {
+    NSLog(@"%@ deallocated.", self);
+}
+#endif
 
 @end

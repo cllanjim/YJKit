@@ -38,7 +38,7 @@
     // manage subscriber
     _YJKVOSubscriberManager *subscriberManager = target.yj_KVOSubscriberManager;
     if (!subscriberManager) {
-        subscriberManager = [_YJKVOSubscriberManager new];
+        subscriberManager = [[_YJKVOSubscriberManager alloc] initWithTarget:target];
         target.yj_KVOSubscriberManager = subscriberManager;
     }
     [subscriberManager addSubscriber:subscriber];
@@ -46,7 +46,7 @@
     // manage porter
     _YJKVOPorterManager *porterManager = subscriber.yj_KVOPorterManager;
     if (!porterManager) {
-        porterManager = [_YJKVOPorterManager new];
+        porterManager = [[_YJKVOPorterManager alloc] initWithSubscriber:subscriber];
         subscriber.yj_KVOPorterManager = porterManager;
     }
     [porterManager addPorter:porter];
@@ -62,62 +62,68 @@
 }
 
 - (void)dismissTarget:(__kindof NSObject *)target {
-    [target.yj_KVOSubscriberManager enumerateSubscribersUsingBlock:^(__kindof NSObject * _Nonnull subscriber, BOOL * _Nonnull stop) {
-        [subscriber.yj_KVOPorterManager enumeratePortersUsingBlock:^(_YJKVOPorter * _Nonnull porter, BOOL * _Nonnull stop) {
-            [porter resign];
+    @autoreleasepool {
+        [target.yj_KVOSubscriberManager enumerateSubscribersUsingBlock:^(__kindof NSObject * _Nonnull subscriber, BOOL * _Nonnull stop) {
+            [subscriber.yj_KVOPorterManager enumeratePortersUsingBlock:^(_YJKVOPorter * _Nonnull porter, BOOL * _Nonnull stop) {
+                [porter resign];
+            }];
+            [subscriber.yj_KVOPorterManager removeAllPorters];
         }];
-        [subscriber.yj_KVOPorterManager removeAllPorters];
-    }];
-    [target.yj_KVOSubscriberManager removeAllSubscribers];
+        [target.yj_KVOSubscriberManager removeAllSubscribers];
+    }
 }
 
-- (void)dismissSubscriber:(__kindof NSObject *)subscriber
-               fromTarget:(__kindof NSObject *)target
-            targetKeyPath:(NSString *)targetKeyPath {
+- (void)dismissPortersFromTarget:(__kindof NSObject *)target
+                   andSubscriber:(__kindof NSObject *)subscriber
+                forTargetKeyPath:(NSString *)targetKeyPath {
     
-    __weak id weakTarget = target;
-    
-    _YJKVOSubscriberManager *subscriberManager = target.yj_KVOSubscriberManager;
-    NSMutableArray *subscribers = [[NSMutableArray alloc] initWithCapacity:subscriberManager.numberOfSubscribers];
-    [subscriberManager enumerateSubscribersUsingBlock:^(__kindof NSObject * _Nonnull subscriber, BOOL * _Nonnull stop) {
+    @autoreleasepool {
+        __weak id weakTarget = target;
         
-        _YJKVOPorterManager *porterManager = subscriber.yj_KVOPorterManager;
-        NSMutableArray *porters = [[NSMutableArray alloc] initWithCapacity:porterManager.numberOfPorters];
-        [porterManager enumeratePortersUsingBlock:^(_YJKVOPorter * _Nonnull porter, BOOL * _Nonnull stop) {
-            if (porter.target == weakTarget && [porter.targetKeyPath isEqualToString:targetKeyPath]) {
-                [porter resign];
-                [porters addObject:porter];
+        _YJKVOSubscriberManager *subscriberManager = target.yj_KVOSubscriberManager;
+        NSMutableArray *subscribers = [[NSMutableArray alloc] initWithCapacity:subscriberManager.numberOfSubscribers];
+        [subscriberManager enumerateSubscribersUsingBlock:^(__kindof NSObject * _Nonnull subscriber, BOOL * _Nonnull stop) {
+            
+            _YJKVOPorterManager *porterManager = subscriber.yj_KVOPorterManager;
+            NSMutableArray *porters = [[NSMutableArray alloc] initWithCapacity:porterManager.numberOfPorters];
+            [porterManager enumeratePortersUsingBlock:^(_YJKVOPorter * _Nonnull porter, BOOL * _Nonnull stop) {
+                if (porter.target == weakTarget && [porter.targetKeyPath isEqualToString:targetKeyPath]) {
+                    [porter resign];
+                    [porters addObject:porter];
+                }
+            }];
+            
+            if (porters.count) {
+                [porterManager removePorters:porters];
+            }
+            if (!porterManager.numberOfPorters) {
+                [subscribers addObject:subscriber];
             }
         }];
         
-        if (porters.count) {
-            [porterManager removePorters:porters];
+        if (subscribers.count) {
+            [subscriberManager removeSubscribers:subscribers];
         }
-        if (!porterManager.numberOfPorters) {
-            [subscribers addObject:subscriber];
-        }
-    }];
-    
-    if (subscribers.count) {
-        [subscriberManager removeSubscribers:subscribers];
     }
 }
 
 - (void)dismissSubscriber:(__kindof NSObject *)subscriber {
-    NSMutableSet *targets = [NSMutableSet new];
-    
-    _YJKVOPorterManager *porterManager = subscriber.yj_KVOPorterManager;
-    [porterManager enumeratePortersUsingBlock:^(_YJKVOPorter * _Nonnull porter, BOOL * _Nonnull stop) {
-        [porter resign];
-        if (porter.target) {
-            [targets addObject:porter.target];
+    @autoreleasepool {
+        NSMutableSet *targets = [NSMutableSet new];
+        
+        _YJKVOPorterManager *porterManager = subscriber.yj_KVOPorterManager;
+        [porterManager enumeratePortersUsingBlock:^(_YJKVOPorter * _Nonnull porter, BOOL * _Nonnull stop) {
+            [porter resign];
+            if (porter.target) {
+                [targets addObject:porter.target];
+            }
+        }];
+        [porterManager removeAllPorters];
+        
+        for (__kindof NSObject *target in targets) {
+            _YJKVOSubscriberManager *subscriberManager = target.yj_KVOSubscriberManager;
+            [subscriberManager removeSubscriber:subscriber];
         }
-    }];
-    [porterManager removeAllPorters];
-    
-    for (__kindof NSObject *target in targets) {
-        _YJKVOSubscriberManager *subscriberManager = target.yj_KVOSubscriberManager;
-        [subscriberManager removeSubscriber:subscriber];
     }
 }
 
