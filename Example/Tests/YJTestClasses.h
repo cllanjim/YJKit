@@ -15,7 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface Foo : NSObject
 
-@property (nonatomic, copy) NSString *name;
+@property (nullable, nonatomic, copy) NSString *name;
+@property (nullable, nonatomic, copy) NSString *nickname;
 @property (nonatomic, readonly, copy) NSString *privateName;
 
 @property (nonatomic, strong) Bar *friend;
@@ -39,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedBar;
 + (instancetype)bar;
 
-@property (nonatomic, copy) NSString *name;
+@property (nullable, nonatomic, copy) NSString *name;
 @property (nonatomic) NSUInteger age;
 @property (nonatomic) CGRect frame;
 
@@ -51,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface Clown : NSObject
 
-@property (nonatomic, copy) NSString *name;
+@property (nullable, nonatomic, copy) NSString *name;
 @property (nonatomic) CGSize size;
 
 - (void)block:(void(^)(id obj1, __kindof NSObject *obj2, id _Nullable obj3, __kindof NSObject * _Nullable obj4))block;

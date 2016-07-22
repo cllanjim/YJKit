@@ -8,6 +8,7 @@
 
 import XCTest
 
+
 class YJKVOTest_Swift: XCTestCase {
 
     override func setUp() {
@@ -31,13 +32,74 @@ class YJKVOTest_Swift: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
+    
+    func testObserve() {
+        let foo = Foo()
+        let bar = Bar()
+        
+        foo.observe(PACK(bar, "name")) { (_, _, newValue) in
+            print("\(newValue)")
+        }
+        
+        bar.name = "Bar"
+        bar.name = "Barrrrrrr"
+    }
+    
+    func testBind() {
+        let foo = Foo()
+        let bar = Bar()
+        
+        PACK(foo, "name").bound(PACK(bar, "name"))
+        
+        bar.name = "Bar"
+        XCTAssert(foo.name == "Bar")
+        
+        bar.name = "Barrrrrrr"
+        XCTAssert(foo.name == "Barrrrrrr")
+    }
+    
+    func testPipe() {
+        let foo = Foo()
+        let bar = Bar()
+        
+        PACK(foo, "name").piped(PACK(bar, "name"))
+            .taken { (_, _, newValue) -> Bool in
+                if let name = newValue as? String {
+                    return name.characters.count > 3
+                }
+                return false
+            }
+            .convert { (_, _, newValue) -> AnyObject in
+                let name = newValue as! String
+                return name.uppercaseString
+            }
+            .after { (_, _) in
+                print("value updated.")
+            }
+            .ready()
+        
+        bar.name = "Bar"
+        XCTAssert(foo.name == nil)
+        
+        bar.name = "Barrrr"
+        XCTAssert(foo.name == "BARRRR")
+    }
+    
+    func testPost() {
+        let foo = Foo()
+        var result = ""
 
-    func testSimpleKVO() {
-//        let foo = Foo()
-//        let bar = Bar()
-//        let clown = Clown()
-//        clown.block { (<#AnyObject#>, <#NSObject#>, <#AnyObject?#>, <#NSObject?#>) in
-//            <#code#>
-//        }
+        PACK(foo, "name").post { (newValue) in
+            if let name = newValue as? String {
+                result = name;
+            }
+        }
+        
+        foo.name = "foo"
+        XCTAssert(result == "foo")
+        
+        PACK(foo, "name").stop()
+        foo.name = "foooooo"
+        XCTAssert(result == "foo")
     }
 }

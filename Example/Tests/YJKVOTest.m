@@ -158,30 +158,47 @@
     __block int i = 0;
     __block int m = 0;
     __block int n = 0;
+    __block int a = 0;
+    __block int b = 0;
+    __block int c = 0;
     
-    int count = 2;
     Foo *foo = [Foo new];
-    for (int j = 0; j < count; j++) {
-        [self.foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, id newValue, NSDictionary * _Nonnull change) {
-            i++;
-        }];
-        [foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, id newValue, NSDictionary * _Nonnull change) {
-            n++;
-        }];
-        [self.foo observe:PACK(self.bar, age) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue, NSDictionary * _Nonnull change) {
-            m++;
-        }];
-    }
+    Clown *clown = [Clown new];
+    
+    [self.foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, id newValue, NSDictionary * _Nonnull change) {
+        i++;
+    }];
+    [foo observe:PACK(self.bar, name) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, id newValue, NSDictionary * _Nonnull change) {
+        n++;
+    }];
+    [self.foo observe:PACK(self.bar, age) options:NSKeyValueObservingOptionNew queue:nil changes:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue, NSDictionary * _Nonnull change) {
+        m++;
+    }];
+    [foo observe:PACK(clown, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+        a++;
+    }];
+    [self.foo observe:PACK(clown, name) updates:^(Foo *foo, Clown *clown, NSString *name) {
+        b++;
+    }];
+    [self.foo observe:PACK(clown, size) updates:^(Foo *foo, Clown *clown, NSValue *sizeValue) {
+        c++;
+    }];
     
     [self.foo unobserve:PACK(self.bar, name)];
+    [self.foo unobserve:PACK(clown, size)];
     [foo unobserveAll];
     
     self.bar.name = @"Baaar";
     self.bar.age = 10;
+    clown.name = @"Clown";
+    clown.size = (CGSize){ 1,2 };
     
     XCTAssertTrue(i == 0);
-    XCTAssertTrue(m == 2);
+    XCTAssertTrue(m == 1);
     XCTAssertTrue(n == 0);
+    XCTAssertTrue(a == 1);
+    XCTAssertTrue(b == 2);
+    XCTAssertTrue(c == 1);
 }
 
 - (void)testRetainCycleBreaks {
@@ -304,11 +321,33 @@
         }];
     }
     
-    foo1 = nil;
+    foo1 = nil; // foo1 release before bar1
     bar1 = nil;
     
     XCTAssertTrue(weakFoo1 == nil);
     XCTAssertTrue(weakBar1 == nil);
+    
+    
+    Foo *foo2 = [Foo new];
+    Bar *bar2 = [Bar new];
+    
+    __weak id weakFoo2 = foo2;
+    __weak id weakBar2 = bar2;
+    
+    @autoreleasepool {
+        [foo2 observe:PACK(bar2, name) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+            NSLog(@"%@ - %@", target, newValue);
+        }];
+        [bar2 observe:PACK(foo2, friend) updates:^(id  _Nonnull receiver, id  _Nonnull target, id  _Nullable newValue) {
+            NSLog(@"%@ - %@", target, newValue);
+        }];
+    }
+    
+    bar2 = nil; // bar2 release before foo2
+    foo2 = nil;
+    
+    XCTAssertTrue(weakFoo2 == nil);
+    XCTAssertTrue(weakBar2 == nil);
 }
 
 - (void)testGroupKVO {
@@ -541,6 +580,70 @@
     
     NSUInteger count4 = [[self.yj_KVOPorterManager valueForKey:@"_porters"] count];
     XCTAssertTrue(count4 == 0);
+}
+
+- (void)testPost {
+    Foo *foo = [Foo new];
+    __weak Foo *weakFoo = foo;
+    
+    __block int i = 0;
+    __block int j = 0;
+    
+    @autoreleasepool {
+        [PACK(foo, name) post:^(NSString *name) {
+            NSLog(@"%@'s name: %@", weakFoo, name);
+            i++;
+        }];
+        
+        [PACK(foo, sleep) post:^(NSValue *value) {
+            NSLog(@"%@ sleep: %@", weakFoo, value);
+            j++;
+        }];
+    }
+    
+    foo.name = @"Foo";
+    foo.sleep = YES;
+    
+    @autoreleasepool {
+        [PACK(foo, name) stop];
+    }
+    
+    foo.name = @"foooooo";
+    foo.sleep = NO;
+    
+    XCTAssertTrue(i == 2);
+    XCTAssertTrue(j == 3);
+    
+    foo = nil;
+    
+    XCTAssertTrue(weakFoo == nil);
+}
+
+- (void)testCutOff {
+    Foo *foo = [Foo new];
+    Bar *bar = [Bar new];
+    
+    [PACK(foo, name) bound:PACK(bar, name)];
+    [PACK(foo, nickname) bound:PACK(bar, name)];
+    
+    bar.name = @"Bar";
+    
+    XCTAssertTrue([foo.name isEqualToString:@"Bar"]);
+    XCTAssertTrue([foo.nickname isEqualToString:@"Bar"]);
+    
+    [PACK(foo, name) cutOff:PACK(bar, name)];
+    
+    bar.name = @"NewBar";
+    
+    XCTAssertTrue([foo.name isEqualToString:@"Bar"]);
+    XCTAssertTrue([foo.nickname isEqualToString:@"NewBar"]);
+    
+    [PACK(foo, nickname) cutOff:PACK(bar, name)];
+    
+    bar.name = @"FreshBar";
+    
+    XCTAssertTrue([foo.name isEqualToString:@"Bar"]);
+    XCTAssertTrue([foo.nickname isEqualToString:@"NewBar"]);
 }
 
 @end
