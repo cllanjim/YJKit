@@ -80,7 +80,7 @@ class YJKVOTest_Swift: XCTestCase {
         
         bar.name = "Bar"
         XCTAssert(foo.name == nil)
-        
+
         bar.name = "Barrrr"
         XCTAssert(foo.name == "BARRRR")
     }
