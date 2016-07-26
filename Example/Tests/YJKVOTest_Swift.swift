@@ -84,22 +84,4 @@ class YJKVOTest_Swift: XCTestCase {
         bar.name = "Barrrr"
         XCTAssert(foo.name == "BARRRR")
     }
-    
-    func testPost() {
-        let foo = Foo()
-        var result = ""
-
-        PACK(foo, "name").post { (newValue) in
-            if let name = newValue as? String {
-                result = name;
-            }
-        }
-        
-        foo.name = "foo"
-        XCTAssert(result == "foo")
-        
-        PACK(foo, "name").stop()
-        foo.name = "foooooo"
-        XCTAssert(result == "foo")
-    }
 }

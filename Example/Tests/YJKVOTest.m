@@ -590,12 +590,12 @@
     __block int j = 0;
     
     @autoreleasepool {
-        [PACK(foo, name) post:^(NSString *name) {
+        [PACK(foo, name) post:^(id self, NSString *name) {
             NSLog(@"%@'s name: %@", weakFoo, name);
             i++;
         }];
         
-        [PACK(foo, sleep) post:^(NSValue *value) {
+        [PACK(foo, sleep) post:^(id self, NSValue *value) {
             NSLog(@"%@ sleep: %@", weakFoo, value);
             j++;
         }];
@@ -605,7 +605,7 @@
     foo.sleep = YES;
     
     @autoreleasepool {
-        [PACK(foo, name) stop];
+        [PACK(foo, name) stopPosting];
     }
     
     foo.name = @"foooooo";
@@ -617,6 +617,38 @@
     foo = nil;
     
     XCTAssertTrue(weakFoo == nil);
+}
+
+- (void)testPost2 {
+    Clown *clown = [Clown new];
+    __weak Clown *weakClown = clown;
+    [clown testKVOPost];
+    clown = nil;
+    XCTAssertTrue(weakClown == nil);
+}
+
+- (void)testPost3 {
+    Foo *foo = [Foo new];
+    Clown *clown = [Clown new];
+    
+    __weak Foo *weakFoo = foo;
+    __weak Clown *weakClown = clown;
+    
+    [foo testKVOPost];
+    [clown testKVOPost];
+    
+    [Bar sharedBar].name = @"SharedBar";
+    
+    id subscriberManager = [[Bar sharedBar] valueForKey:@"yj_KVOSubscriberManager"];
+    XCTAssertTrue([subscriberManager numberOfSubscribers] == 2);
+    
+    foo = nil;
+    clown = nil;
+    
+    XCTAssertTrue([subscriberManager numberOfSubscribers] == 0);
+    
+    XCTAssertTrue(weakFoo == nil);
+    XCTAssertTrue(weakClown == nil);
 }
 
 - (void)testCutOff {

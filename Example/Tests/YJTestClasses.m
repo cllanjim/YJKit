@@ -7,6 +7,7 @@
 //
 
 #import "YJTestClasses.h"
+#import "YJKVOPacker.h"
 
 @interface Foo ()
 @property (nonatomic, copy) NSString *privateName;
@@ -37,6 +38,12 @@
     id vName = [self valueForKey:@"yj_KVOVariableName"];
     id addr = [NSString stringWithFormat:@"%p", self];
     return [NSString stringWithFormat:@"%@<%@>", self.class, (vName ? [NSString stringWithFormat:@"%@_%@", vName, addr] : addr)];
+}
+
+- (void)testKVOPost {
+    [PACK([Bar sharedBar], name) post:^(id  _Nonnull self, id  _Nullable newValue) {
+        NSLog(@"Shared bar has a new name: %@ and it tells %@", newValue, self);
+    }];
 }
 
 @end
@@ -78,6 +85,10 @@
 
 @implementation Clown
 
+- (void)dealloc {
+    NSLog(@"%@ deallocated.", self);
+}
+
 - (BOOL)isEqual:(id)object {
     return CGSizeEqualToSize(self.size, [object size]);
 }
@@ -92,6 +103,20 @@
     if (block) {
         block(@"1", @"2", @"3", @"4");
     }
+}
+
+- (void)testKVOPost {
+    [PACK([Bar sharedBar], name) post:^(id  _Nonnull self, id  _Nullable newValue) {
+        NSLog(@"Shared bar has a new name: %@ and it tells %@", newValue, self);
+    }];
+}
+
+- (void)testKVOPost2 {
+    self.name = @"Clown";
+    [PACK(self, name) post:^(id  _Nonnull self, id  _Nullable newValue) {
+        NSLog(@"%@'s name is %@", self, newValue);
+    }];
+    self.name = @"Clownnnnn";
 }
 
 @end

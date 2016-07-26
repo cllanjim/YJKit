@@ -31,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)sayHi;
 
 - (void)addPrivateName;
+- (void)testKVOPost;
 
 @end
 
@@ -57,6 +58,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)block:(void(^)(id obj1, __kindof NSObject *obj2, id _Nullable obj3, __kindof NSObject * _Nullable obj4))block;
 
+- (void)testKVOPost;
+- (void)testKVOPost2;
 @end
 
 NS_ASSUME_NONNULL_END
