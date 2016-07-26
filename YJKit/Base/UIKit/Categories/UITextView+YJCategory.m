@@ -11,6 +11,7 @@
 #import "YJRuntimeEncapsulation.h"
 #import "RGBColor.h"
 #import "_YJResignFirstResponderDefaultImp.h"
+#import "YJDelegateAndDataSourceCrashPrecaution.h"
 
 static const void *YJTextViewAssociatedPlaceholderKey = &YJTextViewAssociatedPlaceholderKey;
 static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociatedPlaceholderColorKey;
@@ -35,6 +36,8 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
         [self swizzleInstanceMethodsBySelector:NSSelectorFromString(@"dealloc") andSelector:@selector(yj_textViewDealloc)];
         // exchange life cycle
         YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING(TextView)
+        
+        YJ_WEAKIFY_DELEGATE_AND_DATASOURCE_BY_SWIZZLING_SETTERS
     });
 }
 
@@ -124,8 +127,8 @@ static const void *YJTextViewAssociatedPlaceholderColorKey = &YJTextViewAssociat
     return [objc_getAssociatedObject(self, _cmd) RGBColorValue];
 }
 
-#pragma mark - handle auto resigning first responder tap gesture
-
 YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_IMPLEMENTATION(TextView)
+
+YJ_WEAKIFY_DELEGATE_AND_DATASOURCE_BY_IMPLEMENTING_SAFE_SETTERS
 
 @end

@@ -10,6 +10,7 @@
 #import "UITextField+YJCategory.h"
 #import "YJRuntimeEncapsulation.h"
 #import "_YJResignFirstResponderDefaultImp.h"
+#import "YJDelegateAndDataSourceCrashPrecaution.h"
 
 @interface UITextField () <UIGestureRecognizerDelegate>
 @end
@@ -20,11 +21,12 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING(TextField)
+        YJ_WEAKIFY_DELEGATE_AND_DATASOURCE_BY_SWIZZLING_SETTERS
     });
 }
 
-#pragma mark - handle auto resigning first responder tap gesture
-
 YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_IMPLEMENTATION(TextField)
+
+YJ_WEAKIFY_DELEGATE_AND_DATASOURCE_BY_IMPLEMENTING_SAFE_SETTERS
 
 @end

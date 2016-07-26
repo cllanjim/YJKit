@@ -8,6 +8,10 @@
 
 #import "YJAppDelegate.h"
 #import "YJViewController.h"
+#import "YJDelegateAndDataSourceCrashPrecaution.h"
+
+YJ_WEAKIFY_DELEGATE_AND_DATASOURCE_FOR_CLASS(UITableView)
+YJ_WEAKIFY_DELEGATE_AND_DATASOURCE_FOR_CLASS(UICollectionView)
 
 @implementation YJAppDelegate
 

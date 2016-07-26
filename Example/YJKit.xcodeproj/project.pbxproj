@@ -332,6 +332,7 @@
 		72112BB31D41EBB000B447A6 /* YJKit_Example-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "YJKit_Example-Bridging-Header.h"; sourceTree = "<group>"; };
 		7212B6F71D40927B007C4BFB /* YJKit_Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "YJKit_Tests-Bridging-Header.h"; sourceTree = "<group>"; };
 		7212B6F81D40927B007C4BFB /* YJKVOTest_Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YJKVOTest_Swift.swift; sourceTree = "<group>"; };
+		725780A31D478B96001789BA /* YJDelegateAndDataSourceCrashPrecaution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJDelegateAndDataSourceCrashPrecaution.h; sourceTree = "<group>"; };
 		A4E3619C885051E572C0483E /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		D6627507F47E9F7BBE78AB52 /* YJKit.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = YJKit.podspec; path = ../YJKit.podspec; sourceTree = "<group>"; };
 		E90B7132355AB3B4DF313D99 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -659,6 +660,7 @@
 				32AC86DE1D2930DE00DCE1F8 /* NSObject+YJIMPInsertion.m */,
 				32A2F4EF1D3CCE07000D0529 /* NSObject+YJDelegateWeakChecking.h */,
 				32A2F4F01D3CCE07000D0529 /* NSObject+YJDelegateWeakChecking.m */,
+				725780A31D478B96001789BA /* YJDelegateAndDataSourceCrashPrecaution.h */,
 			);
 			path = RuntimeEncapsulation;
 			sourceTree = "<group>";

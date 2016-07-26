@@ -12,7 +12,6 @@
 #import "YJRuntimeEncapsulation.h"
 #import "NSObject+YJSafeKVO.h"
 #import "NSArray+YJCollection.h"
-#import "NSObject+YJDelegateWeakChecking.h"
 
 #ifndef YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING
 #define YJ_AUTO_RESIGN_FIRST_RESPONDER_DEFALT_METHODS_SWIZZLING(XXX) \
@@ -68,7 +67,7 @@
 }  \
   \
 - (void)yj_##XXX##RemoveFromSuperview {  \
-    if (self.autoResignFirstResponder && self.isWeakDelegateByDefault) {  \
+    if (self.autoResignFirstResponder) {  \
         [self yj_removeResignFirstResponderTapAction];  \
     }  \
     [self yj_##XXX##RemoveFromSuperview];  \

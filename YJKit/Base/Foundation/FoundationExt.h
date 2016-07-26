@@ -12,8 +12,6 @@
 #import <YJKit/YJRuntimeEncapsulation.h>
 #import <YJKit/NSObject+YJSafeKVO.h>
 
-#import <YJKit/NSValue+YJGeometryExtension.h>
-
 #import <YJKit/NSString+YJCollection.h>
 #import <YJKit/NSString+YJSequence.h>
 #import <YJKit/NSMutableString+YJSequence.h>
@@ -24,16 +22,17 @@
 #import <YJKit/NSSet+YJCollection.h>
 #import <YJKit/NSMutableSet+YJCollection.h>
 
+#import <YJKit/NSValue+YJGeometryExtension.h>
 #import <YJKit/NSBundle+YJCategory.h>
 #import <YJKit/NSTimer+YJBlockBased.h>
+
+#import <YJKit/YJDelegateAndDataSourceCrashPrecaution.h>
 
 #else
 
 #import "NSObject+YJExtension.h"
 #import "YJRuntimeEncapsulation.h"
 #import "NSObject+YJSafeKVO.h"
-
-#import "NSValue+YJGeometryExtension.h"
 
 #import "NSString+YJCollection.h"
 #import "NSString+YJSequence.h"
@@ -45,7 +44,10 @@
 #import "NSSet+YJCollection.h"
 #import "NSMutableSet+YJCollection.h"
 
+#import "NSValue+YJGeometryExtension.h"
 #import "NSBundle+YJCategory.h"
 #import "NSTimer+YJBlockBased.h"
+
+#import "YJDelegateAndDataSourceCrashPrecaution.h"
 
 #endif

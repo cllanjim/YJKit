@@ -21,8 +21,8 @@
          NO means either it has no delegate property or the delegate
          is may be assigned.
  */
++ (BOOL)isWeakDelegateByDefault;
 - (BOOL)isWeakDelegateByDefault;
-
 
 /**
  @brief Checking if the dataSource property has weak attribute.
@@ -32,6 +32,7 @@
          NO means either it has no dataSource property or the dataSource
          is may be assigned.
  */
++ (BOOL)isWeakDataSourceByDefault;
 - (BOOL)isWeakDataSourceByDefault;
 
 @end
