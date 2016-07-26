@@ -72,4 +72,8 @@
     return ratio;
 }
 
+- (BOOL)isRetinaDisplay {
+    return [[UIScreen mainScreen] scale] > 1;
+}
+
 @end

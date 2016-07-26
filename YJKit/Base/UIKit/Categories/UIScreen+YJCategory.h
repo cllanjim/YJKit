@@ -41,4 +41,8 @@ typedef NS_ENUM(NSInteger, YJScreenDisplayAspectRatio) {
 /// The display aspect ratio of the device screen.
 @property (nonatomic, readonly) YJScreenDisplayAspectRatio displayAspectRatio;
 
+/// Check if the screen is retina display
+@property (nonatomic, readonly) BOOL isRetinaDisplay;
+
+
 @end

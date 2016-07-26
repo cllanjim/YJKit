@@ -36,6 +36,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable UIImage *)imageNamed:(NSString *)name orientation:(UIImageOrientation)orientation scaledInBundle:(nullable NSBundle *)bundle;
 
+
+/**
+ *  Get a resized image from original image.
+ *  @param size The final size of resized image.
+ *  @return Returns a resized image for specific condition.
+ */
+- (UIImage *)resizedImageForSize:(CGSize)size;
+
 /**
  *  Get a resized image from original image.
  *  @param multiplier The multiple of current image width and height.

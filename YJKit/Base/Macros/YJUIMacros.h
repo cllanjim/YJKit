@@ -41,6 +41,10 @@
 
 // UIScreen
 
+#ifndef isRetinaDisplay
+#define isRetinaDisplay [UIScreen mainScreen].isRetinaDisplay
+#endif
+
 #ifndef kUIScreenBounds
 #define kUIScreenBounds [UIScreen mainScreen].bounds
 #endif
