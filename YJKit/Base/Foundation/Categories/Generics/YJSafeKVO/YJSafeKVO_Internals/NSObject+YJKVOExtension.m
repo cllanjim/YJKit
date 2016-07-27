@@ -35,12 +35,4 @@
     return objc_getAssociatedObject(self, _cmd);
 }
 
-- (void)setYj_KVOVariableName:(NSString *)yj_KVOVariableName {
-    objc_setAssociatedObject(self, @selector(yj_KVOVariableName), yj_KVOVariableName, OBJC_ASSOCIATION_COPY_NONATOMIC);
-}
-
-- (NSString *)yj_KVOVariableName {
-    return objc_getAssociatedObject(self, _cmd);
-}
-
 @end

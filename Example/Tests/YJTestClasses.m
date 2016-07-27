@@ -35,7 +35,7 @@
 }
 
 - (NSString *)description {
-    id vName = [self valueForKey:@"yj_KVOVariableName"];
+    id vName = nil;//[self valueForKey:@"yj_KVOVariableName"];
     id addr = [NSString stringWithFormat:@"%p", self];
     return [NSString stringWithFormat:@"%@<%@>", self.class, (vName ? [NSString stringWithFormat:@"%@_%@", vName, addr] : addr)];
 }
@@ -71,7 +71,7 @@
 }
 
 - (NSString *)description {
-    id vName = [self valueForKey:@"yj_KVOVariableName"];
+    id vName = nil;//[self valueForKey:@"yj_KVOVariableName"];
     id addr = [NSString stringWithFormat:@"%p", self];
     return [NSString stringWithFormat:@"%@<%@>", self.class, (vName ? [NSString stringWithFormat:@"%@_%@", vName, addr] : addr)];
 }
@@ -94,7 +94,7 @@
 }
 
 - (NSString *)description {
-    id vName = [self valueForKey:@"yj_KVOVariableName"];
+    id vName = nil;//[self valueForKey:@"yj_KVOVariableName"];
     id addr = [NSString stringWithFormat:@"%p", self];
     return [NSString stringWithFormat:@"%@<%@>", self.class, (vName ? [NSString stringWithFormat:@"%@_%@", vName, addr] : addr)];
 }

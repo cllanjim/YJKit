@@ -25,12 +25,12 @@
                     subscriberKeyPath:(NSString *)subscriberKeyPath {
     
     return [NSString stringWithFormat:@"%@|%@",
-            [self keyValueCodingIdentifierForObject:target keyPath:targetKeyPath],
-            [self keyValueCodingIdentifierForObject:subscriber keyPath:subscriberKeyPath]];
+            [self keyPathIdentifierForObject:target keyPath:targetKeyPath],
+            [self keyPathIdentifierForObject:subscriber keyPath:subscriberKeyPath]];
 }
 
-- (NSString *)keyValueCodingIdentifierForObject:(__kindof NSObject *)object
-                                        keyPath:(NSString *)keyPath {
+- (NSString *)keyPathIdentifierForObject:(__kindof NSObject *)object
+                                 keyPath:(NSString *)keyPath {
     return [NSString stringWithFormat:@"%@<%p>.%@", NSStringFromClass([object class]), object, keyPath];
 }
 

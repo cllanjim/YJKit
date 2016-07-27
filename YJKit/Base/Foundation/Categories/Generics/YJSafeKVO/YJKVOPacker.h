@@ -15,12 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 #define _OBJECTIFY_KEYPATH(OBJECT, KEYPATH) \
     @(((void)(NO && ((void)OBJECT.KEYPATH, NO)), #KEYPATH))
 
-#define _STRINGIFY_VARIABLE(VARIABLE) \
-    @#VARIABLE
-
-// For UNPACK(CLASS, TARGET) macro, not for direct use.
-id _YJKVO_retrieveTarget(NSArray *targets, NSString *variableName);
-
 #ifndef keyPath
 #define keyPath(KEYPATH) \
     (((void)(NO && ((void)KEYPATH, NO)), strchr(#KEYPATH, '.') + 1))
@@ -29,7 +23,6 @@ id _YJKVO_retrieveTarget(NSArray *targets, NSString *variableName);
 #define PACK(OBJECT, KEYPATH) \
     [YJKVOPacker packerWithObject:OBJECT \
                           keyPath:_OBJECTIFY_KEYPATH(OBJECT, KEYPATH) \
-                     variableName:_STRINGIFY_VARIABLE(OBJECT) \
                implicitSubscriber:self]
 
 #define UNPACK(CLASS, TARGET) \
@@ -53,12 +46,11 @@ typedef YJKVOPacker * PACK;
 /// The factory method initializer, and do not call it directly, use PACK.
 + (instancetype)packerWithObject:(__kindof NSObject *)object
                          keyPath:(NSString *)keyPath
-                    variableName:(nullable NSString *)variableName
               implicitSubscriber:(nullable __kindof NSObject *)implicitSubscriber
                         NS_SWIFT_UNAVAILABLE("Use init(_:_:) instead.");
 
 @property (nonatomic, readonly, strong) __kindof NSObject *object;
-@property (nonatomic, readonly, strong) NSString *keyPath;
+@property (nonatomic, readonly, copy) NSString *keyPath;
 @property (nonatomic, readonly) BOOL isValid;
 
 @end
@@ -122,9 +114,17 @@ typedef YJKVOPacker * PACK;
 
 /**
  @brief Receiving changes from multiple targets with keyPaths.
- @param converge The block for reducing the result, then returns a result for setting subscriber's keyPath.
+ @param converge The block for retrieving all targets.
  */
-- (void)flooded:(NSArray <PACK> *)targetsAndKeyPaths converge:(nullable id(^)(id subscriber, NSArray *targets))converge;
+- (void)flooded:(NSArray <PACK> *)targetsAndKeyPaths converge:(nullable id(^)(id subscriber, NSArray *targets))converge UNAVAILABLE_ATTRIBUTE;
+
+
+/**
+ @brief Receiving changes from multiple targets with keyPaths.
+ @param reduce The block for reducing the result, then returns a result for setting subscriber's keyPath.
+ */
+- (void)flooded:(NSArray <PACK> *)targetsAndKeyPaths
+         reduce:(nullable id(^)(/* id _Nullable newValue1, id _Nullable newValue2, ... */))reduce;
 
 
 /**

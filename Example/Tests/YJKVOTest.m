@@ -356,12 +356,9 @@
     
     __block BOOL result = NO;
     
-    [self.foo observeGroup:@[ PACK(bar1, name), PACK(bar2, age) ] updates:^(id  _Nonnull receiver, NSArray * _Nonnull targets) {
-        
-        UNPACK(Bar, bar1)
-        UNPACK(Bar, bar2)
-        
-        if ([bar1.name isEqualToString:@"Bar1"] && bar2.age == 29) {
+    [self.foo observeGroup:@[ PACK(bar1, name), PACK(bar2, age) ] updates:^(NSString *name, NSNumber *ageValue){
+        int age = [ageValue intValue];
+        if ([name isEqualToString:@"Bar1"] && age == 29) {
             result = YES;
         }
     }];
@@ -495,14 +492,8 @@
     foo.name = @"Foo";
     bar.name = @"Bar";
     
-    [PACK(clown, name) flooded:@[ PACK(foo, name),
-                                  PACK(bar, name) ]
-                      converge:^id(id  _Nonnull subscriber, NSArray * _Nonnull targets) {
-                          
-        UNPACK(Foo, foo)
-        UNPACK(Bar, bar)
-                          
-        return [foo.name stringByAppendingString:bar.name];
+    [PACK(clown, name) flooded:@[ PACK(foo, name), PACK(bar, name) ] reduce:^id _Nonnull(NSString *fooName, NSString *barName){
+        return (fooName && barName) ? [fooName stringByAppendingString:barName] : nil;
     }];
     
     NSLog(@"clown.name = %@", clown.name);
@@ -522,22 +513,16 @@
                                   PACK(bar1, frame),
                                   PACK(bar1, name),
                                   PACK(bar2, name)
-                                  ]
-                      converge:^id _Nonnull(id  _Nonnull subscriber, NSArray * _Nonnull targets) {
-        
-        UNPACK(Foo, foo)
-        UNPACK(Bar, bar1)
-        UNPACK(Bar, bar2)
-        
-        BOOL c1 = foo.sleep;
-        BOOL c2 = foo.awake;
-        BOOL c3 = bar1.name.length;
-        BOOL c4 = bar1.frame.size.height;
-        BOOL c5 = bar2.name.length > 5;
-        
-        CGSize size = c1 && c2 && c3 && c4 && c5 ? bar1.frame.size : (CGSize){ 1, 2 };
-        return [NSValue valueWithCGSize:size];
-    }];
+                                  ] reduce:^id (NSNumber *sleepValue, NSNumber *awakeValue, NSValue *frameValue, NSString *bar1Name, NSString *bar2Name){
+                                      
+                                      BOOL sleep = [sleepValue boolValue];
+                                      BOOL awake = [awakeValue boolValue];
+                                      CGRect frame = [frameValue CGRectValue];
+                                      
+                                      CGSize size = sleep && awake && frame.size.height && bar1Name.length && bar2Name.length > 5 ? frame.size : (CGSize){ 1, 2 };
+                                      
+                                      return [NSValue valueWithCGSize:size];
+                                  }];
     
     XCTAssertTrue(CGSizeEqualToSize(clown.size, (CGSize){ 1,2 }));
     

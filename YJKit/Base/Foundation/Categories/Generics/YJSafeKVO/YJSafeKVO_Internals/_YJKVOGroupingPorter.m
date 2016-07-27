@@ -7,25 +7,70 @@
 //
 
 #import "_YJKVOGroupingPorter.h"
+#import "_YJKVOPair.h"
 
 @interface _YJKVOGroupingPorter ()
-@property (nonatomic, strong) NSHashTable *groupTargets;
+@property (nonatomic, strong) NSMutableArray <_YJKVOPair *> *targetsAndKeyPaths;
+@property (nonatomic, readwrite) BOOL employed;
+
+@property (nonatomic, strong) id first;
+@property (nonatomic, strong) id second;
+@property (nonatomic, strong) id third;
+@property (nonatomic, strong) id fourth;
+@property (nonatomic, strong) id fifth;
+@property (nonatomic, strong) id sixth;
+@property (nonatomic, strong) id seventh;
+@property (nonatomic, strong) id eighth;
+@property (nonatomic, strong) id ninth;
+@property (nonatomic, strong) id tenth;
+
 @end
 
-@implementation _YJKVOGroupingPorter
+@implementation _YJKVOGroupingPorter {
+    int _counter;
+}
 
-- (instancetype)initWithTarget:(__kindof NSObject *)target subscriber:(__kindof NSObject *)subscriber targetKeyPath:(NSString *)targetKeyPath {
-    self = [super initWithTarget:target subscriber:subscriber targetKeyPath:targetKeyPath];
+@synthesize employed = _employed;
+
+- (instancetype)initWithSubscriber:(__kindof NSObject *)subscriber {
+    self = [super initWithTarget:nil subscriber:subscriber targetKeyPath:nil];
     if (self) {
-        _groupTargets = [NSHashTable weakObjectsHashTable];
+        _targetsAndKeyPaths = [[NSMutableArray alloc] initWithCapacity:20];
     }
     return self;
 }
 
-- (void)associateWithGroupTarget:(NSArray <__kindof NSObject *> *)groupTargets {
-    for (id target in groupTargets) {
-        [self.groupTargets addObject:target];
+- (instancetype)initWithTarget:(__kindof NSObject *)target subscriber:(__kindof NSObject *)subscriber targetKeyPath:(NSString *)targetKeyPath {
+    [NSException raise:NSGenericException format:@"Do not call %@ directly for %@.", NSStringFromSelector(_cmd), self.class];
+    return [self initWithSubscriber:(id)[NSNull null]];
+}
+
+- (void)addTarget:(__kindof NSObject *)target keyPath:(NSString *)keyPath {
+    [self.targetsAndKeyPaths addObject:_YJKVOPair(target, keyPath)];
+}
+
+- (void)signUp {
+    if (self.employed)
+        return;
+    
+    for (_YJKVOPair *targetAndKeyPath in self.targetsAndKeyPaths) {
+        __kindof NSObject *target = targetAndKeyPath.object;
+        NSString *keyPath = targetAndKeyPath.keyPath;
+        [target addObserver:self forKeyPath:keyPath options:self.observingOptions context:NULL];
     }
+    self.employed = YES;
+}
+
+- (void)resign {
+    if (!self.employed)
+        return;
+    
+    for (_YJKVOPair *targetAndKeyPath in self.targetsAndKeyPaths) {
+        __kindof NSObject *target = targetAndKeyPath.object;
+        NSString *keyPath = targetAndKeyPath.keyPath;
+        [target removeObserver:self forKeyPath:keyPath context:NULL];
+    }
+    self.employed = NO;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
@@ -33,14 +78,44 @@
     id newValue = change[NSKeyValueChangeNewKey];
     if (newValue == [NSNull null]) newValue = nil;
     
-    if (self.targetsHandler) {
-        self.targetsHandler(self.subscriber, [self.groupTargets allObjects]);
+    if (self.multipleValueHandler && [self applyNewValue:newValue fromKeyPath:keyPath ofObject:object]) {
+        self.multipleValueHandler(self.first, self.second, self.third, self.fourth, self.fifth, self.sixth, self.seventh, self.eighth, self.ninth, self.tenth);
     }
     
-    if (self.targetsReturnHandler && self.subscriberKeyPath.length) {
-        id mergedValue = self.targetsReturnHandler(self.subscriber, [self.groupTargets allObjects]);
-        [self.subscriber setValue:mergedValue forKeyPath:self.subscriberKeyPath];
+    if (self.reduceValueReturnHandler && self.subscriberKeyPath && [self applyNewValue:newValue fromKeyPath:keyPath ofObject:object]) {
+        id reducedValue = self.reduceValueReturnHandler(self.first, self.second, self.third, self.fourth, self.fifth, self.sixth, self.seventh, self.eighth, self.ninth, self.tenth);
+        [self.subscriber setValue:reducedValue forKeyPath:self.subscriberKeyPath];
     }
+}
+
+- (BOOL)applyNewValue:(nullable id)newValue fromKeyPath:(NSString *)keyPath ofObject:(id)object {
+    NSInteger index = NSNotFound;
+    for (int i = 0; i < (int)self.targetsAndKeyPaths.count; i++) {
+        _YJKVOPair *targetAndKeyPath = self.targetsAndKeyPaths[i];
+        if (targetAndKeyPath.object == object && [targetAndKeyPath.keyPath isEqualToString:keyPath]) {
+            index = i;
+            break;
+        }
+    }
+    
+    if (index != NSNotFound) {
+        switch (index) {
+            case 0: self.first = newValue; break;
+            case 1: self.second = newValue; break;
+            case 2: self.third = newValue; break;
+            case 3: self.fourth = newValue; break;
+            case 4: self.fifth = newValue; break;
+            case 5: self.sixth = newValue; break;
+            case 6: self.seventh = newValue; break;
+            case 7: self.eighth = newValue; break;
+            case 8: self.ninth = newValue; break;
+            case 9: self.tenth = newValue; break;
+            default: break;
+        }
+        _counter++;
+    }
+    
+    return _counter >= self.targetsAndKeyPaths.count;
 }
 
 @end

@@ -16,8 +16,8 @@
 
 @interface YJKVOPacker ()
 @property (nonatomic, strong) __kindof NSObject *object;
-@property (nonatomic, strong) NSString *keyPath;
-@property (nonatomic, assign) _YJKVOBindingPorter *bindingPorter;
+@property (nonatomic, copy) NSString *keyPath;
+@property (nullable, nonatomic, assign) _YJKVOBindingPorter *bindingPorter;
 @property (nullable, nonatomic, assign) __kindof NSObject *implicitSubscriber;
 @end
 
@@ -27,7 +27,7 @@
     self = [super init];
     if (self) {
         _object = object;
-        _keyPath = keyPath;
+        _keyPath = [keyPath copy];
     }
     return self;
 }
@@ -39,11 +39,9 @@
 
 + (instancetype)packerWithObject:(__kindof NSObject *)object
                          keyPath:(NSString *)keyPath
-                    variableName:(nullable NSString *)variableName
               implicitSubscriber:(nullable __kindof NSObject *)implicitSubscriber {
     
-    object.yj_KVOVariableName = variableName;
-    __kindof YJKVOPacker *packer = [[self alloc] initWithObject:object keyPath:keyPath];
+    YJKVOPacker *packer = [[self alloc] initWithObject:object keyPath:keyPath];
     packer.implicitSubscriber = implicitSubscriber;
     return packer;
 }
@@ -123,32 +121,27 @@
     return self;
 }
 
-- (void)flooded:(NSArray <PACK> *)targetsAndKeyPaths converge:(id(^)(id subscriber, NSArray *targets))converge {
+- (void)flooded:(NSArray <PACK> *)targetsAndKeyPaths reduce:(nullable id(^)())reduce {
+    if (!self.isValid || !targetsAndKeyPaths.count)
+        return;
     
-    if (!self.isValid) return;
+    __kindof NSObject *subscriber = self.object;
+    NSString *subscriberKeyPath = self.keyPath;
     
-    NSMutableArray *targets = [NSMutableArray arrayWithCapacity:targetsAndKeyPaths.count];
+    _YJKVOGroupingPorter *porter = [[_YJKVOGroupingPorter alloc] initWithSubscriber:subscriber];
+    porter.subscriberKeyPath = subscriberKeyPath;
+    porter.reduceValueReturnHandler = reduce;
+    
     for (PACK targetAndKeyPath in targetsAndKeyPaths) {
-        if (!targetAndKeyPath.isValid) return;
-        [targets addObject:targetAndKeyPath.object];
+        if (targetAndKeyPath.isValid) {
+            [porter addTarget:targetAndKeyPath.object keyPath:targetAndKeyPath.keyPath];
+        }
     }
     
     for (PACK targetAndKeyPath in targetsAndKeyPaths) {
-        
-        __kindof NSObject *target = targetAndKeyPath.object;
-        __kindof NSObject *subscriber = self.object;
-        
-        NSString *targetKeyPath = targetAndKeyPath.keyPath;
-        NSString *subscriberKeyPath = self.keyPath;
-        
-        _YJKVOGroupingPorter *porter = [[_YJKVOGroupingPorter alloc] initWithTarget:target
-                                                                         subscriber:subscriber
-                                                                      targetKeyPath:targetKeyPath];
-        porter.subscriberKeyPath = subscriberKeyPath;
-        porter.targetsReturnHandler = converge;
-        [porter associateWithGroupTarget:targets];
-        
-        [[_YJKVOExecutiveOfficer officer] organizeTarget:target subscriber:subscriber porter:porter];
+        if (targetAndKeyPath.isValid) {
+            [[_YJKVOExecutiveOfficer officer] organizeTarget:targetAndKeyPath.object subscriber:subscriber porter:porter];
+        }
     }
 }
 
@@ -169,16 +162,6 @@
 }
 
 @end
-
-// Retrieve target out of array.
-id _YJKVO_retrieveTarget(NSArray *targets, NSString *variableName) {
-    for (__kindof NSObject *target in targets) {
-        if ([target.yj_KVOVariableName isEqualToString:variableName]) {
-            return target;
-        }
-    }
-    return nil;
-}
 
 
 @implementation YJKVOPacker (YJKVOPosting)

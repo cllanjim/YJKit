@@ -10,4 +10,13 @@
 
 @implementation _YJKVOPair
 
+- (instancetype)initWithObject:(__kindof NSObject *)object keyPath:(NSString *)keyPath {
+    self = [super init];
+    if (self) {
+        _object = object;
+        _keyPath = [keyPath copy];
+    }
+    return self;
+}
+
 @end

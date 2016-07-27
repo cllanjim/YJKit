@@ -24,4 +24,10 @@ __attribute__((visibility("hidden")))
                         targetKeyPath:(NSString *)targetKeyPath
                     subscriberKeyPath:(NSString *)subscriberKeyPath;
 
+/// Generating a key path identifier for object.
+/// e.g. "Foo<0x123>.name"
+///
+- (NSString *)keyPathIdentifierForObject:(__kindof NSObject *)object
+                                 keyPath:(NSString *)keyPath;
+
 @end
