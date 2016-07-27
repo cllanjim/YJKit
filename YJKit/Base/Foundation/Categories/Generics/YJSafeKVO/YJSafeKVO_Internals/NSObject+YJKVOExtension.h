@@ -19,8 +19,5 @@
 /// Associated with a porter manager for subcriber managing porters.
 @property (nonatomic, strong) _YJKVOPorterManager *yj_KVOPorterManager;
 
-/// Associated with a pipeID keeper for keeping pipe identifier
-@property (nonatomic, strong) _YJKVOPipeIDKeeper *yj_KVOPipeIDKeeper;
-
 
 @end

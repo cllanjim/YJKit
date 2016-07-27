@@ -27,12 +27,4 @@
     return objc_getAssociatedObject(self, _cmd);
 }
 
-- (void)setYj_KVOPipeIDKeeper:(_YJKVOPipeIDKeeper *)yj_KVOPipeIDKeeper {
-    objc_setAssociatedObject(self, @selector(yj_KVOPipeIDKeeper), yj_KVOPipeIDKeeper, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (_YJKVOPipeIDKeeper *)yj_KVOPipeIDKeeper {
-    return objc_getAssociatedObject(self, _cmd);
-}
-
 @end

@@ -10,21 +10,23 @@
 #import "_YJKVOPair.h"
 
 @interface _YJKVOGroupingPorter ()
+
 @property (nonatomic, strong) NSMutableArray <_YJKVOPair *> *targetsAndKeyPaths;
 @property (nonatomic, readwrite) BOOL employed;
 
-@property (nonatomic, strong) id first;
-@property (nonatomic, strong) id second;
-@property (nonatomic, strong) id third;
-@property (nonatomic, strong) id fourth;
-@property (nonatomic, strong) id fifth;
-@property (nonatomic, strong) id sixth;
-@property (nonatomic, strong) id seventh;
-@property (nonatomic, strong) id eighth;
-@property (nonatomic, strong) id ninth;
-@property (nonatomic, strong) id tenth;
+@property (nonatomic, assign) id first;
+@property (nonatomic, assign) id second;
+@property (nonatomic, assign) id third;
+@property (nonatomic, assign) id fourth;
+@property (nonatomic, assign) id fifth;
+@property (nonatomic, assign) id sixth;
+@property (nonatomic, assign) id seventh;
+@property (nonatomic, assign) id eighth;
+@property (nonatomic, assign) id ninth;
+@property (nonatomic, assign) id tenth;
 
 @end
+
 
 @implementation _YJKVOGroupingPorter {
     int _counter;
@@ -35,7 +37,7 @@
 - (instancetype)initWithSubscriber:(__kindof NSObject *)subscriber {
     self = [super initWithTarget:nil subscriber:subscriber targetKeyPath:nil];
     if (self) {
-        _targetsAndKeyPaths = [[NSMutableArray alloc] initWithCapacity:20];
+        _targetsAndKeyPaths = [[NSMutableArray alloc] initWithCapacity:10];
     }
     return self;
 }
@@ -54,9 +56,7 @@
         return;
     
     for (_YJKVOPair *targetAndKeyPath in self.targetsAndKeyPaths) {
-        __kindof NSObject *target = targetAndKeyPath.object;
-        NSString *keyPath = targetAndKeyPath.keyPath;
-        [target addObserver:self forKeyPath:keyPath options:self.observingOptions context:NULL];
+        [targetAndKeyPath.object addObserver:self forKeyPath:targetAndKeyPath.keyPath options:self.observingOptions context:NULL];
     }
     self.employed = YES;
 }
@@ -66,9 +66,7 @@
         return;
     
     for (_YJKVOPair *targetAndKeyPath in self.targetsAndKeyPaths) {
-        __kindof NSObject *target = targetAndKeyPath.object;
-        NSString *keyPath = targetAndKeyPath.keyPath;
-        [target removeObserver:self forKeyPath:keyPath context:NULL];
+        [targetAndKeyPath.object removeObserver:self forKeyPath:targetAndKeyPath.keyPath context:NULL];
     }
     self.employed = NO;
 }

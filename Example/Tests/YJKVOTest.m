@@ -508,21 +508,13 @@
     
     bar2.name = @"Bar2";
     
-    [PACK(clown, size) flooded:@[ PACK(foo, sleep),
-                                  PACK(foo, awake),
-                                  PACK(bar1, frame),
-                                  PACK(bar1, name),
-                                  PACK(bar2, name)
-                                  ] reduce:^id (NSNumber *sleepValue, NSNumber *awakeValue, NSValue *frameValue, NSString *bar1Name, NSString *bar2Name){
-                                      
-                                      BOOL sleep = [sleepValue boolValue];
-                                      BOOL awake = [awakeValue boolValue];
-                                      CGRect frame = [frameValue CGRectValue];
-                                      
-                                      CGSize size = sleep && awake && frame.size.height && bar1Name.length && bar2Name.length > 5 ? frame.size : (CGSize){ 1, 2 };
-                                      
-                                      return [NSValue valueWithCGSize:size];
-                                  }];
+    [PACK(clown, size) flooded:@[ PACK(foo, sleep), PACK(foo, awake), PACK(bar1, frame), PACK(bar1, name), PACK(bar2, name) ] reduce:^id (NSNumber *sleepValue, NSNumber *awakeValue, NSValue *frameValue, NSString *bar1Name, NSString *bar2Name){
+        BOOL sleep = [sleepValue boolValue];
+        BOOL awake = [awakeValue boolValue];
+        CGRect frame = [frameValue CGRectValue];
+        CGSize size = sleep && awake && frame.size.height && bar1Name.length && bar2Name.length > 5 ? frame.size : (CGSize){ 1, 2 };
+        return [NSValue valueWithCGSize:size];
+    }];
     
     XCTAssertTrue(CGSizeEqualToSize(clown.size, (CGSize){ 1,2 }));
     
@@ -624,13 +616,12 @@
     
     [Bar sharedBar].name = @"SharedBar";
     
-    id subscriberManager = [[Bar sharedBar] valueForKey:@"yj_KVOSubscriberManager"];
-    XCTAssertTrue([subscriberManager numberOfSubscribers] == 2);
+//    id subscriberManager = [[Bar sharedBar] valueForKey:@"yj_KVOSubscriberManager"];
+//    XCTAssertTrue([subscriberManager numberOfSubscribers] == 2);
     
     foo = nil;
     clown = nil;
-    
-    XCTAssertTrue([subscriberManager numberOfSubscribers] == 0);
+//    XCTAssertTrue([subscriberManager numberOfSubscribers] == 0);
     
     XCTAssertTrue(weakFoo == nil);
     XCTAssertTrue(weakClown == nil);

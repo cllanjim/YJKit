@@ -23,10 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define PACK(OBJECT, KEYPATH) \
     [YJKVOPacker packerWithObject:OBJECT \
                           keyPath:_OBJECTIFY_KEYPATH(OBJECT, KEYPATH) \
-               implicitSubscriber:self]
-
-#define UNPACK(CLASS, TARGET) \
-    CLASS *TARGET = _YJKVO_retrieveTarget(targets, _STRINGIFY_VARIABLE(TARGET));
+                               on:self]
 
 /// PACK(OBJECT, KEYPATH) is a macro to wrap object and its key path to a YJKVOPacker.
 /// e.g. PACK(foo, name) or PACK(foo, friend.name)
@@ -46,7 +43,7 @@ typedef YJKVOPacker * PACK;
 /// The factory method initializer, and do not call it directly, use PACK.
 + (instancetype)packerWithObject:(__kindof NSObject *)object
                          keyPath:(NSString *)keyPath
-              implicitSubscriber:(nullable __kindof NSObject *)implicitSubscriber
+                              on:(nullable __kindof NSObject *)on
                         NS_SWIFT_UNAVAILABLE("Use init(_:_:) instead.");
 
 @property (nonatomic, readonly, strong) __kindof NSObject *object;

@@ -19,4 +19,8 @@
     return self;
 }
 
+- (BOOL)isEqual:(id)object {
+    return self == object;
+}
+
 @end

@@ -11,8 +11,6 @@
 #import "_YJKVOExecutiveOfficer.h"
 #import "_YJKVOBindingPorter.h"
 #import "_YJKVOGroupingPorter.h"
-#import "_YJKVOPipeIDKeeper.h"
-#import "_YJKVOIdentifierGenerator.h"
 
 @interface YJKVOPacker ()
 @property (nonatomic, strong) __kindof NSObject *object;
@@ -39,10 +37,10 @@
 
 + (instancetype)packerWithObject:(__kindof NSObject *)object
                          keyPath:(NSString *)keyPath
-              implicitSubscriber:(nullable __kindof NSObject *)implicitSubscriber {
+                              on:(nullable __kindof NSObject *)on {
     
     YJKVOPacker *packer = [[self alloc] initWithObject:object keyPath:keyPath];
-    packer.implicitSubscriber = implicitSubscriber;
+    packer.implicitSubscriber = on;
     return packer;
 }
 
@@ -80,20 +78,6 @@
         NSString *targetKeyPath = targetAndKeyPath.keyPath;
         NSString *subscriberKeyPath = self.keyPath;
 
-        // generate pipe id
-        NSString *identifier = [[_YJKVOIdentifierGenerator sharedGenerator] pipeIdentifierForTarget:target
-                                                                                         subscriber:subscriber
-                                                                                      targetKeyPath:targetKeyPath
-                                                                                  subscriberKeyPath:subscriberKeyPath];
-        // keep pipe id
-        _YJKVOPipeIDKeeper *pipeIDKeeper = subscriber.yj_KVOPipeIDKeeper;
-        if (!pipeIDKeeper) {
-            pipeIDKeeper = [[_YJKVOPipeIDKeeper alloc] initWithSubscriber:subscriber];
-            subscriber.yj_KVOPipeIDKeeper = pipeIDKeeper;
-        }
-        [pipeIDKeeper addPipeIdentifier:identifier];
-        
-        // generate pipe porter
         _YJKVOBindingPorter *porter = [[_YJKVOBindingPorter alloc] initWithTarget:target
                                                                        subscriber:subscriber
                                                                     targetKeyPath:targetKeyPath
@@ -101,7 +85,6 @@
         porter.observingOptions = options;
         [targetAndKeyPath setBindingPorter:porter];
         
-        // register pipe porter
         [[_YJKVOExecutiveOfficer officer] organizeTarget:target subscriber:subscriber porter:porter];
     }
 }
