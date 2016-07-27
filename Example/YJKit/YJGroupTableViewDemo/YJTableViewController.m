@@ -18,10 +18,6 @@
     [super viewWillAppear:animated];
     self.title = @"GroupTable";
     [self.navigationController setNavigationBarHidden:NO animated:animated];
-    
-    UITextView *textView = [[UITextView alloc] initWithFrame:(CGRect){0,0,50,50}];
-    textView.delegate = self;
-    [self.view addSubview:textView];
 }
 
 #pragma mark - Table view
