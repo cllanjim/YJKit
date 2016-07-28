@@ -1,14 +1,14 @@
 //
-//  _YJKVOPair.m
+//  _YJKVOUnsafePair.m
 //  YJKit
 //
 //  Created by huang-kun on 16/7/27.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
 
-#import "_YJKVOPair.h"
+#import "_YJKVOUnsafePair.h"
 
-@implementation _YJKVOPair
+@implementation _YJKVOUnsafePair
 
 - (instancetype)initWithObject:(__kindof NSObject *)object keyPath:(NSString *)keyPath {
     self = [super init];

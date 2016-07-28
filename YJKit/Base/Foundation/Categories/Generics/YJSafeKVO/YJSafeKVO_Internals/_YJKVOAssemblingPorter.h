@@ -17,9 +17,6 @@ typedef BOOL(^YJKVOValueTakenHandler)(id subscriber, id target, id _Nullable new
 __attribute__((visibility("hidden")))
 @interface _YJKVOAssemblingPorter : _YJKVOPorter
 
-/// Associate with subscribers's key path for applying changes directly.
-@property (nonatomic, readonly, copy) NSString *subscriberKeyPath;
-
 /// The value change callback block which only for converting changes.
 @property (nonatomic, copy) YJKVOSubscriberTargetValueReturnHandler convertHandler;
 

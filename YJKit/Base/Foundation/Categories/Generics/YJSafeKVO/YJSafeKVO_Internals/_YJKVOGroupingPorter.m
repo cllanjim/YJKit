@@ -7,12 +7,12 @@
 //
 
 #import "_YJKVOGroupingPorter.h"
-#import "_YJKVOPair.h"
+#import "_YJKVOUnsafePair.h"
 #import "YJMutableUnsafeUnretainedTuple.h"
 
 @interface _YJKVOGroupingPorter ()
 
-@property (nonatomic, strong) NSMutableArray <_YJKVOPair *> *targetsAndKeyPaths;
+@property (nonatomic, strong) NSMutableArray <_YJKVOUnsafePair *> *targetsAndKeyPaths;
 @property (nonatomic, strong) YJMutableUnsafeUnretainedTuple *multipleValues;
 @property (nonatomic, readwrite) BOOL employed;
 
@@ -40,14 +40,14 @@
 }
 
 - (void)addTarget:(__kindof NSObject *)target keyPath:(NSString *)keyPath {
-    [self.targetsAndKeyPaths addObject:_YJKVOPair(target, keyPath)];
+    [self.targetsAndKeyPaths addObject:_YJKVOUnsafePair(target, keyPath)];
 }
 
 - (void)signUp {
     if (self.employed)
         return;
     
-    for (_YJKVOPair *targetAndKeyPath in self.targetsAndKeyPaths) {
+    for (_YJKVOUnsafePair *targetAndKeyPath in self.targetsAndKeyPaths) {
         [targetAndKeyPath.object addObserver:self forKeyPath:targetAndKeyPath.keyPath options:self.observingOptions context:NULL];
     }
     self.employed = YES;
@@ -57,7 +57,7 @@
     if (!self.employed)
         return;
     
-    for (_YJKVOPair *targetAndKeyPath in self.targetsAndKeyPaths) {
+    for (_YJKVOUnsafePair *targetAndKeyPath in self.targetsAndKeyPaths) {
         [targetAndKeyPath.object removeObserver:self forKeyPath:targetAndKeyPath.keyPath context:NULL];
     }
     self.employed = NO;
@@ -90,7 +90,7 @@
     
     NSInteger index = NSNotFound;
     for (int i = 0; i < (int)self.targetsAndKeyPaths.count; i++) {
-        _YJKVOPair *targetAndKeyPath = self.targetsAndKeyPaths[i];
+        _YJKVOUnsafePair *targetAndKeyPath = self.targetsAndKeyPaths[i];
         if (targetAndKeyPath.object == object && [targetAndKeyPath.keyPath isEqualToString:keyPath]) {
             index = i;
             break;

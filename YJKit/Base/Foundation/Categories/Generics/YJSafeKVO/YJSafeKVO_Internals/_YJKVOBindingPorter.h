@@ -17,4 +17,7 @@ __attribute__((visibility("hidden")))
                  targetKeyPath:(NSString *)targetKeyPath
              subscriberKeyPath:(NSString *)subscriberKeyPath NS_DESIGNATED_INITIALIZER;
 
+/// Associate with subscribers's key path for applying changes directly.
+@property (nonatomic, readonly, copy) NSString *subscriberKeyPath;
+
 @end

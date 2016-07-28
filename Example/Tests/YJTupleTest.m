@@ -8,32 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "YJMutableTuple.h"
-#import "YJTuple.h"
 #import "YJMutableUnsafeUnretainedTuple.h"
-
-#define AFTNetworkResult(status, desc) YJMutableTuple(AFTNetworkResult, status, desc)
-
-@interface AFTNetworkResult : YJTuple
-
-@property (nonatomic) int status;
-@property (nonatomic, copy) NSString *desc;
-
-@end
-
-@implementation AFTNetworkResult
-
-@dynamic status, desc;
-
-- (int)status {
-    return [self.first intValue];
-}
-
-- (NSString *)desc {
-    return self.second;
-}
-
-@end
-
 
 @interface YJTupleTest : XCTestCase
 
@@ -63,20 +38,6 @@
     }];
 }
 
-- (void)testYJTupleMacro {
-    YJTuple *tuple = YJTuplePack(@1,@2,@3);
-    XCTAssertTrue([tuple.first isEqualToNumber:@1]);
-    XCTAssertTrue([tuple[1] isEqualToNumber:@2]);
-    XCTAssertTrue([tuple[2] isEqualToNumber:@3]);
-    XCTAssertTrue(tuple.fourth == nil);
-    XCTAssertTrue(tuple.fifth == nil);
-}
-
-- (void)testYJTupleMacro1 {
-    YJTuple *tuple = YJTuplePack(@1,@2,@3,@4,@5,@6,@7,@8,@9,@10);
-    XCTAssertTrue([tuple.tenth isEqualToNumber:@10]);
-}
-
 - (void)testYJMutableUnsafeUnretainedTupleMacro {
     YJMutableUnsafeUnretainedTuple *tuple = YJMutableUnsafeUnretainedTuplePack(@1,@2,@3);
     XCTAssertTrue([tuple.first isEqualToNumber:@1]);
@@ -89,12 +50,6 @@
 - (void)testYJMutableUnsafeUnretainedTupleMacro1 {
     YJMutableUnsafeUnretainedTuple *tuple = YJMutableUnsafeUnretainedTuplePack(@1,@2,@3,@4,@5,@6,@7,@8,@9,@10);
     XCTAssertTrue([tuple.tenth isEqualToNumber:@10]);
-}
-
-- (void)testSubclassOfTuple {
-    AFTNetworkResult *result = AFTNetworkResult( @504, @"Bad Connection." );
-    XCTAssertTrue(result.status == 504);
-    XCTAssertTrue([result.desc isEqualToString:@"Bad Connection."]);
 }
 
 @end

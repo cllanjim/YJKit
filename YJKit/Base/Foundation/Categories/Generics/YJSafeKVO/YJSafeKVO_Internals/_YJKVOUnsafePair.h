@@ -1,5 +1,5 @@
 //
-//  _YJKVOPair.h
+//  _YJKVOUnsafePair.h
 //  YJKit
 //
 //  Created by huang-kun on 16/7/27.
@@ -8,13 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-#define _YJKVOPair(OBJECT, KEYPATH) \
-    [[_YJKVOPair alloc] initWithObject:OBJECT keyPath:KEYPATH]
+#define _YJKVOUnsafePair(OBJECT, KEYPATH) \
+    [[_YJKVOUnsafePair alloc] initWithObject:OBJECT keyPath:KEYPATH]
 
 /// This class is for pairing object and keyPath
 
 __attribute__((visibility("hidden")))
-@interface _YJKVOPair : NSObject
+@interface _YJKVOUnsafePair : NSObject
 
 /// initializer
 - (instancetype)initWithObject:(__kindof NSObject *)object keyPath:(NSString *)keyPath;
