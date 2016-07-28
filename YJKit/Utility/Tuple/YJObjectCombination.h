@@ -1,5 +1,5 @@
 //
-//  YJMutableTuple.h
+//  YJObjectCombination.h
 //  YJKit
 //
 //  Created by huang-kun on 16/7/28.
@@ -8,13 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-#define YJMutableTuple(CLASS, ...) yj_tupleM_new([CLASS class], __VA_ARGS__, nil)
+#define YJObjectCombination(CLASS, ...) yj_comb_new([CLASS class], __VA_ARGS__, nil)
 
 #define YJ_MUTABLE_TUPLE_MAX_NUMBER_OF_VALUES 10
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol YJMutableTuple <NSObject>
+@protocol YJObjectCombination <NSObject>
 
 - (void)setFirst:(nullable id)first;
 - (void)setSecond:(nullable id)second;
@@ -44,10 +44,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-id yj_tupleM_new(Class cls, id first, ...);
+id yj_comb_new(Class cls, id first, ...);
 
-id yj_tupleM_get(id tuple, NSUInteger idx);
+id yj_comb_get(id tuple, NSUInteger idx);
 
-void yj_tupleM_set(id tuple, id object, NSUInteger idx);
+void yj_comb_set(id tuple, id object, NSUInteger idx);
 
 NS_ASSUME_NONNULL_END

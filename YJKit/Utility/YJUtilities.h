@@ -11,17 +11,13 @@
 #import <YJKit/YJMemoryCache.h>
 #import <YJKit/YJPhotoLibrary.h>
 #import <YJKit/YJGroupedStyleTableViewController.h>
-
-#import <YJKit/YJMutableTuple.h>
-#import <YJKit/YJMutableUnsafeUnretainedTuple.h>
+#import <YJKit/YJTuples.h>
 
 #else
 
+#import "YJMemoryCache.h"
 #import "YJPhotoLibrary.h"
 #import "YJGroupedStyleTableViewController.h"
-#import "YJMemoryCache.h"
-
-#import "YJMutableTuple.h"
-#import "YJMutableUnsafeUnretainedTuple.h"
+#import "YJTuples.h"
 
 #endif

@@ -1,31 +1,31 @@
 //
-//  YJMutableTuple.m
+//  YJObjectCombination.m
 //  YJKit
 //
 //  Created by huang-kun on 16/7/28.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
 
-#import "YJMutableTuple.h"
+#import "YJObjectCombination.h"
 #import <objc/runtime.h>
 
-id yj_tupleM_new(Class cls, id first, ...) {
+id yj_comb_new(Class cls, id first, ...) {
     
-    if (!class_conformsToProtocol(cls, @protocol(YJMutableTuple)))
+    if (!class_conformsToProtocol(cls, @protocol(YJObjectCombination)))
         return nil;
     
-    id <YJMutableTuple> tuple = [cls new];
+    id <YJObjectCombination> tuple = [cls new];
     
     int i = 0;
     id arg = nil;
     va_list args;
     
     if (first) {
-        yj_tupleM_set(tuple, first, i); i++; // tuple[i++] = first;
+        yj_comb_set(tuple, first, i); i++; // tuple[i++] = first;
         
         va_start(args, first);
         while ((arg = va_arg(args, id))) {
-            yj_tupleM_set(tuple, arg, i); i++; // tuple[i++] = arg;
+            yj_comb_set(tuple, arg, i); i++; // tuple[i++] = arg;
         }
         va_end(args);
     }
@@ -33,7 +33,7 @@ id yj_tupleM_new(Class cls, id first, ...) {
     return tuple;
 }
 
-void yj_tupleM_set(id <YJMutableTuple> tuple, id obj, NSUInteger idx) {
+void yj_comb_set(id <YJObjectCombination> tuple, id obj, NSUInteger idx) {
     NSCParameterAssert(idx >= 0 && idx < YJ_MUTABLE_TUPLE_MAX_NUMBER_OF_VALUES);
     switch (idx) {
         case 0: [tuple setFirst:obj]; break;
@@ -50,7 +50,7 @@ void yj_tupleM_set(id <YJMutableTuple> tuple, id obj, NSUInteger idx) {
     }
 }
 
-id yj_tupleM_get(id <YJMutableTuple> tuple, NSUInteger idx) {
+id yj_comb_get(id <YJObjectCombination> tuple, NSUInteger idx) {
     NSCParameterAssert(idx >= 0 && idx < YJ_MUTABLE_TUPLE_MAX_NUMBER_OF_VALUES);
     switch (idx) {
         case 0: return [tuple first];

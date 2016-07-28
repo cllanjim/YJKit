@@ -7,13 +7,13 @@
 //
 
 #import "_YJKVOGroupingPorter.h"
-#import "_YJKVOUnsafePair.h"
-#import "YJMutableUnsafeUnretainedTuple.h"
+#import "YJUnsafeMixedObjectCombinator.h"
+#import "YJUnsafeObjectCombinator.h"
 
 @interface _YJKVOGroupingPorter ()
 
-@property (nonatomic, strong) NSMutableArray <_YJKVOUnsafePair *> *targetsAndKeyPaths;
-@property (nonatomic, strong) YJMutableUnsafeUnretainedTuple *multipleValues;
+@property (nonatomic, strong) NSMutableArray <YJUnsafeMixedObjectCombinator *> *targetsAndKeyPaths;
+@property (nonatomic, strong) YJUnsafeObjectCombinator *multipleValues;
 @property (nonatomic, readwrite) BOOL employed;
 
 @end
@@ -29,7 +29,7 @@
     self = [super initWithTarget:nil subscriber:subscriber targetKeyPath:nil];
     if (self) {
         _targetsAndKeyPaths = [[NSMutableArray alloc] initWithCapacity:10];
-        _multipleValues = [YJMutableUnsafeUnretainedTuple new];
+        _multipleValues = [YJUnsafeObjectCombinator new];
     }
     return self;
 }
@@ -40,15 +40,15 @@
 }
 
 - (void)addTarget:(__kindof NSObject *)target keyPath:(NSString *)keyPath {
-    [self.targetsAndKeyPaths addObject:_YJKVOUnsafePair(target, keyPath)];
+    [self.targetsAndKeyPaths addObject:YJUnsafeMixedObjectCombinatorPack(target, keyPath)];
 }
 
 - (void)signUp {
     if (self.employed)
         return;
     
-    for (_YJKVOUnsafePair *targetAndKeyPath in self.targetsAndKeyPaths) {
-        [targetAndKeyPath.object addObserver:self forKeyPath:targetAndKeyPath.keyPath options:self.observingOptions context:NULL];
+    for (YJUnsafeMixedObjectCombinator *targetAndKeyPath in self.targetsAndKeyPaths) {
+        [targetAndKeyPath.first addObserver:self forKeyPath:targetAndKeyPath.second options:self.observingOptions context:NULL];
     }
     self.employed = YES;
 }
@@ -57,8 +57,8 @@
     if (!self.employed)
         return;
     
-    for (_YJKVOUnsafePair *targetAndKeyPath in self.targetsAndKeyPaths) {
-        [targetAndKeyPath.object removeObserver:self forKeyPath:targetAndKeyPath.keyPath context:NULL];
+    for (YJUnsafeMixedObjectCombinator *targetAndKeyPath in self.targetsAndKeyPaths) {
+        [targetAndKeyPath.first removeObserver:self forKeyPath:targetAndKeyPath.second context:NULL];
     }
     self.employed = NO;
 }
@@ -90,8 +90,8 @@
     
     NSInteger index = NSNotFound;
     for (int i = 0; i < (int)self.targetsAndKeyPaths.count; i++) {
-        _YJKVOUnsafePair *targetAndKeyPath = self.targetsAndKeyPaths[i];
-        if (targetAndKeyPath.object == object && [targetAndKeyPath.keyPath isEqualToString:keyPath]) {
+        YJUnsafeMixedObjectCombinator *targetAndKeyPath = self.targetsAndKeyPaths[i];
+        if (targetAndKeyPath.first == object && [targetAndKeyPath.second isEqualToString:keyPath]) {
             index = i;
             break;
         }

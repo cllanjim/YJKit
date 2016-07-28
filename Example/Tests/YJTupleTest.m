@@ -7,8 +7,8 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "YJMutableTuple.h"
-#import "YJMutableUnsafeUnretainedTuple.h"
+#import "YJObjectCombination.h"
+#import "YJUnsafeObjectCombinator.h"
 
 @interface YJTupleTest : XCTestCase
 
@@ -38,8 +38,8 @@
     }];
 }
 
-- (void)testYJMutableUnsafeUnretainedTupleMacro {
-    YJMutableUnsafeUnretainedTuple *tuple = YJMutableUnsafeUnretainedTuplePack(@1,@2,@3);
+- (void)testYJUnsafeObjectCombinatorMacro {
+    YJUnsafeObjectCombinator *tuple = YJUnsafeObjectCombinatorPack(@1,@2,@3);
     XCTAssertTrue([tuple.first isEqualToNumber:@1]);
     XCTAssertTrue([tuple[1] isEqualToNumber:@2]);
     XCTAssertTrue([tuple[2] isEqualToNumber:@3]);
@@ -47,8 +47,8 @@
     XCTAssertTrue(tuple.fifth == nil);
 }
 
-- (void)testYJMutableUnsafeUnretainedTupleMacro1 {
-    YJMutableUnsafeUnretainedTuple *tuple = YJMutableUnsafeUnretainedTuplePack(@1,@2,@3,@4,@5,@6,@7,@8,@9,@10);
+- (void)testYJUnsafeObjectCombinatorMacro1 {
+    YJUnsafeObjectCombinator *tuple = YJUnsafeObjectCombinatorPack(@1,@2,@3,@4,@5,@6,@7,@8,@9,@10);
     XCTAssertTrue([tuple.tenth isEqualToNumber:@10]);
 }
 

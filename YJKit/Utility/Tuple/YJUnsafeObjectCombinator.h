@@ -1,16 +1,16 @@
 //
-//  YJMutableUnsafeUnretainedTuple.h
+//  YJUnsafeObjectCombinator.h
 //  YJKit
 //
 //  Created by huang-kun on 16/7/28.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
 
-#import "YJMutableTuple.h"
+#import "YJObjectCombination.h"
 
-#define YJMutableUnsafeUnretainedTuplePack(...) YJMutableTuple(YJMutableUnsafeUnretainedTuple, __VA_ARGS__)
+#define YJUnsafeObjectCombinatorPack(...) YJObjectCombination(YJUnsafeObjectCombinator, __VA_ARGS__)
 
-@interface YJMutableUnsafeUnretainedTuple : NSObject <YJMutableTuple>
+@interface YJUnsafeObjectCombinator : NSObject <YJObjectCombination>
 
 @property (nullable, nonatomic, assign) id first;
 @property (nullable, nonatomic, assign) id second;

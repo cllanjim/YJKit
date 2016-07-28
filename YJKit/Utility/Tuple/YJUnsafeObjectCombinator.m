@@ -1,25 +1,25 @@
 //
-//  YJMutableUnsafeUnretainedTuple.m
+//  YJUnsafeObjectCombinator.m
 //  YJKit
 //
 //  Created by huang-kun on 16/7/28.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
 
-#import "YJMutableUnsafeUnretainedTuple.h"
+#import "YJUnsafeObjectCombinator.h"
 
-@interface YJMutableUnsafeUnretainedTuple () 
+@interface YJUnsafeObjectCombinator () 
 
 @end
 
-@implementation YJMutableUnsafeUnretainedTuple
+@implementation YJUnsafeObjectCombinator
 
 - (void)setObject:(nullable id)obj atIndexedSubscript:(NSUInteger)idx {
-    yj_tupleM_set(self, obj, idx);
+    yj_comb_set(self, obj, idx);
 }
 
 - (nullable id)objectAtIndexedSubscript:(NSUInteger)idx {
-    return yj_tupleM_get(self, idx);
+    return yj_comb_get(self, idx);
 }
 
 @end

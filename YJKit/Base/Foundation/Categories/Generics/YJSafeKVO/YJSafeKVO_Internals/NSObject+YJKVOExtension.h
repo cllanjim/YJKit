@@ -10,7 +10,6 @@
 
 @class _YJKVOSubscriberManager, _YJKVOPorterManager, _YJKVOPipeIDKeeper;
 
-
 @interface NSObject (YJKVOExtension)
 
 /// Associated with a subscriber manager for target managing subscribers.
