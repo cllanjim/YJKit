@@ -2,20 +2,14 @@
 //  _YJKVOBindingPorter.h
 //  YJKit
 //
-//  Created by huang-kun on 16/7/7.
+//  Created by huang-kun on 16/7/28.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
 
-#import "_YJKVOPorter.h"
-
-NS_ASSUME_NONNULL_BEGIN
-
-typedef BOOL(^YJKVOValueTakenHandler)(id subscriber, id target, id _Nullable newValue);
-
-/// The class for deliver the value changes.
+#import "_YJKVOAssemblingPorter.h"
 
 __attribute__((visibility("hidden")))
-@interface _YJKVOBindingPorter : _YJKVOPorter
+@interface _YJKVOBindingPorter : _YJKVOAssemblingPorter
 
 /// The designated initializer
 - (instancetype)initWithTarget:(__kindof NSObject *)target
@@ -23,18 +17,4 @@ __attribute__((visibility("hidden")))
                  targetKeyPath:(NSString *)targetKeyPath
              subscriberKeyPath:(NSString *)subscriberKeyPath NS_DESIGNATED_INITIALIZER;
 
-/// Associate with subscribers's key path for applying changes directly.
-@property (nonatomic, readonly, copy) NSString *subscriberKeyPath;
-
-/// The value change callback block which only for converting changes.
-@property (nonatomic, copy) YJKVOSubscriberTargetValueReturnHandler convertHandler;
-
-/// The value change callback block which only for filtering changes.
-@property (nonatomic, copy) YJKVOValueTakenHandler takenHandler;
-
-/// The value change callback block which only called after applying changes.
-@property (nonatomic, copy) YJKVOSubscriberTargetHandler afterHandler;
-
 @end
-
-NS_ASSUME_NONNULL_END

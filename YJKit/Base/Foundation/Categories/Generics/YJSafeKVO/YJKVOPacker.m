@@ -9,8 +9,9 @@
 #import "YJKVOPacker.h"
 #import "NSObject+YJKVOExtension.h"
 #import "_YJKVOExecutiveOfficer.h"
-#import "_YJKVOBindingPorter.h"
+#import "_YJKVOAssemblingPorter.h"
 #import "_YJKVOGroupingPorter.h"
+#import "_YJKVOBindingPorter.h"
 
 @interface YJKVOPacker ()
 @property (nonatomic, strong) __kindof NSObject *object;

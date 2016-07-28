@@ -8,22 +8,13 @@
 
 #import "_YJKVOGroupingPorter.h"
 #import "_YJKVOPair.h"
+#import "YJMutableUnsafeUnretainedTuple.h"
 
 @interface _YJKVOGroupingPorter ()
 
 @property (nonatomic, strong) NSMutableArray <_YJKVOPair *> *targetsAndKeyPaths;
+@property (nonatomic, strong) YJMutableUnsafeUnretainedTuple *multipleValues;
 @property (nonatomic, readwrite) BOOL employed;
-
-@property (nonatomic, assign) id first;
-@property (nonatomic, assign) id second;
-@property (nonatomic, assign) id third;
-@property (nonatomic, assign) id fourth;
-@property (nonatomic, assign) id fifth;
-@property (nonatomic, assign) id sixth;
-@property (nonatomic, assign) id seventh;
-@property (nonatomic, assign) id eighth;
-@property (nonatomic, assign) id ninth;
-@property (nonatomic, assign) id tenth;
 
 @end
 
@@ -38,6 +29,7 @@
     self = [super initWithTarget:nil subscriber:subscriber targetKeyPath:nil];
     if (self) {
         _targetsAndKeyPaths = [[NSMutableArray alloc] initWithCapacity:10];
+        _multipleValues = [YJMutableUnsafeUnretainedTuple new];
     }
     return self;
 }
@@ -77,16 +69,25 @@
     if (newValue == [NSNull null]) newValue = nil;
     
     if (self.multipleValueHandler && [self applyNewValue:newValue fromKeyPath:keyPath ofObject:object]) {
-        self.multipleValueHandler(self.first, self.second, self.third, self.fourth, self.fifth, self.sixth, self.seventh, self.eighth, self.ninth, self.tenth);
+        self.multipleValueHandler(self.multipleValues.first, self.multipleValues.second, self.multipleValues.third,
+                                  self.multipleValues.fourth, self.multipleValues.fifth, self.multipleValues.sixth,
+                                  self.multipleValues.seventh, self.multipleValues.eighth, self.multipleValues.ninth,
+                                  self.multipleValues.tenth);
     }
     
     if (self.reduceValueReturnHandler && self.subscriberKeyPath && [self applyNewValue:newValue fromKeyPath:keyPath ofObject:object]) {
-        id reducedValue = self.reduceValueReturnHandler(self.first, self.second, self.third, self.fourth, self.fifth, self.sixth, self.seventh, self.eighth, self.ninth, self.tenth);
+        id reducedValue = self.reduceValueReturnHandler(self.multipleValues.first, self.multipleValues.second, self.multipleValues.third,
+                                                        self.multipleValues.fourth, self.multipleValues.fifth, self.multipleValues.sixth,
+                                                        self.multipleValues.seventh, self.multipleValues.eighth, self.multipleValues.ninth,
+                                                        self.multipleValues.tenth);
         [self.subscriber setValue:reducedValue forKeyPath:self.subscriberKeyPath];
     }
 }
 
 - (BOOL)applyNewValue:(nullable id)newValue fromKeyPath:(NSString *)keyPath ofObject:(id)object {
+    
+    NSAssert(self.targetsAndKeyPaths.count <= YJ_MUTABLE_TUPLE_MAX_NUMBER_OF_VALUES, @"YJSafeKVO Exception - Too many key paths observing, should less then %@, but you have %@", @(YJ_MUTABLE_TUPLE_MAX_NUMBER_OF_VALUES), @(self.targetsAndKeyPaths.count));
+    
     NSInteger index = NSNotFound;
     for (int i = 0; i < (int)self.targetsAndKeyPaths.count; i++) {
         _YJKVOPair *targetAndKeyPath = self.targetsAndKeyPaths[i];
@@ -97,19 +98,7 @@
     }
     
     if (index != NSNotFound) {
-        switch (index) {
-            case 0: self.first = newValue; break;
-            case 1: self.second = newValue; break;
-            case 2: self.third = newValue; break;
-            case 3: self.fourth = newValue; break;
-            case 4: self.fifth = newValue; break;
-            case 5: self.sixth = newValue; break;
-            case 6: self.seventh = newValue; break;
-            case 7: self.eighth = newValue; break;
-            case 8: self.ninth = newValue; break;
-            case 9: self.tenth = newValue; break;
-            default: break;
-        }
+        self.multipleValues[index] = newValue;
         _counter++;
     }
     

@@ -94,7 +94,7 @@
 		32D883FE1D30B8B000DB882A /* _YJKVOExecutiveOfficer.m in Sources */ = {isa = PBXBuildFile; fileRef = 32D883FD1D30B8B000DB882A /* _YJKVOExecutiveOfficer.m */; };
 		32E5D29F1CDC7DEE0070B96D /* yj_head_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 32E5D29E1CDC7DEE0070B96D /* yj_head_icon.png */; };
 		32F0C7B61CEF2E2A00234ECF /* YJCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 32F0C7B51CEF2E2A00234ECF /* YJCollectionTest.m */; };
-		32FF16F91D2E53D60037A5D2 /* _YJKVOBindingPorter.m in Sources */ = {isa = PBXBuildFile; fileRef = 32FF16F81D2E53D60037A5D2 /* _YJKVOBindingPorter.m */; };
+		32FF16F91D2E53D60037A5D2 /* _YJKVOAssemblingPorter.m in Sources */ = {isa = PBXBuildFile; fileRef = 32FF16F81D2E53D60037A5D2 /* _YJKVOAssemblingPorter.m */; };
 		32FF17021D2E87840037A5D2 /* YJKVOPacker.m in Sources */ = {isa = PBXBuildFile; fileRef = 32FF17011D2E87840037A5D2 /* YJKVOPacker.m */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
@@ -109,7 +109,11 @@
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		7212B6F91D40927B007C4BFB /* YJKVOTest_Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7212B6F81D40927B007C4BFB /* YJKVOTest_Swift.swift */; };
+		72639EAA1D4A2F660063BA67 /* _YJKVOBindingPorter.m in Sources */ = {isa = PBXBuildFile; fileRef = 72639EA91D4A2F660063BA67 /* _YJKVOBindingPorter.m */; };
 		72E46B141D48953E00B1BADF /* _YJKVOPair.m in Sources */ = {isa = PBXBuildFile; fileRef = 72E46B131D48953E00B1BADF /* _YJKVOPair.m */; };
+		72FA5FE51D49E9F4008BDCA9 /* YJMutableUnsafeUnretainedTuple.m in Sources */ = {isa = PBXBuildFile; fileRef = 72FA5FE31D49E9F4008BDCA9 /* YJMutableUnsafeUnretainedTuple.m */; };
+		72FA5FE81D49EE8B008BDCA9 /* YJMutableTuple.m in Sources */ = {isa = PBXBuildFile; fileRef = 72FA5FE71D49EE8B008BDCA9 /* YJMutableTuple.m */; };
+		72FA5FEA1D49F7F2008BDCA9 /* YJTupleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 72FA5FE91D49F7F2008BDCA9 /* YJTupleTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -302,8 +306,8 @@
 		32D883FD1D30B8B000DB882A /* _YJKVOExecutiveOfficer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YJKVOExecutiveOfficer.m; sourceTree = "<group>"; };
 		32E5D29E1CDC7DEE0070B96D /* yj_head_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = yj_head_icon.png; sourceTree = "<group>"; };
 		32F0C7B51CEF2E2A00234ECF /* YJCollectionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJCollectionTest.m; sourceTree = "<group>"; };
-		32FF16F71D2E53D60037A5D2 /* _YJKVOBindingPorter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YJKVOBindingPorter.h; sourceTree = "<group>"; };
-		32FF16F81D2E53D60037A5D2 /* _YJKVOBindingPorter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YJKVOBindingPorter.m; sourceTree = "<group>"; };
+		32FF16F71D2E53D60037A5D2 /* _YJKVOAssemblingPorter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YJKVOAssemblingPorter.h; sourceTree = "<group>"; };
+		32FF16F81D2E53D60037A5D2 /* _YJKVOAssemblingPorter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YJKVOAssemblingPorter.m; sourceTree = "<group>"; };
 		32FF17001D2E87840037A5D2 /* YJKVOPacker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJKVOPacker.h; sourceTree = "<group>"; };
 		32FF17011D2E87840037A5D2 /* YJKVOPacker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJKVOPacker.m; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* YJKit_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YJKit_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -327,9 +331,16 @@
 		72112BB31D41EBB000B447A6 /* YJKit_Example-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "YJKit_Example-Bridging-Header.h"; sourceTree = "<group>"; };
 		7212B6F71D40927B007C4BFB /* YJKit_Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "YJKit_Tests-Bridging-Header.h"; sourceTree = "<group>"; };
 		7212B6F81D40927B007C4BFB /* YJKVOTest_Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YJKVOTest_Swift.swift; sourceTree = "<group>"; };
-		725780A31D478B96001789BA /* YJDelegateAndDataSourceCrashPrecaution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJDelegateAndDataSourceCrashPrecaution.h; sourceTree = "<group>"; };
+		72639EA81D4A2F660063BA67 /* _YJKVOBindingPorter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YJKVOBindingPorter.h; sourceTree = "<group>"; };
+		72639EA91D4A2F660063BA67 /* _YJKVOBindingPorter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YJKVOBindingPorter.m; sourceTree = "<group>"; };
 		72E46B121D48953E00B1BADF /* _YJKVOPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YJKVOPair.h; sourceTree = "<group>"; };
 		72E46B131D48953E00B1BADF /* _YJKVOPair.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YJKVOPair.m; sourceTree = "<group>"; };
+		72FA5FD21D49A4B7008BDCA9 /* YJDelegateAndDataSourceCrashPrecaution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJDelegateAndDataSourceCrashPrecaution.h; sourceTree = "<group>"; };
+		72FA5FE21D49E9F4008BDCA9 /* YJMutableUnsafeUnretainedTuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJMutableUnsafeUnretainedTuple.h; sourceTree = "<group>"; };
+		72FA5FE31D49E9F4008BDCA9 /* YJMutableUnsafeUnretainedTuple.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJMutableUnsafeUnretainedTuple.m; sourceTree = "<group>"; };
+		72FA5FE61D49ECF0008BDCA9 /* YJMutableTuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJMutableTuple.h; sourceTree = "<group>"; };
+		72FA5FE71D49EE8B008BDCA9 /* YJMutableTuple.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJMutableTuple.m; sourceTree = "<group>"; };
+		72FA5FE91D49F7F2008BDCA9 /* YJTupleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJTupleTest.m; sourceTree = "<group>"; };
 		A4E3619C885051E572C0483E /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		D6627507F47E9F7BBE78AB52 /* YJKit.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = YJKit.podspec; path = ../YJKit.podspec; sourceTree = "<group>"; };
 		E90B7132355AB3B4DF313D99 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -414,6 +425,7 @@
 				3263889A1CF2B3390026BED8 /* YJObjcMacros.h */,
 				32490DA51D20FCC400ACDA51 /* YJKVCMacros.h */,
 				3263889B1CF2B3390026BED8 /* YJUIMacros.h */,
+				72FA5FD21D49A4B7008BDCA9 /* YJDelegateAndDataSourceCrashPrecaution.h */,
 			);
 			path = Macros;
 			sourceTree = "<group>";
@@ -576,6 +588,7 @@
 				326388EA1CF2B3390026BED8 /* YJMemoryCache.m */,
 				326388EB1CF2B3390026BED8 /* YJPhotoLibrary.h */,
 				326388EC1CF2B3390026BED8 /* YJPhotoLibrary.m */,
+				72FA5FDF1D49E9F4008BDCA9 /* Tuple */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -657,7 +670,6 @@
 				32AC86DE1D2930DE00DCE1F8 /* NSObject+YJIMPInsertion.m */,
 				32A2F4EF1D3CCE07000D0529 /* NSObject+YJDelegateWeakChecking.h */,
 				32A2F4F01D3CCE07000D0529 /* NSObject+YJDelegateWeakChecking.m */,
-				725780A31D478B96001789BA /* YJDelegateAndDataSourceCrashPrecaution.h */,
 			);
 			path = RuntimeEncapsulation;
 			sourceTree = "<group>";
@@ -689,8 +701,10 @@
 				32AC86F81D29389500DCE1F8 /* _YJKVOPorter.m */,
 				320688A71D2B8FA800B85E95 /* _YJKVOGroupingPorter.h */,
 				320688A81D2B8FA800B85E95 /* _YJKVOGroupingPorter.m */,
-				32FF16F71D2E53D60037A5D2 /* _YJKVOBindingPorter.h */,
-				32FF16F81D2E53D60037A5D2 /* _YJKVOBindingPorter.m */,
+				32FF16F71D2E53D60037A5D2 /* _YJKVOAssemblingPorter.h */,
+				32FF16F81D2E53D60037A5D2 /* _YJKVOAssemblingPorter.m */,
+				72639EA81D4A2F660063BA67 /* _YJKVOBindingPorter.h */,
+				72639EA91D4A2F660063BA67 /* _YJKVOBindingPorter.m */,
 				32BABCF21D3F508D00CEAA3F /* _YJKVOSubscriberManager.h */,
 				32BABCF31D3F508D00CEAA3F /* _YJKVOSubscriberManager.m */,
 				32AC86F51D29389500DCE1F8 /* _YJKVOPorterManager.h */,
@@ -812,6 +826,7 @@
 				3204386C1CEEF3E9006806EC /* YJArraySequence.m */,
 				32F0C7B51CEF2E2A00234ECF /* YJCollectionTest.m */,
 				320438711CEF14EC006806EC /* YJGeneralTest.m */,
+				72FA5FE91D49F7F2008BDCA9 /* YJTupleTest.m */,
 				32B55D001D162BF300A578AD /* YJRuntimeTest.m */,
 				32CEA1731D275F4300FBF82C /* YJKVOTest.m */,
 				7212B6F81D40927B007C4BFB /* YJKVOTest_Swift.swift */,
@@ -840,6 +855,17 @@
 				A4E3619C885051E572C0483E /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		72FA5FDF1D49E9F4008BDCA9 /* Tuple */ = {
+			isa = PBXGroup;
+			children = (
+				72FA5FE61D49ECF0008BDCA9 /* YJMutableTuple.h */,
+				72FA5FE71D49EE8B008BDCA9 /* YJMutableTuple.m */,
+				72FA5FE21D49E9F4008BDCA9 /* YJMutableUnsafeUnretainedTuple.h */,
+				72FA5FE31D49E9F4008BDCA9 /* YJMutableUnsafeUnretainedTuple.m */,
+			);
+			path = Tuple;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -980,12 +1006,14 @@
 				326F34CD1CF5C20F00B2FF75 /* NSTimer+YJBlockBased.m in Sources */,
 				324AB0A01CD1C6EE00A9DCF0 /* YJMaskViewController.m in Sources */,
 				72E46B141D48953E00B1BADF /* _YJKVOPair.m in Sources */,
-				32FF16F91D2E53D60037A5D2 /* _YJKVOBindingPorter.m in Sources */,
+				32FF16F91D2E53D60037A5D2 /* _YJKVOAssemblingPorter.m in Sources */,
 				326F34C61CF5C20F00B2FF75 /* NSBundle+YJCategory.m in Sources */,
 				32CB4AAB1CCA3C880050C01B /* YJSavingImageToAlbumViewController.m in Sources */,
 				3238B26E1CE1FDF50018D1F0 /* YJMaskTableViewController.m in Sources */,
 				326F34D61CF5F70300B2FF75 /* UITextField+YJCategory.m in Sources */,
+				72FA5FE51D49E9F4008BDCA9 /* YJMutableUnsafeUnretainedTuple.m in Sources */,
 				32C1EB641D017EEC00E595EF /* YJHeaderDemoCell.m in Sources */,
+				72FA5FE81D49EE8B008BDCA9 /* YJMutableTuple.m in Sources */,
 				32C1EB6F1D01899000E595EF /* YJCustomDemoCell.m in Sources */,
 				6003F59E195388D20070C39A /* YJAppDelegate.m in Sources */,
 				326389041CF2B3390026BED8 /* UIColor+YJCategory.m in Sources */,
@@ -1023,6 +1051,7 @@
 				3268A1D41CA83F5300B71E50 /* YJGeometryViewController.m in Sources */,
 				3263891B1CF2B3390026BED8 /* YJSemicircularCornerLabel.m in Sources */,
 				326F34C41CF5C20F00B2FF75 /* NSString+YJCollection.m in Sources */,
+				72639EAA1D4A2F660063BA67 /* _YJKVOBindingPorter.m in Sources */,
 				326389191CF2B3390026BED8 /* YJRoundedCornerView.m in Sources */,
 				326F34BE1CF5C20F00B2FF75 /* NSArray+YJSequence.m in Sources */,
 				326388EF1CF2B3390026BED8 /* AVCaptureSession+YJCategory.m in Sources */,
@@ -1037,6 +1066,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				32F0C7B61CEF2E2A00234ECF /* YJCollectionTest.m in Sources */,
+				72FA5FEA1D49F7F2008BDCA9 /* YJTupleTest.m in Sources */,
 				32CEA1761D275F8200FBF82C /* YJTestClasses.m in Sources */,
 				32B55D011D162BF300A578AD /* YJRuntimeTest.m in Sources */,
 				320438721CEF14EC006806EC /* YJGeneralTest.m in Sources */,

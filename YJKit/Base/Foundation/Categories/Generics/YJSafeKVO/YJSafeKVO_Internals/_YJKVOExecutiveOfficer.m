@@ -12,7 +12,7 @@
 #import "_YJKVOSubscriberManager.h"
 #import "_YJKVOPorterManager.h"
 #import "_YJKVOPorter.h"
-#import "_YJKVOBindingPorter.h"
+#import "_YJKVOAssemblingPorter.h"
 
 /*
     Remember: 

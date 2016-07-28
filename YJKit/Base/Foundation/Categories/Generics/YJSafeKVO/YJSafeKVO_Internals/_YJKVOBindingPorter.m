@@ -2,14 +2,11 @@
 //  _YJKVOBindingPorter.m
 //  YJKit
 //
-//  Created by huang-kun on 16/7/7.
+//  Created by huang-kun on 16/7/28.
 //  Copyright © 2016年 huang-kun. All rights reserved.
 //
 
 #import "_YJKVOBindingPorter.h"
-#import "NSObject+YJKVOExtension.h"
-#import "_YJKVOPair.h"
-#import <objc/message.h>
 
 @implementation _YJKVOBindingPorter
 
@@ -30,27 +27,8 @@
     return [self initWithTarget:target subscriber:subscriber targetKeyPath:targetKeyPath subscriberKeyPath:(id)[NSNull null]];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
-    
-    id newValue = change[NSKeyValueChangeNewKey];
-    if (newValue == [NSNull null]) newValue = nil;
-    
-    BOOL taken = YES;
-    if (self.takenHandler) {
-        taken = self.takenHandler(self.subscriber, object, newValue);
-    }
-    if (!taken) return;
-    
-    id convertedValue = newValue;
-    if (self.convertHandler) {
-        convertedValue = self.convertHandler(self.subscriber, object, newValue);
-    }
-    
-    [self.subscriber setValue:convertedValue forKeyPath:self.subscriberKeyPath];
-    
-    if (self.afterHandler) {
-        self.afterHandler(self.subscriber, object);
-    }
+- (void)handleValue:(nullable id)value fromObject:(id)object keyPath:(NSString *)keyPath {
+    [self.subscriber setValue:value forKeyPath:self.subscriberKeyPath];
 }
 
 @end

@@ -15,6 +15,7 @@
 #import <YJKit/YJConfigureMacros.h>
 #import <YJKit/YJClangMacros.h>
 #import <YJKit/YJKVCMacros.h>
+#import <YJKit/YJDelegateAndDataSourceCrashPrecaution.h>
 
 #else
 
@@ -25,5 +26,6 @@
 #import "YJConfigureMacros.h"
 #import "YJClangMacros.h"
 #import "YJKVCMacros.h"
+#import "YJDelegateAndDataSourceCrashPrecaution.h"
 
 #endif

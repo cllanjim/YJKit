@@ -26,8 +26,6 @@
 #import <YJKit/NSBundle+YJCategory.h>
 #import <YJKit/NSTimer+YJBlockBased.h>
 
-#import <YJKit/YJDelegateAndDataSourceCrashPrecaution.h>
-
 #else
 
 #import "NSObject+YJExtension.h"
@@ -47,7 +45,5 @@
 #import "NSValue+YJGeometryExtension.h"
 #import "NSBundle+YJCategory.h"
 #import "NSTimer+YJBlockBased.h"
-
-#import "YJDelegateAndDataSourceCrashPrecaution.h"
 
 #endif
