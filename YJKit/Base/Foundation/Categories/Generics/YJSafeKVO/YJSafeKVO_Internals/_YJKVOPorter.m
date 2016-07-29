@@ -22,8 +22,7 @@
 }
 
 - (instancetype)init {
-    [NSException raise:NSGenericException format:@"Do not call init directly for %@.", self.class];
-    return [self initWithTarget:(id)[NSNull null] subscriber:(id)[NSNull null] targetKeyPath:(id)[NSNull null]];
+    return [self initWithTarget:nil subscriber:nil targetKeyPath:nil];
 }
 
 - (void)signUp {
@@ -51,8 +50,8 @@
         if (newValue == [NSNull null]) newValue = nil;
         if (self.changeHandler && self.subscriber) {
             self.changeHandler(self.subscriber, object, newValue, change);
-        } else if (self.valueHandler && self.subscriber) {
-            self.valueHandler(self.subscriber, newValue);
+        } else if (self.subscriberValueHandler && self.subscriber) {
+            self.subscriberValueHandler(self.subscriber, newValue);
         }
     };
     

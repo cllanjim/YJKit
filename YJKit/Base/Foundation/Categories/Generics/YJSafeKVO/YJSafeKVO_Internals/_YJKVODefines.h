@@ -23,4 +23,11 @@ typedef void(^YJKVOSubscriberTargetHandler)(id subscriber, id target);
 
 typedef void(^YJKVOSubscriberValueHandler)(id subscriber, id newValue);
 
+typedef void(^YJKVOValueHandler)(id newValue);
+typedef BOOL(^YJKVOValueFilteringHandler)(id newValue);
+typedef id(^YJKVOValueReturnHandler)(id newValue);
+
+typedef void(^YJKVOVoidHandler)(void);
+typedef id(^YJKVOVoidReturnHandler)(void);
+
 #endif /* _YJKVODefines_h */

@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "YJTuple.h"
 #import "YJObjectCombination.h"
 #import "YJUnsafeObjectCombinator.h"
 
@@ -39,7 +40,7 @@
 }
 
 - (void)testYJUnsafeObjectCombinatorMacro {
-    YJUnsafeObjectCombinator *tuple = YJUnsafeObjectCombinatorPack(@1,@2,@3);
+    YJUnsafeObjectCombinator *tuple = YJUnsafeObjectCombinator(@1,@2,@3);
     XCTAssertTrue([tuple.first isEqualToNumber:@1]);
     XCTAssertTrue([tuple[1] isEqualToNumber:@2]);
     XCTAssertTrue([tuple[2] isEqualToNumber:@3]);
@@ -48,8 +49,35 @@
 }
 
 - (void)testYJUnsafeObjectCombinatorMacro1 {
-    YJUnsafeObjectCombinator *tuple = YJUnsafeObjectCombinatorPack(@1,@2,@3,@4,@5,@6,@7,@8,@9,@10);
+    YJUnsafeObjectCombinator *tuple = YJUnsafeObjectCombinator(@1,@2,@3,@4,@5,@6,@7,@8,@9,@10);
     XCTAssertTrue([tuple.tenth isEqualToNumber:@10]);
+}
+
+- (void)testYJTupleMacro {
+    YJTuple *tuple = YJTuple(@1,@2,@3,@4,@5,@6,@7,@8,@9,@10);
+    XCTAssertTrue([tuple.fifth isEqualToNumber:@5]);
+    XCTAssertTrue([tuple.last isEqualToNumber:@10]);
+    XCTAssertTrue([tuple[9] isEqualToNumber:@10]);
+    
+    int i = 1;
+    for (NSNumber *num in tuple) {
+        XCTAssertTrue(i == [num intValue]);
+        i++;
+    }
+}
+
+- (void)testYJTupleFromArray {
+    NSArray *arr = @[ @1,@2,@3,@4,@5,@6,@7,@8,@9,@10 ];
+    YJTuple *tuple = [YJTuple tupleWithArray:arr];
+    XCTAssertTrue([tuple.fifth isEqualToNumber:@5]);
+    XCTAssertTrue([tuple.last isEqualToNumber:@10]);
+    XCTAssertTrue([tuple[9] isEqualToNumber:@10]);
+    
+    int i = 1;
+    for (NSNumber *num in tuple) {
+        XCTAssertTrue(i == [num intValue]);
+        i++;
+    }
 }
 
 @end

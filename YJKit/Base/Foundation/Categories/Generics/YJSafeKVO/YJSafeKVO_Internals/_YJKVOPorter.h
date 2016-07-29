@@ -31,13 +31,13 @@ __attribute__((visibility("hidden")))
 @property (nonatomic, readonly) BOOL employed;
 
 /// The KVO target.
-@property (nullable, nonatomic, readonly, assign) __kindof NSObject *target;
+@property (nullable, nonatomic, assign) __kindof NSObject *target;
 
 /// The KVO subscriber.
-@property (nullable, nonatomic, readonly, assign) __kindof NSObject *subscriber;
+@property (nullable, nonatomic, assign) __kindof NSObject *subscriber;
 
 /// The key path of target for observing.
-@property (nullable, nonatomic, readonly, copy) NSString *targetKeyPath;
+@property (nullable, nonatomic, copy) NSString *targetKeyPath;
 
 /// The key value observing options, default is (.initial | .new)
 @property (nonatomic) NSKeyValueObservingOptions observingOptions;
@@ -49,7 +49,7 @@ __attribute__((visibility("hidden")))
 @property (nullable, nonatomic, copy) YJKVODefaultChangeHandler changeHandler;
 
 /// The value handler for handling value changes.
-@property (nullable, nonatomic, copy) YJKVOSubscriberValueHandler valueHandler;
+@property (nullable, nonatomic, copy) YJKVOSubscriberValueHandler subscriberValueHandler;
 
 @end
 

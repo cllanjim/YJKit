@@ -49,7 +49,7 @@ class YJKVOTest_Swift: XCTestCase {
         let foo = Foo()
         let bar = Bar()
         
-        PACK(foo, "name").bound(PACK(bar, "name"))
+        PACK(foo, "name").boundTo(PACK(bar, "name"))
         
         bar.name = "Bar"
         XCTAssert(foo.name == "Bar")
@@ -62,21 +62,20 @@ class YJKVOTest_Swift: XCTestCase {
         let foo = Foo()
         let bar = Bar()
         
-        PACK(foo, "name").piped(PACK(bar, "name"))
-            .taken { (_, _, newValue) -> Bool in
+        PACK(foo, "name").boundTo(PACK(bar, "name"))
+            .filter { (newValue) -> Bool in
                 if let name = newValue as? String {
                     return name.characters.count > 3
                 }
                 return false
             }
-            .convert { (_, _, newValue) -> AnyObject in
+            .convert { (newValue) -> AnyObject in
                 let name = newValue as! String
                 return name.uppercaseString
             }
-            .after { (_, _) in
+            .applied {
                 print("value updated.")
             }
-            .ready()
         
         bar.name = "Bar"
         XCTAssert(foo.name == nil)

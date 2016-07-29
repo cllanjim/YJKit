@@ -8,7 +8,7 @@
 
 #import "YJObjectCombination.h"
 
-#define YJUnsafeObjectCombinatorPack(...) YJObjectCombination(YJUnsafeObjectCombinator, __VA_ARGS__)
+#define YJUnsafeObjectCombinator(...) YJObjectCombination(YJUnsafeObjectCombinator, __VA_ARGS__)
 
 @interface YJUnsafeObjectCombinator : NSObject <YJObjectCombination>
 

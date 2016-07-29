@@ -12,7 +12,7 @@
 #import "_YJKVOSubscriberManager.h"
 #import "_YJKVOPorterManager.h"
 #import "_YJKVOPorter.h"
-#import "_YJKVOBindingPorter.h"
+#import "_YJKVOAssemblingPorter.h"
 
 /*
     Remember: 
@@ -55,7 +55,7 @@
     // manage porter
     _YJKVOPorterManager *porterManager = subscriber.yj_KVOPorterManager;
     if (!porterManager) {
-        porterManager = [[_YJKVOPorterManager alloc] initWithOwner:subscriber];
+        porterManager = [[_YJKVOPorterManager alloc] initWithSubscriber:subscriber];
         subscriber.yj_KVOPorterManager = porterManager;
     }
     [porterManager addPorter:porter];
@@ -145,7 +145,7 @@
 
 - (void)dismissSubscriber:(__kindof NSObject *)subscriber {
     @autoreleasepool {
-        NSMutableSet *targets = [NSMutableSet new];
+        NSMutableSet *targets = [NSMutableSet setWithCapacity:50];
         
         _YJKVOPorterManager *porterManager = subscriber.yj_KVOPorterManager;
         [porterManager enumeratePortersUsingBlock:^(__kindof _YJKVOPorter * _Nonnull porter, BOOL * _Nonnull stop) {

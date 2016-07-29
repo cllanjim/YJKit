@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "YJKVOPacker.h"
+#import "YJKVOPort.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  @brief The receiver observe the target with key path by using Key-Value Observing mechanism with block based callback.
  
- @param targetAndKeyPath    The YJKVOPacker object for wrapping object and its key path, using PACK(target, keyPath).
+ @param targetAndKeyPath    The YJKVOPort object for wrapping object and its key path, using PACK(target, keyPath).
  @param updates             The block of code will be performed both immediately and when observed value changes.
  */
 - (void)observe:(PACK)targetAndKeyPath updates:(void(^)(id receiver, id target, id _Nullable newValue))updates;
@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  @brief The receiver observe the target with key path by using Key-Value Observing mechanism with block based callback.
  
- @param targetsAndKeyPaths  The array of YJKVOPacker object for wrapping object and its key path, using PACK(target, keyPath).
+ @param targetsAndKeyPaths  The array of YJKVOPort object for wrapping object and its key path, using PACK(target, keyPath).
  @param updates             The block of code will be performed both immediately and when observed value changes.
  */
 - (void)observeGroup:(NSArray <PACK> *)targetsAndKeyPaths
@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  @brief The receiver observe the target with key path by using Key-Value Observing mechanism with block based callback.
  
- @param targetAndKeyPath    The YJKVOPacker object for wrapping object and its key path, using PACK(target, keyPath).
+ @param targetAndKeyPath    The YJKVOPort object for wrapping object and its key path, using PACK(target, keyPath).
  @param options             A combination of the NSKeyValueObservingOptions values that specifies what is included in observation notifications. 
  @param queue               The operation queue to which block should be added.
  @param changes             The block of code will be performed when observed value changes.
@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  @brief Manually stop observing the key path when you finish the job.
  
- @param targetAndKeyPath    The YJKVOPacker object for wrapping object and its key path, using PACK(target, keyPath).
+ @param targetAndKeyPath    The YJKVOPort object for wrapping object and its key path, using PACK(target, keyPath).
  */
 - (void)unobserve:(PACK)targetAndKeyPath;
 

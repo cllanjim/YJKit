@@ -7,7 +7,8 @@
 //
 
 #import "YJTestClasses.h"
-#import "YJKVOPacker.h"
+#import "YJKVOPort.h"
+#import "YJObjcMacros.h"
 
 @interface Foo ()
 @property (nonatomic, copy) NSString *privateName;
@@ -41,7 +42,9 @@
 }
 
 - (void)testKVOPost {
-    [PACK([Bar sharedBar], name) post:^(id  _Nonnull self, id  _Nullable newValue) {
+    @weakify(self)
+    [PACK([Bar sharedBar], name) post:^(id  _Nullable newValue) {
+        @strongify(self)
         NSLog(@"Shared bar has a new name: %@ and it tells %@", newValue, self);
     }];
 }
@@ -61,7 +64,7 @@
 }
 
 + (instancetype)bar {
-    return [Bar bar];
+    return [[Bar alloc] init];
 }
 
 - (void)sayYoo { NSLog(@"instance yoo"); }
@@ -106,14 +109,18 @@
 }
 
 - (void)testKVOPost {
-    [PACK([Bar sharedBar], name) post:^(id  _Nonnull self, id  _Nullable newValue) {
+    @weakify(self)
+    [PACK([Bar sharedBar], name) post:^(id  _Nullable newValue) {
+        @strongify(self)
         NSLog(@"Shared bar has a new name: %@ and it tells %@", newValue, self);
     }];
 }
 
 - (void)testKVOPost2 {
     self.name = @"Clown";
-    [PACK(self, name) post:^(id  _Nonnull self, id  _Nullable newValue) {
+    @weakify(self)
+    [PACK(self, name) post:^(id  _Nullable newValue) {
+        @strongify(self)
         NSLog(@"%@'s name is %@", self, newValue);
     }];
     self.name = @"Clownnnnn";

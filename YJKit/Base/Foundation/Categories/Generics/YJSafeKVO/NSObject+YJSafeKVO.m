@@ -9,6 +9,7 @@
 #import <objc/runtime.h>
 #import "NSObject+YJSafeKVO.h"
 #import "NSObject+YJKVOExtension.h"
+#import "YJKVOPair.h"
 #import "_YJKVOPorter.h"
 #import "_YJKVOGroupingPorter.h"
 #import "_YJKVOExecutiveOfficer.h"
@@ -24,18 +25,18 @@ YJKVODefaultChangeHandler (^yj_convertedKVOChangeHandler)(YJKVOSubscriberTargetV
 
 @implementation NSObject (YJSafeKVO)
 
-- (void)observe:(PACK)targetAndKeyPath updates:(void(^)(id receiver, id target, id _Nullable newValue))updates {
-    if (targetAndKeyPath.isValid) {
-        [self observeTarget:targetAndKeyPath.object
-                    keyPath:targetAndKeyPath.keyPath
+- (void)observe:(PACK)port updates:(void(^)(id receiver, id target, id _Nullable newValue))updates {
+    if (port.pair.isValid) {
+        [self observeTarget:port.pair.object
+                    keyPath:port.pair.keyPath
                     options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew)
                       queue:nil
                     changes:yj_convertedKVOChangeHandler(updates)];
     }
 }
 
-- (void)observeGroup:(NSArray <PACK> *)targetsAndKeyPaths updates:(void(^)())updates {
-    if (!targetsAndKeyPaths.count)
+- (void)observeGroup:(NSArray <PACK> *)ports updates:(void(^)())updates {
+    if (!ports.count)
         return;
     
     __kindof NSObject *subscriber = self;
@@ -43,27 +44,27 @@ YJKVODefaultChangeHandler (^yj_convertedKVOChangeHandler)(YJKVOSubscriberTargetV
     _YJKVOGroupingPorter *porter = [[_YJKVOGroupingPorter alloc] initWithSubscriber:subscriber];
     porter.multipleValueHandler = updates;
     
-    for (PACK targetAndKeyPath in targetsAndKeyPaths) {
-        if (targetAndKeyPath.isValid) {
-            [porter addTarget:targetAndKeyPath.object keyPath:targetAndKeyPath.keyPath];
+    for (PACK port in ports) {
+        if (port.pair.isValid) {
+            [porter addTarget:port.pair.object keyPath:port.pair.keyPath];
         }
     }
     
-    for (PACK targetAndKeyPath in targetsAndKeyPaths) {
-        if (targetAndKeyPath.isValid) {
-            [[_YJKVOExecutiveOfficer officer] organizeTarget:targetAndKeyPath.object subscriber:subscriber porter:porter];
+    for (PACK port in ports) {
+        if (port.pair.isValid) {
+            [[_YJKVOExecutiveOfficer officer] organizeTarget:port.pair.object subscriber:subscriber porter:porter];
         }
     }
 }
 
-- (void)observe:(PACK)targetAndKeyPath
+- (void)observe:(PACK)port
         options:(NSKeyValueObservingOptions)options
           queue:(nullable NSOperationQueue *)queue
         changes:(void(^)(id receiver, id target, id _Nullable newValue, NSDictionary *change))changes {
     
-    if (targetAndKeyPath.isValid) {
-        [self observeTarget:targetAndKeyPath.object
-                    keyPath:targetAndKeyPath.keyPath
+    if (port.pair.isValid) {
+        [self observeTarget:port.pair.object
+                    keyPath:port.pair.keyPath
                     options:options
                       queue:queue
                     changes:changes];
@@ -94,9 +95,9 @@ YJKVODefaultChangeHandler (^yj_convertedKVOChangeHandler)(YJKVOSubscriberTargetV
     [[_YJKVOExecutiveOfficer officer] organizeTarget:target subscriber:self porter:porter];
 }
 
-- (void)unobserve:(PACK)targetAndKeyPath {
-    if (targetAndKeyPath.isValid) {
-        [self unobserveTarget:targetAndKeyPath.object keyPath:targetAndKeyPath.keyPath];
+- (void)unobserve:(PACK)port {
+    if (port.pair.isValid) {
+        [self unobserveTarget:port.pair.object keyPath:port.pair.keyPath];
     }
 }
 

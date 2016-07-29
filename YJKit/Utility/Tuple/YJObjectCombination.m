@@ -34,7 +34,7 @@ id yj_comb_new(Class cls, id first, ...) {
 }
 
 void yj_comb_set(id <YJObjectCombination> tuple, id obj, NSUInteger idx) {
-    NSCParameterAssert(idx >= 0 && idx < YJ_MUTABLE_TUPLE_MAX_NUMBER_OF_VALUES);
+    NSCParameterAssert(idx >= 0 && idx < YJ_OBJECT_COMBINATOR_MAX_VALUE_COUNT);
     switch (idx) {
         case 0: [tuple setFirst:obj]; break;
         case 1: [tuple setSecond:obj]; break;
@@ -51,7 +51,7 @@ void yj_comb_set(id <YJObjectCombination> tuple, id obj, NSUInteger idx) {
 }
 
 id yj_comb_get(id <YJObjectCombination> tuple, NSUInteger idx) {
-    NSCParameterAssert(idx >= 0 && idx < YJ_MUTABLE_TUPLE_MAX_NUMBER_OF_VALUES);
+    NSCParameterAssert(idx >= 0 && idx < YJ_OBJECT_COMBINATOR_MAX_VALUE_COUNT);
     switch (idx) {
         case 0: return [tuple first];
         case 1: return [tuple second];

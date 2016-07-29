@@ -12,6 +12,7 @@
 #import "NSObject+YJKVOExtension.h"
 #import "_YJKVOSubscriberManager.h"
 #import "_YJKVOPorterManager.h"
+#import "NSObject+YJAssociatedIdentifier.h"
 
 @interface YJKVOTest : XCTestCase
 @property (nonatomic, strong) Foo *foo;
@@ -29,7 +30,7 @@
 }
 
 - (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+    // Put teardown code here. This method is called applied the invocation of each test method in the class.
     self.foo = nil;
     self.bar = nil;
     [super tearDown];
@@ -370,32 +371,30 @@
     XCTAssertTrue(result == YES);
 }
 
-- (void)testBinding {
-    [[[PACK(self.foo, sleep) piped:PACK(self.bar, name)]
-     convert:^id _Nonnull(id  _Nonnull subscriber, id  _Nonnull target, NSString *newValue) {
+- (void)testSubscribeFrom {
+    [[[PACK(self.foo, sleep) boundTo:PACK(self.bar, name)]
+     convert:^id _Nonnull(NSString *newValue) {
         return @(newValue.length < 10 ? NO : YES);
     }]
-     after:^(id  _Nonnull subscriber, id  _Nonnull target) {
-         NSLog(@"after.");
+     applied:^{
+         NSLog(@"applied.");
     }];
     
     self.bar.name = @"BINDING";
-    NSLog(@"sleep: %@, %@", self.foo.sleep ? @"YES" : @"NO", @(self.foo.sleep));
     XCTAssertTrue(self.foo.sleep == NO);
     
     self.bar.name = @"BINDING_BINDING";
-    NSLog(@"sleep: %@, %@", self.foo.sleep ? @"YES" : @"NO", @(self.foo.sleep));
     XCTAssertTrue(self.foo.sleep == YES);
 }
 
-- (void)testBinding2 {
+- (void)testSubscribeFrom2 {
     Clown *clown = [Clown new];
     clown.name = @"Clown";
     
     __weak id weakClown = clown;
     
     @autoreleasepool {
-        [PACK(self.foo, friend.name) piped:PACK(clown, name)];
+        [PACK(self.foo, friend.name) boundTo:PACK(clown, name)];
     }
     
     clown.name = @"ClownClownClown";
@@ -406,20 +405,20 @@
     XCTAssertTrue(weakClown == nil);
 }
 
-- (void)testBinding3 {
+- (void)testSubscribeFrom3 {
     Clown *clown = [Clown new];
     clown.name = @"Clown";
     
-    [PACK(self.foo, name) piped:PACK(clown, name)];
-    [PACK(self.bar, name) piped:PACK(clown, name)];
+    [PACK(self.foo, name) boundTo:PACK(clown, name)];
+    [PACK(self.bar, name) boundTo:PACK(clown, name)];
     
     self.foo.sleep = NO;
     self.foo.awake = NO;
     
-    [[PACK(self.foo, sleep) piped:PACK(clown, name)] convert:^id _Nonnull(id  _Nonnull subscriber, id  _Nonnull target, id  _Nullable newValue) {
+    [[PACK(self.foo, sleep) boundTo:PACK(clown, name)] convert:^id _Nonnull(id  _Nullable newValue) {
         return [newValue length] > 10 ? @YES : @NO;
     }];
-    [[PACK(self.foo, awake) piped:PACK(clown, name)] taken:^BOOL(id  _Nonnull subscriber, id  _Nonnull target, id  _Nullable newValue) {
+    [[PACK(self.foo, awake) boundTo:PACK(clown, name)] filter:^BOOL(id  _Nullable newValue) {
         return NO;
     }];
 
@@ -432,14 +431,14 @@
 }
 
 - (void)testDeadBinding {
-//    [PACK(self.bar, name) piped:PACK(self.foo, name)];
-//    [PACK(self.foo, name) piped:PACK(self.bar, name)];
+//    [PACK(self.bar, name) boundTo:PACK(self.foo, name)];
+//    [PACK(self.foo, name) boundTo:PACK(self.bar, name)];
 //    self.foo.name = @"Fooo";
 }
 
 - (void)testPipe {
     self.bar.name = @"Barrrr";
-    [PACK(self.foo, name) bound:PACK(self.bar, name)];
+    [[PACK(self.foo, name) boundTo:PACK(self.bar, name)] now];
     XCTAssertTrue([self.foo.name isEqualToString:@"Barrrr"]);
 }
 
@@ -448,7 +447,7 @@
     Bar *bar = [Bar new];
     foo.friend = bar;
     bar.name = @"Bar";
-    [[PACK(foo, name) piped:PACK(foo, friend.name)] ready];
+    [[PACK(foo, name) boundTo:PACK(foo, friend.name)] now];
     XCTAssertTrue([foo.name isEqualToString:@"Bar"]);
 }
 
@@ -458,29 +457,29 @@
     Clown *clown = [Clown new];
     
     foo.name = @"Fo";
-    [PACK(bar, name) bound:PACK(foo, name)];
+    [PACK(bar, name) boundTo:PACK(foo, name)];
     foo.name = @"Foo";
-    [PACK(clown, name) bound:PACK(bar, name)];
+    [PACK(clown, name) boundTo:PACK(bar, name)];
     foo.name = @"Fooo";
     XCTAssertTrue([clown.name isEqualToString:@"Fooo"]);
 }
 
-- (void)testConvert {
+- (void)testFromAndConvert {
     Bar *bar = [Bar new];
     Clown *clown = [Clown new];
     bar.frame = (CGRect){ 1,2,3,4 };
-    [[[PACK(clown, size) piped:PACK(bar, frame)] convert:^id _Nonnull(id  _Nonnull subscriber, id  _Nonnull target, id  _Nullable newValue) {
+    [[[PACK(clown, size) boundTo:PACK(bar, frame)] convert:^id _Nonnull(id  _Nullable newValue) {
         CGRect frame = [newValue CGRectValue];
         return [NSValue valueWithCGSize:frame.size];
-    }] ready];
+    }] now];
     XCTAssertTrue(clown.size.width == 3 && clown.size.height == 4);
 }
 
-- (void)testBindPrimitives {
+- (void)testFromWithPrimitives {
     Foo *foo = [Foo new];
     Bar *bar = [Bar new];
     bar.frame = (CGRect){ 1,2,3,4 };
-    [PACK(foo, frame) bound:PACK(bar, frame)];
+    [[PACK(foo, frame) boundTo:PACK(bar, frame)] now];
     XCTAssertTrue(CGRectEqualToRect(foo.frame, (CGRect){ 1,2,3,4 }));
 }
 
@@ -492,7 +491,7 @@
     foo.name = @"Foo";
     bar.name = @"Bar";
     
-    [PACK(clown, name) flooded:@[ PACK(foo, name), PACK(bar, name) ] reduce:^id _Nonnull(NSString *fooName, NSString *barName){
+    [PACK(clown, name) combineLatest:@[ PACK(foo, name), PACK(bar, name) ] reduce:^id _Nonnull(NSString *fooName, NSString *barName){
         return (fooName && barName) ? [fooName stringByAppendingString:barName] : nil;
     }];
     
@@ -508,7 +507,7 @@
     
     bar2.name = @"Bar2";
     
-    [PACK(clown, size) flooded:@[ PACK(foo, sleep), PACK(foo, awake), PACK(bar1, frame), PACK(bar1, name), PACK(bar2, name) ] reduce:^id (NSNumber *sleepValue, NSNumber *awakeValue, NSValue *frameValue, NSString *bar1Name, NSString *bar2Name){
+    [PACK(clown, size) combineLatest:@[ PACK(foo, sleep), PACK(foo, awake), PACK(bar1, frame), PACK(bar1, name), PACK(bar2, name) ] reduce:^id (NSNumber *sleepValue, NSNumber *awakeValue, NSValue *frameValue, NSString *bar1Name, NSString *bar2Name){
         BOOL sleep = [sleepValue boolValue];
         BOOL awake = [awakeValue boolValue];
         CGRect frame = [frameValue CGRectValue];
@@ -567,15 +566,15 @@
     __block int j = 0;
     
     @autoreleasepool {
-        [PACK(foo, name) post:^(id self, NSString *name) {
+        [[PACK(foo, name) post:^(NSString *name) {
             NSLog(@"%@'s name: %@", weakFoo, name);
             i++;
-        }];
+        }] now];
         
-        [PACK(foo, sleep) post:^(id self, NSValue *value) {
+        [[PACK(foo, sleep) post:^(NSValue *value) {
             NSLog(@"%@ sleep: %@", weakFoo, value);
             j++;
-        }];
+        }] now];
     }
     
     foo.name = @"Foo";
@@ -631,8 +630,8 @@
     Foo *foo = [Foo new];
     Bar *bar = [Bar new];
     
-    [PACK(foo, name) bound:PACK(bar, name)];
-    [PACK(foo, nickname) bound:PACK(bar, name)];
+    [PACK(foo, name) boundTo:PACK(bar, name)];
+    [PACK(foo, nickname) boundTo:PACK(bar, name)];
     
     bar.name = @"Bar";
     
@@ -652,6 +651,113 @@
     
     XCTAssertTrue([foo.name isEqualToString:@"Bar"]);
     XCTAssertTrue([foo.nickname isEqualToString:@"NewBar"]);
+}
+
+- (void)testNestedPost {
+    Foo *foo = [Foo new];
+    
+    [[[PACK(foo, name) filter:^BOOL(NSString *newValue) {
+        return newValue.length > 5;
+    }] convert:^id _Nullable(NSString *newValue) {
+        return [newValue uppercaseString];
+    }] post:^(NSString *newValue) {
+        XCTAssertTrue([newValue isEqualToString:@"FOOOOO"]);
+    }];
+    
+    foo.name = @"foo";
+    foo.name = @"fooooo";
+}
+
+- (void)testBindingWithMultiConditions {
+    Foo *foo = [Foo new];
+    Bar *bar = [Bar new];
+    
+    foo.name = @"123";
+    
+    [[[[[[[[PACK(foo, name) bindTo:PACK(bar, name)]
+           applied:^{
+               NSLog(@"^^^^^^^^^^");
+           }] filter:^BOOL(NSString *name) {
+               return name.length > 5;
+           }] convert:^id _Nullable(NSString *name) {
+               return [name uppercaseString];
+           }] filter:^BOOL(NSString *name) {
+               return [name hasPrefix:@"ABC"];
+           }] convert:^id _Nullable(NSString *name) {
+               return [name lowercaseString];
+           }] applied:^{
+               NSLog(@"@@@@@@@@@@");
+           }] now];
+    
+    foo.name = @"foo";
+    XCTAssertTrue(bar.name == nil);
+    
+    foo.name = @"fooooooooooooo";
+    XCTAssertTrue(bar.name == nil);
+
+    foo.name = @"abcabcabcabc";
+    XCTAssertTrue([bar.name isEqualToString:@"abcabcabcabc"]);
+}
+
+- (void)testPipeWithMultiConditions {
+    Foo *foo = [Foo new];
+    Bar *bar = [Bar new];
+    
+    foo.name = @"123";
+    
+    [[[[[[[[PACK(bar, name) boundTo:PACK(foo, name)]
+           applied:^{
+               NSLog(@"^^^^^^^^^^");
+           }] filter:^BOOL(NSString *name) {
+               return name.length > 5;
+           }] convert:^id _Nullable(NSString *name) {
+               return [name uppercaseString];
+           }] filter:^BOOL(NSString *name) {
+               return [name hasPrefix:@"ABC"];
+           }] convert:^id _Nullable(NSString *name) {
+               return [name lowercaseString];
+           }] applied:^{
+               NSLog(@"@@@@@@@@@@");
+           }] now];
+    
+    foo.name = @"foo";
+    XCTAssertTrue(bar.name == nil);
+    
+    foo.name = @"fooooooooooooo";
+    XCTAssertTrue(bar.name == nil);
+    
+    foo.name = @"abcabcabcabc";
+    XCTAssertTrue([bar.name isEqualToString:@"abcabcabcabc"]);
+}
+
+- (void)testLoop {
+    
+    return;
+        
+    __block Foo *foo = [Foo new];
+    __block Bar *bar = [Bar new];
+    
+    NSLog(@"foo = %p", foo);
+    NSLog(@"bar = %p", bar);
+    
+    @autoreleasepool {
+        [PACK(foo, name) bindTo:PACK(bar, name)];
+    }
+    
+    NSOperationQueue *q1 = [NSOperationQueue mainQueue];
+    NSOperationQueue *q2 = [NSOperationQueue new];
+    
+    [q1 addOperationWithBlock:^{
+        static int i = 0;
+        while (foo && i < 99999) {
+            foo.name = @"foo";
+            i++;
+        }
+    }];
+    
+    [q2 addOperationWithBlock:^{
+        foo = nil;
+    }];
 }
 
 @end

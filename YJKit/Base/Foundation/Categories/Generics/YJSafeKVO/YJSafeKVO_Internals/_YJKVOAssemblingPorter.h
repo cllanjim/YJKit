@@ -8,26 +8,27 @@
 
 #import "_YJKVOPorter.h"
 
-NS_ASSUME_NONNULL_BEGIN
+FOUNDATION_EXTERN const NSInteger YJKeyValueFilteringTag;
+FOUNDATION_EXTERN const NSInteger YJKeyValueConvertingTag;
+FOUNDATION_EXTERN const NSInteger YJKeyValueAppliedTag;
 
-typedef BOOL(^YJKVOValueTakenHandler)(id subscriber, id target, id _Nullable newValue);
+@class YJObjectCombinator;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /// The class for deliver the value changes.
 
 __attribute__((visibility("hidden")))
 @interface _YJKVOAssemblingPorter : _YJKVOPorter
 
-/// The value change callback block which only for converting changes.
-@property (nonatomic, copy) YJKVOSubscriberTargetValueReturnHandler convertHandler;
+/// Associate with subscribers's key path for applying changes directly.
+@property (nullable, nonatomic, copy) NSString *subscriberKeyPath;
 
-/// The value change callback block which only for filtering changes.
-@property (nonatomic, copy) YJKVOValueTakenHandler takenHandler;
+/// The value change callback block.
+@property (nullable, nonatomic, copy) YJKVOValueHandler valueHandler;
 
-/// The value change callback block which only called after applying changes.
-@property (nonatomic, copy) YJKVOSubscriberTargetHandler afterHandler;
-
-/// Handle changed value.
-- (void)handleValue:(nullable id)value fromObject:(id)object keyPath:(NSString *)keyPath;
+/// Add handler block for handling value changes.
+- (void)addKVOHandler:(id)handler forTag:(NSInteger)tag;
 
 @end
 

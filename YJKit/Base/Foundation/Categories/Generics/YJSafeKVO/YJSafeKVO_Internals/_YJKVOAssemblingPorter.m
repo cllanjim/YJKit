@@ -7,35 +7,81 @@
 //
 
 #import "_YJKVOAssemblingPorter.h"
+#import "YJObjectCombinator.h"
+#import "NSObject+YJAssociatedIdentifier.h"
+
+const NSInteger YJKeyValueFilteringTag = __LINE__;
+const NSInteger YJKeyValueConvertingTag = __LINE__;
+const NSInteger YJKeyValueAppliedTag = __LINE__;
+
+@interface _YJKVOAssemblingPorter()
+@property (nonatomic, strong) YJObjectCombinator *handlers;
+@property (nonatomic, strong) id processedValue;
+@property (nonatomic, assign) BOOL valueAccepted;
+@property (nonatomic, assign) BOOL dispatched;
+@end
 
 @implementation _YJKVOAssemblingPorter
+
+- (instancetype)initWithTarget:(__kindof NSObject *)target subscriber:(__kindof NSObject *)subscriber targetKeyPath:(NSString *)targetKeyPath {
+    self = [super initWithTarget:target subscriber:subscriber targetKeyPath:targetKeyPath];
+    if (self) {
+        _handlers = [YJObjectCombinator new];
+    }
+    return self;
+}
+
+- (void)addKVOHandler:(id)handler forTag:(NSInteger)tag {
+    for (int i = 0; i < YJ_OBJECT_COMBINATOR_MAX_VALUE_COUNT; i++) {
+        if (!self.handlers[i]) {
+            id block = [handler copy];
+            [block setAssociatedTag:tag];
+            self.handlers[i] = block;
+            break;
+        }
+    }
+}
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     
     id newValue = change[NSKeyValueChangeNewKey];
     if (newValue == [NSNull null]) newValue = nil;
     
-    BOOL taken = YES;
-    if (self.takenHandler) {
-        taken = self.takenHandler(self.subscriber, object, newValue);
-    }
-    if (!taken) return;
+    self.processedValue = newValue;
+    self.valueAccepted = YES;
     
-    id convertedValue = newValue;
-    if (self.convertHandler) {
-        convertedValue = self.convertHandler(self.subscriber, object, newValue);
+    NSMutableArray *applies = [NSMutableArray arrayWithCapacity:YJ_OBJECT_COMBINATOR_MAX_VALUE_COUNT];
+    
+    for (int i = 0; i < YJ_OBJECT_COMBINATOR_MAX_VALUE_COUNT; i++) {
+        id block = self.handlers[i];
+        if (!block) break;
+        
+        NSInteger tag = [block associatedTag];
+        
+        if (tag == YJKeyValueFilteringTag) {
+            YJKVOValueFilteringHandler handler = block;
+            self.valueAccepted = handler(self.processedValue);
+            if (!self.valueAccepted) break;
+        } else if (tag == YJKeyValueConvertingTag) {
+            YJKVOValueReturnHandler handler = block;
+            self.processedValue = handler(self.processedValue);
+        } else if (tag == YJKeyValueAppliedTag) {
+            [applies addObject:block];
+        }
     }
     
-    [self handleValue:convertedValue fromObject:object keyPath:keyPath];
+    if (!self.valueAccepted)
+        return;
     
-    if (self.afterHandler) {
-        self.afterHandler(self.subscriber, object);
+    if (self.subscriberKeyPath) {
+        [self.subscriber setValue:self.processedValue forKeyPath:self.subscriberKeyPath];
+    } else if (self.valueHandler) {
+        self.valueHandler(self.processedValue);
     }
-}
-
-- (void)handleValue:(nullable id)value fromObject:(id)object keyPath:(NSString *)keyPath {
-    if (self.subscriber && self.valueHandler) {
-        self.valueHandler(self.subscriber, value);
+    
+    for (id block in applies) {
+        YJKVOVoidHandler handler = block;
+        handler();
     }
 }
 

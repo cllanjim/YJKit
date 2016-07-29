@@ -10,7 +10,7 @@
 
 #define YJObjectCombination(CLASS, ...) yj_comb_new([CLASS class], __VA_ARGS__, nil)
 
-#define YJ_MUTABLE_TUPLE_MAX_NUMBER_OF_VALUES 10
+#define YJ_OBJECT_COMBINATOR_MAX_VALUE_COUNT 10
 
 NS_ASSUME_NONNULL_BEGIN
 

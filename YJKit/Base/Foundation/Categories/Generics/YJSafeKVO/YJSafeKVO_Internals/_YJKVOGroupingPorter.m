@@ -40,7 +40,7 @@
 }
 
 - (void)addTarget:(__kindof NSObject *)target keyPath:(NSString *)keyPath {
-    [self.targetsAndKeyPaths addObject:YJUnsafeMixedObjectCombinatorPack(target, keyPath)];
+    [self.targetsAndKeyPaths addObject:YJUnsafeMixedObjectCombinator(target, keyPath)];
 }
 
 - (void)signUp {
@@ -86,7 +86,7 @@
 
 - (BOOL)applyNewValue:(nullable id)newValue fromKeyPath:(NSString *)keyPath ofObject:(id)object {
     
-    NSAssert(self.targetsAndKeyPaths.count <= YJ_MUTABLE_TUPLE_MAX_NUMBER_OF_VALUES, @"YJSafeKVO Exception - Too many key paths observing, should less then %@, but you have %@", @(YJ_MUTABLE_TUPLE_MAX_NUMBER_OF_VALUES), @(self.targetsAndKeyPaths.count));
+    NSAssert(self.targetsAndKeyPaths.count <= YJ_OBJECT_COMBINATOR_MAX_VALUE_COUNT, @"YJSafeKVO Exception - Too many key paths observing, should less then %@, but you have %@", @(YJ_OBJECT_COMBINATOR_MAX_VALUE_COUNT), @(self.targetsAndKeyPaths.count));
     
     NSInteger index = NSNotFound;
     for (int i = 0; i < (int)self.targetsAndKeyPaths.count; i++) {

@@ -10,6 +10,7 @@
 
 #import <YJKit/YJTuple.h>
 #import <YJKit/YJObjectCombination.h>
+#import <YJKit/YJObjectCombinator.h>
 #import <YJKit/YJUnsafeObjectCombinator.h>
 #import <YJKit/YJUnsafeMixedObjectCombinator.h>
 
@@ -17,6 +18,7 @@
 
 #import "YJTuple.h"
 #import "YJObjectCombination.h"
+#import "YJObjectCombinator.h"
 #import "YJUnsafeObjectCombinator.h"
 #import "YJUnsafeMixedObjectCombinator.h"
 

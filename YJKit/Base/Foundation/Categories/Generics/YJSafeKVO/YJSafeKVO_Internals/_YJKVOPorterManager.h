@@ -19,7 +19,7 @@ __attribute__((visibility("hidden")))
 @interface _YJKVOPorterManager : NSObject
 
 /// designated initializer
-- (instancetype)initWithOwner:(__kindof NSObject *)owner NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithSubscriber:(__kindof NSObject *)owner NS_DESIGNATED_INITIALIZER;
 
 /// Add porter
 - (void)addPorter:(_YJKVOPorter *)porter;
