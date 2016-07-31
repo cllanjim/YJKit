@@ -115,13 +115,15 @@ static BOOL _yj_insertImpBlocksIntoMethod(id obj, SEL sel,
     if (!block || ![self isKindOfClass:[NSObject class]] || [self isMemberOfClass:[NSObject class]])
         return;
     
+    Class currCls = [self class];
+    
     // Add dealloc method to the current class if it doesn't implement one.
     SEL deallocSEL = sel_registerName("dealloc");
     Method deallocMtd = class_getInstanceMethod([self class], deallocSEL);
     const char *deallocType = method_getTypeEncoding(deallocMtd);
     
     IMP deallocIMP = imp_implementationWithBlock(^(__unsafe_unretained id obj){
-        struct objc_super superInfo = (struct objc_super){ obj, class_getSuperclass([obj class]) };
+        struct objc_super superInfo = (struct objc_super){ obj, class_getSuperclass(currCls) };
         ((void (*)(struct objc_super *, SEL)) objc_msgSendSuper)(&superInfo, deallocSEL);
     });
     
@@ -165,28 +167,3 @@ static BOOL _yj_insertImpBlocksIntoMethod(id obj, SEL sel,
 }
 
 @end
-
-// ------------------ Deprecated Implementation ------------------
-
-// In iOS 7, if you want exact IMP for dealloc method from UIResponder class and use runtime API to get the result,
-// the system will returns the dealloc IMP from NSObject class, which may not what you expected. So here is a simple
-// solution to fix it. Call -swizzleInstanceMethodsBySelector:andSelector: to add the dealloc method for UIResponder
-// first, then you can get exact dealloc IMP from UIResponder class.
-//
-//@implementation UIResponder (YJSwizzleDeallocForUIResponder)
-//
-//+ (void)load {
-//    static dispatch_once_t onceToken;
-//    dispatch_once(&onceToken, ^{
-//        [self swizzleInstanceMethodsBySelector:NSSelectorFromString(@"dealloc")
-//                                  andSelector:@selector(yj_handleResponderDealloc)];
-//    });
-//}
-//
-//- (void)yj_handleResponderDealloc {
-//    [self yj_handleResponderDealloc];
-//}
-//
-//@end
-
-
