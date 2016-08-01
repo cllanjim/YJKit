@@ -39,20 +39,25 @@ pod 'YJKit'
 
 ## 版本更新
 
-在`terminal`中使用`pod update YJKit`即可实现版本更新。这里特别需要注意，**Xcode缓存的`DerivedData`可能会造成新的代码不被编译**，如果遇到编译不过或者运行后没有识别新的代码等问题。解决方法是删除`DerivedData`，最方便的操作就是首先退出Xcode，然后在`terminal`中进行：
+在`terminal`中使用`pod update YJKit`即可实现版本更新。这里特别需要注意，**Xcode缓存的`DerivedData`可能会造成新的代码不被编译**，如果遇到编译不过或者运行后没有识别新的代码等问题，可以尝试删除`DerivedData`。首先退出Xcode，然后在`terminal`中进行：
 
 ```
 cd ~/Library/Developer/Xcode
 rm -rf DerivedData
 ```
 
-（本人推荐最好是定期删除一下，删完后，磁盘容量也瞬间腾出了好多好多）
-
 <br>
 
 ## YJKit Demo
 
 [YJKit Demo](https://github.com/huang-kun/YJKit) 进入后点击`Download ZIP`
+
+<br>
+
+## 版本 1.0.0（2016-8-1）
+
+* 修复YJSafeKVO的bug
+* 发布1.0.0
 
 <br>
 
@@ -497,7 +502,7 @@ imageView.yj_contentMode = YJViewContentModeScaleAspectFit | YJViewContentModeLe
 
 <br>
 
-## 版本 0.0.5
+## 版本 0.0.5 (2016-4-12)
 
 * 常用图片资源(如icon)的独立封装和准确加载，这里借鉴了`ibireme`的`YYKit`对于NSBundle的扩展
 * 指定屏幕像素尺寸
