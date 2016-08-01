@@ -114,11 +114,19 @@ typedef YJKVOPort * PACK;
 
 /**
  @brief Cutting off the binding relationship between subscriber's keyPath and source's keyPath.
- @discussion This is for cutting off -bounds: or -piped:
  @discussion After calling this, the subscriber with its key path will not receive the value changes
              from specified source with its key path.
  */
-- (void)cutOff:(PACK)sourceAndKeyPath;
+- (void)cutOffSource:(PACK)sourceAndKeyPath;
+
+
+/**
+ @brief Cutting off the binding relationship between subscriber's keyPath and source's keyPath.
+ @discussion After calling this, the source with its key path will not send value changes
+             to specified subscriber with its key path.
+ */
+- (void)cutOffSubscriber:(PACK)subscriberAndKeyPath;
+
 
 @end
 

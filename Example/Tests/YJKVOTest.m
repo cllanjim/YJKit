@@ -638,14 +638,14 @@
     XCTAssertTrue([foo.name isEqualToString:@"Bar"]);
     XCTAssertTrue([foo.nickname isEqualToString:@"Bar"]);
     
-    [PACK(foo, name) cutOff:PACK(bar, name)];
+    [PACK(foo, name) cutOffSource:PACK(bar, name)];
     
     bar.name = @"NewBar";
     
     XCTAssertTrue([foo.name isEqualToString:@"Bar"]);
     XCTAssertTrue([foo.nickname isEqualToString:@"NewBar"]);
     
-    [PACK(foo, nickname) cutOff:PACK(bar, name)];
+    [PACK(foo, nickname) cutOffSource:PACK(bar, name)];
     
     bar.name = @"FreshBar";
     

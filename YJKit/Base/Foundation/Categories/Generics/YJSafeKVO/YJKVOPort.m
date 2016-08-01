@@ -144,7 +144,7 @@
     self.assemblingPorter = nil;
 }
 
-- (void)cutOff:(YJKVOPort *)port {
+- (void)cutOffSource:(PACK)port {
     if (self.pair.isValid && port.pair.isValid) {
         [[_YJKVOExecutiveOfficer officer] dismissPortersFromTarget:port.pair.object
                                                      andSubscriber:self.pair.object
@@ -152,6 +152,18 @@
                                               andSubscriberKeyPath:self.pair.keyPath];
     }
     self.assemblingPorter = nil;
+    port.assemblingPorter = nil;
+}
+
+- (void)cutOffSubscriber:(PACK)port {
+    if (self.pair.isValid && port.pair.isValid) {
+        [[_YJKVOExecutiveOfficer officer] dismissPortersFromTarget:self.pair.object
+                                                     andSubscriber:port.pair.object
+                                                  forTargetKeyPath:self.pair.keyPath
+                                              andSubscriberKeyPath:port.pair.keyPath];
+    }
+    self.assemblingPorter = nil;
+    port.assemblingPorter = nil;
 }
 
 @end
