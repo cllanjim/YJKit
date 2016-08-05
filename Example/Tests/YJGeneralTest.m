@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+//#import "NSString+YJCompatible.h"
 
 @interface YJGeneralTest : XCTestCase
 
@@ -34,6 +35,26 @@
     [self measureBlock:^{
         // Put the code you want to measure the time of here.
     }];
+}
+
+- (void)testContainsString {
+//    id str = nil;
+//    XCTAssertTrue([@"hello world" containsString:(id)str] == NO);
+
+    XCTAssertTrue([@"hello world" containsString:@""] == NO);
+    XCTAssertTrue([@"" containsString:@""] == NO);
+    XCTAssertTrue([@"" containsString:@"1"] == NO);
+    XCTAssertTrue([@"hello" containsString:@"hello world"] == NO);
+    XCTAssertTrue([@"hello world" containsString:@"hello"]);
+    XCTAssertTrue([@"hello world" containsString:@"hello!"] == NO);
+    XCTAssertTrue([@"hello world" containsString:@"ll"]);
+    XCTAssertTrue([@"hello world" containsString:@"lli"] == NO);
+    XCTAssertTrue([@"hello world" containsString:@"world"]);
+    XCTAssertTrue([@"!@#$%^&*" containsString:@"^&*!"] == NO);
+    XCTAssertTrue([@"hello world" containsString:@" "]);
+    XCTAssertTrue([@" " containsString:@" "]);
+    XCTAssertTrue([@"  " containsString:@" "]);
+
 }
 
 @end

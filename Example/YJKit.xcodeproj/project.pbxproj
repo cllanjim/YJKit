@@ -113,6 +113,7 @@
 		7212B6F91D40927B007C4BFB /* YJKVOTest_Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7212B6F81D40927B007C4BFB /* YJKVOTest_Swift.swift */; };
 		72639EAD1D4A3EDA0063BA67 /* YJUnsafeMixedObjectCombinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 72639EAC1D4A3EDA0063BA67 /* YJUnsafeMixedObjectCombinator.m */; };
 		72639EB11D4A42860063BA67 /* YJTuple.m in Sources */ = {isa = PBXBuildFile; fileRef = 72639EB01D4A42860063BA67 /* YJTuple.m */; };
+		72F169201D54523700A29021 /* NSString+YJCompatible.m in Sources */ = {isa = PBXBuildFile; fileRef = 72F1691F1D54523700A29021 /* NSString+YJCompatible.m */; };
 		72FA5FE51D49E9F4008BDCA9 /* YJUnsafeObjectCombinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 72FA5FE31D49E9F4008BDCA9 /* YJUnsafeObjectCombinator.m */; };
 		72FA5FE81D49EE8B008BDCA9 /* YJObjectCombination.m in Sources */ = {isa = PBXBuildFile; fileRef = 72FA5FE71D49EE8B008BDCA9 /* YJObjectCombination.m */; };
 		72FA5FEA1D49F7F2008BDCA9 /* YJTupleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 72FA5FE91D49F7F2008BDCA9 /* YJTupleTest.m */; };
@@ -342,6 +343,7 @@
 		72639EAE1D4A41E60063BA67 /* YJTuples.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJTuples.h; sourceTree = "<group>"; };
 		72639EAF1D4A42860063BA67 /* YJTuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJTuple.h; sourceTree = "<group>"; };
 		72639EB01D4A42860063BA67 /* YJTuple.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJTuple.m; sourceTree = "<group>"; };
+		72F1691F1D54523700A29021 /* NSString+YJCompatible.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+YJCompatible.m"; sourceTree = "<group>"; };
 		72FA5FD21D49A4B7008BDCA9 /* YJDelegateAndDataSourceCrashPrecaution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJDelegateAndDataSourceCrashPrecaution.h; sourceTree = "<group>"; };
 		72FA5FE21D49E9F4008BDCA9 /* YJUnsafeObjectCombinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YJUnsafeObjectCombinator.h; sourceTree = "<group>"; };
 		72FA5FE31D49E9F4008BDCA9 /* YJUnsafeObjectCombinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YJUnsafeObjectCombinator.m; sourceTree = "<group>"; };
@@ -644,6 +646,7 @@
 				326F34CF1CF5C2BD00B2FF75 /* NSValue+YJGeometryExtension.m */,
 				326F34BC1CF5C20F00B2FF75 /* NSTimer+YJBlockBased.h */,
 				326F34BB1CF5C20F00B2FF75 /* NSTimer+YJBlockBased.m */,
+				72F1691F1D54523700A29021 /* NSString+YJCompatible.m */,
 			);
 			path = Generics;
 			sourceTree = "<group>";
@@ -1030,6 +1033,7 @@
 				32C1EB6F1D01899000E595EF /* YJCustomDemoCell.m in Sources */,
 				6003F59E195388D20070C39A /* YJAppDelegate.m in Sources */,
 				326389041CF2B3390026BED8 /* UIColor+YJCategory.m in Sources */,
+				72F169201D54523700A29021 /* NSString+YJCompatible.m in Sources */,
 				326389171CF2B3390026BED8 /* YJRoundedCornerLabel.m in Sources */,
 				326389001CF2B3390026BED8 /* YJGeometryExtension.c in Sources */,
 				326F34C11CF5C20F00B2FF75 /* NSMutableSet+YJCollection.m in Sources */,

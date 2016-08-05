@@ -54,6 +54,12 @@ rm -rf DerivedData
 
 <br>
 
+## 版本 1.0.1（2016-8-5）
+
+* 实现在低于`iOS 8`版本环境下依然可以使用`-[NSString containsString:]`的方法。
+
+<br>
+
 ## 版本 1.0.0（2016-8-1）
 
 * 修复YJSafeKVO的bug
