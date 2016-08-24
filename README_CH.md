@@ -85,12 +85,10 @@ YJKit是一个由iOS开发而衍生的开源项目，内容包含：
 
 ## 安装
 
-1. 需要Xcode 7.3以上的支持，用于使用`NS_SWIFT_NAME`来创建swift的API
-2. 需要cocoapods支持，创建Podfile: (需要添加`use_frameworks!`来避免编译器对于在cocoapods的项目中使用`IB_DESIGNABLE`带来的报错)
+需要Xcode 7.3以上的支持，用于使用`NS_SWIFT_NAME`来创建swift的API
 
 ```
 platform :ios, '7.0'
-use_frameworks!
 pod 'YJKit'
 ```
 

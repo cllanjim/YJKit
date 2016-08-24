@@ -76,11 +76,9 @@ YJKit is a useful Cocoa Touch library extension. Here is the menu list.
 ## Installation
 
 * It requires Xcode 7.3+ for `NS_SWIFT_NAME` avaliable, so it can expose APIs for swift and feels more swifty. 
-* It requires Cocoapods. Add `use_frameworks!` for Podfile to avoid compiler error by defining IB_DESIGNABLE in cocoapods project
 
 ```
 platform :ios, '7.0'
-use_frameworks!
 pod 'YJKit'
 ```
 

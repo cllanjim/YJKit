@@ -26,7 +26,7 @@
 }
 
 bool _yj_streq(const char *str1, const char *str2, size_t length) {
-    for (int i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++) {
         if (*str1++ != *str2++) {
             return false;
         }

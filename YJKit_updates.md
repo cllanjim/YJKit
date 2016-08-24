@@ -16,11 +16,10 @@ YJKit(云江库)是基于iOS平台的一个开源项目，目前由云江科技i
 
 ## 安装
 
-YJKit的安装是基于CocoaPods项目管理工具，需要在项目中建立Podfile，其中标明`use_frameworks!`的原因是避免编译器对于Pod中使用`IBDesignable`的报错，以确保其正常使用：
+YJKit的安装是基于CocoaPods项目管理工具，需要在项目中建立Podfile
 
 ```
 platform :ios, '7.0'
-use_frameworks! 
 pod 'YJKit'
 ```
 

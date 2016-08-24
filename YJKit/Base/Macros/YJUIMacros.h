@@ -41,6 +41,10 @@
 
 // UIScreen
 
+#ifndef OnePixelInPoint
+#define OnePixelInPoint (1 / [UIScreen mainScreen].scale)
+#endif
+
 #ifndef isRetinaDisplay
 #define isRetinaDisplay [UIScreen mainScreen].isRetinaDisplay
 #endif
